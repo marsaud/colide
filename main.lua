@@ -269,9 +269,9 @@ function love.load()
 		h = 100,
 		speed = 100,
 		vector = moveVectors[MOVE.NONE]:copy()
-	} + IADraw
+	} .. IADraw
 
-	ARect = AGameUIObject:new(IRect + IAControl)
+	ARect = AGameUIObject:new(IRect .. IAControl)
 	Rect2D = ARect:new(IControl2D)
 	Rect1DX = ARect:new(IControl1DX)
 	Rect1DY = ARect:new(IControl1DY)

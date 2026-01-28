@@ -7,7 +7,7 @@ end
 
 local Trait = {
   new = new,
-  __add = function (t1, t2)
+  __concat = function (t1, t2)
     t3 = {}
     for k, v in pairs(t1) do
       t3[k] = v
