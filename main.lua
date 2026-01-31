@@ -40,30 +40,41 @@ local moveVectors = {
 }
 
 local IAMove = Trait:new({
-	commit = function (self)
-		if (self.d) then
-			self.x = self.d.x or self.x
-			self.y = self.d.y or self.y
-			self.d = Coord:new({x = self.x, y = self.y})
+	_new = function (self)
+		self._c = Coord:new({x = self.x, y = self.y})
+		self._d = self._c:copy()
+		self.d = self._d:copy()
+	end,
+	move = function (self)
+		if self._move then
+			self:_move()
 		end
+	end,
+	_move = function (self)
+		self._d = self._c + self.vector
+		self.d = self._d:round()
+	end,
+	commit = function (self)
+		if self.d ~= self._d:round() then
+			self._d = self.d:copy()
+		end
+		self._c = self._d:copy()
+		self.x = math.round(self._c.x)
+		self.y = math.round(self._c.y)
 		self.vector = moveVectors[MOVE.NONE]:copy()
 	end
 })
 
 local IAControl = Trait:new({
-	move = function (self, m, dt)
-		if not self.d then
-			self.d = Coord:new({x = self.x, y = self.y})
-		end
-		if self._move then
-			self:_move(m, dt)
-			self.d = self.d + self.vector
+	control = function (self, m, dt)
+		if self._control then
+			self:_control(m, dt)
 		end
 	end
 })
 
 local IControl2D = Trait:new({
-	_move = function (self, m, dt)
+	_control = function (self, m, dt)
 		if m >= CONTROL.UP then
 			m = m - CONTROL.UP
 			self.vector = self.vector + moveVectors[CONTROL.UP]
@@ -79,12 +90,12 @@ local IControl2D = Trait:new({
 		if m >= CONTROL.RIGHT then
 			self.vector = self.vector + moveVectors[CONTROL.RIGHT]
 		end
-		self.vector = (self.vector * self.speed * dt):round()
-	end
+		self.vector = (self.vector * self.speed * dt)
+	end,
 })
 
 local IControl1DX = Trait:new({
-	_move = function (self, m, dt)
+	_control = function (self, m, dt)
 		if m >= CONTROL.UP then
 			m = m - CONTROL.UP
 		end
@@ -98,12 +109,12 @@ local IControl1DX = Trait:new({
 		if m >= CONTROL.RIGHT then
 			self.vector = self.vector + moveVectors[CONTROL.RIGHT]
 		end
-		self.vector = (self.vector * self.speed * dt):round()
+		self.vector = (self.vector * self.speed * dt)
 	end
 })
 
 local IControl1DY = Trait:new({
-	_move = function (self, m, dt)
+	_control = function (self, m, dt)
 		if m >= CONTROL.UP then
 			m = m - CONTROL.UP
 			self.vector = self.vector + moveVectors[CONTROL.UP]
@@ -111,7 +122,7 @@ local IControl1DY = Trait:new({
 		if m >= CONTROL.DOWN then
 			self.vector = self.vector + moveVectors[CONTROL.DOWN]
 		end
-		self.vector = (self.vector * self.speed * dt):round()
+		self.vector = self.vector * self.speed * dt
 	end
 })
 -- END MOVE INTERFACES
@@ -147,7 +158,7 @@ local function _resolveCollision1 (o1, o2)
 	if o1.y >= (o2.y + o2.h) then return end -- under
 	if (o1.y + o1.h) <= o2.y then return end -- on top
 
-	p1, p2 = o1.priority, o2.priority
+	local p1, p2 = o1.priority, o2.priority
 	if o1.vector == moveVectors[MOVE.NONE] then
 		p1 = 0
 	end
@@ -176,10 +187,10 @@ local function _resolveCollision1 (o1, o2)
 end
 
 local function _resolveCollision2 (o1, o2)
-	if o1.x >= (o2.x + o2.w) then return end -- right
-	if (o1.x + o1.w) <= o2.x then return end -- left
-	if o1.y >= (o2.y + o2.h) then return end -- under
-	if (o1.y + o1.h) <= o2.y then return end -- on top
+	if o1.d.x >= (o2.d.x + o2.w) then return end -- right
+	if (o1.d.x + o1.w) <= o2.d.x then return end -- left
+	if o1.d.y >= (o2.d.y + o2.h) then return end -- under
+	if (o1.d.y + o1.h) <= o2.d.y then return end -- on top
 
 	-- collision
 	local p1, p2 = o1.priority, o2.priority
@@ -332,7 +343,8 @@ end
 function love.update(dt)
 	local move = pullControl()
 	for _, o in ipairs(mObjects) do
-		o:move(move, dt)
+		o:control(move, dt)
+		o:move()
 	end
 
 	resolveCollisions(mObjects)

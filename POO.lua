@@ -2,6 +2,9 @@ local function new (self, o)
   o = o or {}
   setmetatable(o, self)
   self.__index = self
+  if o._new then
+    o:_new()
+  end
   return o
 end
 
