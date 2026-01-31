@@ -5,17 +5,18 @@ local function new (self, o)
   return o
 end
 
-local Trait = {
+local Trait
+Trait = {
   new = new,
   __concat = function (t1, t2)
-    t3 = {}
+    local t3 = {}
     for k, v in pairs(t1) do
       t3[k] = v
     end
     for k, v in pairs(t2) do
       t3[k] = v
     end
-    return t3
+    return Trait:new(t3)
   end
 }
 
