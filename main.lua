@@ -50,12 +50,20 @@ local IAMove = Trait:new({
 			self:_move()
 		end
 	end,
+	commit = function (self)
+		if self._commit then
+			self:_commit()
+		end
+	end
+})
+
+local IMoveMove = Trait:new({
 	_move = function (self)
 		self._d = self._c + self.vector
 		self.d = self._d:round()
 	end,
-	commit = function (self)
-		if self.d ~= self._d:round() then
+	_commit = function (self)
+		if not (self.d == self._d:round()) then
 			self._d = self.d:copy()
 		end
 		self._c = self._d:copy()
@@ -65,11 +73,28 @@ local IAMove = Trait:new({
 	end
 })
 
+local IMoveNot = Trait:new({
+	_move = function (self)
+		self._d = self._c:copy()
+		self.d = self._c:copy()
+	end,
+	_commit = function (self)
+		self._d = self._c:copy()
+		self.d = self._c:copy()
+	end
+})
+
 local IAControl = Trait:new({
 	control = function (self, m, dt)
 		if self._control then
 			self:_control(m, dt)
 		end
+	end
+})
+
+local IControlNot = Trait:new({
+	_control = function (self)
+		self.vector = moveVectors[MOVE.NONE]
 	end
 })
 
@@ -152,40 +177,6 @@ local function pullControl()
 	(love.keyboard.isDown("right") and CONTROL.RIGHT or 0)
 end
 
-local function _resolveCollision1 (o1, o2)
-	if o1.x >= (o2.x + o2.w) then return end -- right
-	if (o1.x + o1.w) <= o2.x then return end -- left
-	if o1.y >= (o2.y + o2.h) then return end -- under
-	if (o1.y + o1.h) <= o2.y then return end -- on top
-
-	local p1, p2 = o1.priority, o2.priority
-	if o1.vector == moveVectors[MOVE.NONE] then
-		p1 = 0
-	end
-	if o2.vector == moveVectors[MOVE.NONE] then
-		p2 = 0
-	end
-	if p1 + p2 == 0 then return end
-	if p2 > p1 then
-		o1, o2 = o2, o1
-	end
-
-	if (o1.vector.x > 0 and o1.x + o1.w < o2.x + o2.w / 2) or (o1.vector.x < 0 and o1.x > o2.x + o2.w / 2) then
-		o2.vector = Vector:new({
-			x = o1.vector.x,
-			y = o2.vector.y
-		})
-		o2.x = o1.x + (o1.w * math.sign(o1.vector.x))
-	end
-	if (o1.vector.y > 0 and o1.y + o1.h < o2.y + o2.h / 2) or (o1.vector.y < 0 and o1.y > o2.y + o2.h / 2) then
-		o2.vector = Vector:new({
-			x = o2.vector.x,
-			y = o1.vector.y
-		})
-		o2.y = o1.y + (o1.h * math.sign(o1.vector.y))
-	end
-end
-
 local function _resolveCollision2 (o1, o2)
 	if o1.d.x >= (o2.d.x + o2.w) then return end -- right
 	if (o1.d.x + o1.w) <= o2.d.x then return end -- left
@@ -236,7 +227,6 @@ local function _resolveCollision2 (o1, o2)
 		})
 		o2.d.y = o1.d.y + (o1.h * math.sign(o1.vector.y))
 	end
-
 end
 
 local function _resolveCollision (o1, o2)
@@ -286,9 +276,11 @@ local mObjects
 
 function love.load()
 	local ARect = AGameUIObject:new(IRect)
-	local Rect2D = ARect:new(IControl2D)
-	local Rect1DX = ARect:new(IControl1DX)
-	local Rect1DY = ARect:new(IControl1DY)
+	local Rect2D = ARect:new(IControl2D .. IMoveMove)
+	local RectNot = ARect:new (IControlNot .. IMoveMove)
+	local Rect1DX = ARect:new(IControl1DX .. IMoveMove)
+	local Rect1DY = ARect:new(IControl1DY .. IMoveMove)
+	local RectStatic = ARect:new(IControlNot .. IMoveNot)
 	-- END GAME CLASSES
 
 	-- GAME OBJECTS
@@ -306,20 +298,20 @@ function love.load()
 		priority = 2,
 		color = COLOR.GREEN
 	})
-	local rect3 = Rect2D:new({
+	local rect3 = RectNot:new({
 		x = 230,
 		y = 230,
 		speed = 40,
 		priority = 1,
 		color = COLOR.BLUE
 	})
-	--[[
-	rect4 = Rect1DX:new({
-		x = 115,
-		y = 115,
+	local rect4 = RectStatic:new({
+		x = 340,
+		y = 340,
 		speed = 110,
 		color = COLOR.YELLOW
 	})
+	--[[
 	rect5 = Rect1DY:new({
 		x = 240,
 		y = 240,
@@ -332,8 +324,8 @@ function love.load()
 		rect1,
 		rect2,
 		rect3,
-		--[[
 		rect4,
+		--[[
 		rect5
 		--]]
 	}
