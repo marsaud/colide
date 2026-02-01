@@ -2,155 +2,15 @@
 require("math-ext")
 local new, Trait = require("POO")()
 local Coord, Point, Size, Vector = require("Couple")()
+local COLOR, CONTROL, MOVE = require("Const")()
+local IAMove, IMoveMove, IMoveNot, moveVectors = require("Move")()
+local
+	IAControl,
+  IControl1DX,
+  IControl1DY,
+  IControl2D,
+  IControlNot = require("Control")()
 -- END IMPORTS
-
--- CONSTANTS
-local CONTROL = {
-	UP = 1000,
-	DOWN = 100,
-	LEFT = 10,
-	RIGHT = 1,
-	NONE = 0
-}
-
-local MOVE = CONTROL
-
-local COLOR = {
-	WHITE = {1, 1, 1},
-	BLACK = {0, 0, 0},
-	RED = { 1, 0, 0 },
-	GREEN = { 0, 1, 0 },
-	BLUE = { 0, 0, 1 },
-	YELLOW = { 1, 1, 0 },
-	MAGENTA = { 1, 0, 1 },
-	CYAN = { 0, 1, 1}
-}
-COLOR.DEFAULT = COLOR.WHITE
--- END CONSTANTS
-
--- INTERFACES
-
--- MOVE INTERFACES
-local moveVectors = {
-	[MOVE.UP] = Vector:new({ x  = 0, y = -1 }),
-	[MOVE.DOWN] = Vector:new({ x = 0, y = 1 }),
-	[MOVE.LEFT] = Vector:new({ x = -1, y = 0 }),
-	[MOVE.RIGHT] = Vector:new({ x = 1, y = 0 }),
-	[MOVE.NONE] = Vector:new({ x = 0, y = 0 })
-}
-
-local IAMove = Trait:new({
-	_new = function (self)
-		self._c = Coord:new({x = self.x, y = self.y})
-		self._d = self._c:copy()
-		self.d = self._d:copy()
-	end,
-	move = function (self)
-		if self._move then
-			self:_move()
-		end
-	end,
-	commit = function (self)
-		if self._commit then
-			self:_commit()
-		end
-	end
-})
-
-local IMoveMove = Trait:new({
-	_move = function (self)
-		self._d = self._c + self.vector
-		self.d = self._d:round()
-	end,
-	_commit = function (self)
-		if not (self.d == self._d:round()) then
-			self._d = self.d:copy()
-		end
-		self._c = self._d:copy()
-		self.x = math.round(self._c.x)
-		self.y = math.round(self._c.y)
-		self.vector = moveVectors[MOVE.NONE]:copy()
-	end
-})
-
-local IMoveNot = Trait:new({
-	_move = function (self)
-		self._d = self._c:copy()
-		self.d = self._c:copy()
-	end,
-	_commit = function (self)
-		self._d = self._c:copy()
-		self.d = self._c:copy()
-	end
-})
-
-local IAControl = Trait:new({
-	control = function (self, m, dt)
-		if self._control then
-			self:_control(m, dt)
-		end
-	end
-})
-
-local IControlNot = Trait:new({
-	_control = function (self)
-		self.vector = moveVectors[MOVE.NONE]
-	end
-})
-
-local IControl2D = Trait:new({
-	_control = function (self, m, dt)
-		if m >= CONTROL.UP then
-			m = m - CONTROL.UP
-			self.vector = self.vector + moveVectors[CONTROL.UP]
-		end
-		if m >= CONTROL.DOWN then
-			m = m - CONTROL.DOWN
-			self.vector = self.vector + moveVectors[CONTROL.DOWN]
-		end
-		if m >= CONTROL.LEFT then
-			m = m -CONTROL.LEFT
-			self.vector = self.vector + moveVectors[CONTROL.LEFT]
-		end
-		if m >= CONTROL.RIGHT then
-			self.vector = self.vector + moveVectors[CONTROL.RIGHT]
-		end
-		self.vector = (self.vector * self.speed * dt)
-	end,
-})
-
-local IControl1DX = Trait:new({
-	_control = function (self, m, dt)
-		if m >= CONTROL.UP then
-			m = m - CONTROL.UP
-		end
-		if m >= CONTROL.DOWN then
-			m = m - CONTROL.DOWN
-		end
-		if m >= CONTROL.LEFT then
-			m = m -CONTROL.LEFT
-			self.vector = self.vector + moveVectors[CONTROL.LEFT]
-		end
-		if m >= CONTROL.RIGHT then
-			self.vector = self.vector + moveVectors[CONTROL.RIGHT]
-		end
-		self.vector = (self.vector * self.speed * dt)
-	end
-})
-
-local IControl1DY = Trait:new({
-	_control = function (self, m, dt)
-		if m >= CONTROL.UP then
-			m = m - CONTROL.UP
-			self.vector = self.vector + moveVectors[CONTROL.UP]
-		end
-		if m >= CONTROL.DOWN then
-			self.vector = self.vector + moveVectors[CONTROL.DOWN]
-		end
-		self.vector = self.vector * self.speed * dt
-	end
-})
--- END MOVE INTERFACES
 
 -- DRAW INTERFACES
 local IADraw = Trait:new({
@@ -309,6 +169,7 @@ function love.load()
 		x = 340,
 		y = 340,
 		speed = 110,
+		priority = 1,
 		color = COLOR.YELLOW
 	})
 	--[[
