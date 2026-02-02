@@ -85,7 +85,6 @@ local IACollide = Trait:new({
 
 local ICollideBlock = Trait:new({
   _resolve = function (self, o)
-    print("BLOCK")
     if (
       o.vector.x > 0 and -- moving right
       o.d.x + o.w < self.d.x + self.w / 2 -- from the left
