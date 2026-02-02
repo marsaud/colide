@@ -1,8 +1,8 @@
 -- IMPORTS
 require("math-ext")
-local new, Trait = require("POO")()
-local Coord, Point, Size, Vector = require("Couple")()
-local COLOR, CONTROL, MOVE = require("Const")()
+local _, Trait = require("POO")()
+local Coord, _, _, Vector = require("Couple")()
+local _, _, MOVE = require("Const")()
 -- END IMPORTS
 
 local moveVectors = {

@@ -1,7 +1,7 @@
 -- IMPORTS
 require("math-ext")
 local new, Trait = require("POO")()
-local Coord, Point, Size, Vector = require("Couple")()
+local _, _, _, Vector = require("Couple")()
 local COLOR, CONTROL, MOVE = require("Const")()
 local IAMove, IMoveMove, IMoveNot, moveVectors = require("Move")()
 local
@@ -10,6 +10,7 @@ local
   IControl1DY,
   IControl2D,
   IControlNot = require("Control")()
+local IACollide, ICollideBlock = require("Collide")()
 -- END IMPORTS
 
 -- DRAW INTERFACES
@@ -96,7 +97,9 @@ end
 local function resolveCollisions (objects)
 	for i = 1, (#objects - 1) do
 		for j = i + 1, (#objects) do
-			_resolveCollision(objects[i], objects[j])
+			if not objects[i]:resolve(objects[j]) then
+				_resolveCollision(objects[i], objects[j])
+			end
 		end
 	end
 end
@@ -130,7 +133,7 @@ local AGameUIObject = {
 	h = 100,
 	speed = 100,
 	vector = moveVectors[MOVE.NONE]:copy()
-} .. IADraw .. IAMove .. IAControl
+} .. IADraw .. IAMove .. IAControl .. IACollide
 
 local mObjects
 
@@ -140,7 +143,7 @@ function love.load()
 	local RectNot = ARect:new (IControlNot .. IMoveMove)
 	local Rect1DX = ARect:new(IControl1DX .. IMoveMove)
 	local Rect1DY = ARect:new(IControl1DY .. IMoveMove)
-	local RectStatic = ARect:new(IControlNot .. IMoveNot)
+	local RectStatic = ARect:new(IControlNot .. IMoveNot .. ICollideBlock)
 	-- END GAME CLASSES
 
 	-- GAME OBJECTS
@@ -151,7 +154,7 @@ function love.load()
 		priority = 3,
 		color = COLOR.RED
 	})
-	local rect2 = Rect2D:new({
+	local rect2 = Rect1DX:new({
 		x = 120,
 		y = 120,
 		speed = 50,
@@ -169,24 +172,24 @@ function love.load()
 		x = 340,
 		y = 340,
 		speed = 110,
-		priority = 1,
 		color = COLOR.YELLOW
 	})
-	--[[
-	rect5 = Rect1DY:new({
-		x = 240,
-		y = 240,
+	---[[
+	local rect5 = Rect1DY:new({
+		x = 230,
+		y = 10,
 		speed = 90,
+		priority = 2,
 		color = COLOR.MAGENTA
 	})
 	--]]
 
 	mObjects = {
+		rect4,
 		rect1,
 		rect2,
 		rect3,
-		rect4,
-		--[[
+		---[[
 		rect5
 		--]]
 	}
