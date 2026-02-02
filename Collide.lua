@@ -10,8 +10,9 @@ local colStates = {
 }
 
 local IACollide = Trait:new({
-  -- _new = function (self) self:_init() end,
-  -- _init = function (self) self._colState = {} end,
+  _initColState = function (self)
+    self._colState = {}
+  end,
   resolve = function (self, o)
     if self.d.x >= (o.d.x + o.w) then return true end -- right
     if (self.d.x + self.w) <= o.d.x then return true end -- left
@@ -20,6 +21,13 @@ local IACollide = Trait:new({
     if self._resolve then
       return self:_resolve(o)
     end
+  end,
+
+  _addColState = function (self, state)
+    if (not self._colState) then
+      self:_initColState()
+    end
+    table.insert(self._colState, state)
   end,
 
   blockX = function (self)
@@ -32,7 +40,7 @@ local IACollide = Trait:new({
       y = self._d.y
     })
     self.d = self._d:round()
-    table.insert(self._colState, colStates.BLOCK_1DX)
+    self:_addColState(colStates.BLOCK_1DX)
   end,
 
   blockY = function (self)
@@ -45,7 +53,7 @@ local IACollide = Trait:new({
       y = self._c.y
     })
     self.d = self._d:round()
-    table.insert(self._colState, colStates.BLOCK_1DY)
+    self:_addColState(colStates.BLOCK_1DY)
   end,
 
   pushX = function (self, o)
@@ -58,7 +66,7 @@ local IACollide = Trait:new({
       y = self._d.y
     })
     self.d = self._d:round()
-    table.insert(self._colState, colStates.PUSH_1DX)
+    self:_addColState(colStates.PUSH_1DX)
   end,
 
   pushY = function (self, o)
@@ -71,7 +79,7 @@ local IACollide = Trait:new({
       y = o.d.y + o.h * math.sign(o.vector.y),
     })
     self.d = self._d:round()
-    table.insert(self._colState, colStates.PUSH_1DY)
+    self:_addColState(colStates.PUSH_1DY)
   end
 })
 
