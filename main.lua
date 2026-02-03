@@ -10,7 +10,7 @@ local
   IControl1DY,
   IControl2D,
   IControlNot = require("Control")()
-local IACollide, ICollideBlock = require("Collide")()
+local IACollide, ICollideBlock, ICollidePush = require("Collide")()
 -- END IMPORTS
 
 -- DRAW INTERFACES
@@ -139,10 +139,10 @@ local mObjects
 
 function love.load()
 	local ARect = AGameUIObject:new(IRect)
-	local Rect2D = ARect:new(IControl2D .. IMoveMove)
+	local Rect2D = ARect:new(IControl2D .. IMoveMove .. ICollidePush)
 	local RectNot = ARect:new (IControlNot .. IMoveMove)
-	local Rect1DX = ARect:new(IControl1DX .. IMoveMove)
-	local Rect1DY = ARect:new(IControl1DY .. IMoveMove)
+	local Rect1DX = ARect:new(IControl1DX .. IMoveMove .. ICollidePush)
+	local Rect1DY = ARect:new(IControl1DY .. IMoveMove .. ICollidePush)
 	local RectStatic = ARect:new(IControlNot .. IMoveNot .. ICollideBlock)
 	-- END GAME CLASSES
 
