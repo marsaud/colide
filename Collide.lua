@@ -10,6 +10,8 @@ local colStates = {
 }
 
 local IACollide = Trait:new({
+  _byXs = {},
+  _byYs = {},
   _initColState = function (self)
     self._colState = {}
   end,
@@ -30,7 +32,8 @@ local IACollide = Trait:new({
     table.insert(self._colState, state)
   end,
 
-  blockX = function (self, by)
+  blockX = function (self, ...)
+    local _ = {...}
     self.vector = Vector:new({
       x = 0,
       y = self.vector.y
@@ -40,10 +43,15 @@ local IACollide = Trait:new({
       y = self._d.y
     })
     self.d = self._d:round()
+    local pushBy = table.remove(self._byXs)
+    if pushBy then
+      pushBy.blockX(self)
+    end
     self:_addColState(colStates.BLOCK_1DX)
   end,
 
-  blockY = function (self, by)
+  blockY = function (self, ...)
+    local _ = {...}
     self.vector = Vector:new({
       x = self.vector.x,
       y = 0
@@ -53,10 +61,17 @@ local IACollide = Trait:new({
       y = self._c.y
     })
     self.d = self._d:round()
+    local pushBy = table.remove(self._byYs)
+    if pushBy then
+      pushBy.blockY(self)
+    end
     self:_addColState(colStates.BLOCK_1DY)
   end,
 
-  pushX = function (self, by)
+  pushX = function (self, ...)
+    local bys = {...}
+    local by = table.remove(bys)
+    table.insert(self._byXs, by)
     self.vector = Vector:new({
       x = by.vector.x,
       y = self.vector.y
@@ -69,7 +84,10 @@ local IACollide = Trait:new({
     self:_addColState(colStates.PUSH_1DX)
   end,
 
-  pushY = function (self, by)
+  pushY = function (self, ...)
+    local bys = {...}
+    local by = table.remove(bys)
+    table.insert(self._byYs, by)
     self.vector = Vector:new({
       x = self.vector.x,
       y = by.vector.y
@@ -85,36 +103,40 @@ local IACollide = Trait:new({
 
 local ICollideBlock = Trait:new({
   _resolve = function (self, o)
-    if (
-      o.vector.x > 0 and -- moving right
-      o.d.x + o.w < self.d.x + self.w / 2 -- from the left
-    )
-      or
-    (
-      o.vector.x < 0 and -- moving left
-      o.d.x > self.d.x + self.w / 2 -- from the right
-    ) then
-        o:blockX()
-    end
-    if (
-      o.vector.y > 0 and -- moving down
-      o.d.y + o.h < self.d.y + self.h / 2 -- from top
-    )
-      or
-    (
-      o.vector.y < 0 and -- moving up
-      o.d.y > self.d.y + self.h / 2 -- from under
-    ) then
-        o:blockY()
-    end
+    -- if (
+    --   o.vector.x > 0 and -- moving right
+    --   o.d.x + o.w < self.d.x + self.w / 2 -- from the left
+    -- )
+    --   or
+    -- (
+    --   o.vector.x < 0 and -- moving left
+    --   o.d.x > self.d.x + self.w / 2 -- from the right
+    -- ) then
+    --     o:blockX(self)
+    -- end
+    -- if (
+    --   o.vector.y > 0 and -- moving down
+    --   o.d.y + o.h < self.d.y + self.h / 2 -- from top
+    -- )
+    --   or
+    -- (
+    --   o.vector.y < 0 and -- moving up
+    --   o.d.y > self.d.y + self.h / 2 -- from under
+    -- ) then
+    --     o:blockY(self)
+    -- end
     return true
   end,
 
-  pushX = function (self, by)
+  pushX = function (self, ...)
+    local bys = {...}
+    local by = table.remove(bys)
     by:blockX(self)
   end,
 
-  pushY = function (self, by)
+  pushY = function (self, ...)
+    local bys = {...}
+    local by = table.remove(bys)
     by:blockY(self)
   end
 })
@@ -147,4 +169,13 @@ local ICollidePush = Trait:new({
   end
 })
 
-return function () return IACollide, ICollideBlock, ICollidePush end
+local ICollideNot = Trait:new({
+  _resolve = function () return true end
+})
+
+return function () return
+  IACollide,
+  ICollideBlock,
+  ICollideNot,
+  ICollidePush
+end
