@@ -40,8 +40,9 @@
 	local function resolveCollisions (objects)
 		for i = 1, (#objects - 1) do
 			for j = i + 1, (#objects) do
-				objects[i]:resolve(objects[j])
+				objects[i]:submitCollider(objects[j])
 			end
+			objects[i]:resolve()
 		end
 	end
 -- END MAIN UTILITIES
@@ -115,7 +116,6 @@ function love.load()
 		speed = 110,
 		color = COLOR.YELLOW
 	})
-	---[[
 	local rect5 = Rect1DY:new({
 		x = 230,
 		y = 10,
@@ -123,7 +123,6 @@ function love.load()
 		priority = 2,
 		color = COLOR.MAGENTA
 	})
-	--]]
 
 	mObjects = {
 		rect1,

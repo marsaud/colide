@@ -12,17 +12,37 @@ local colStates = {
 local IACollide = Trait:new({
   _byXs = {},
   _byYs = {},
+  _colliders = {},
   _initColState = function (self)
     self._colState = {}
   end,
-  resolve = function (self, o)
-    if self.d.x >= (o.d.x + o.w) then return true end -- right
-    if (self.d.x + self.w) <= o.d.x then return true end -- left
-    if self.d.y >= (o.d.y + o.h) then return true end -- under
-    if (self.d.y + self.h) <= o.d.y then return true end
-    if self._resolve then
-      return self:_resolve(o)
+  _isRight = function (self, o)
+    return self.d.x >= (o.d.x + o.w)
+  end,
+  _isLeft = function (self, o)
+    return (self.d.x + self.w) <= o.d.x
+  end,
+  _isTop = function (self, o)
+    return self.d.y >= (o.d.y + o.h)
+  end,
+  _isUnder = function (self, o)
+    return (self.d.y + self.h) <= o.d.y
+  end,
+  submitCollider = function (self, o)
+    if self:_isRight(o) then return true end
+    if self:_isLeft(o) then return true end
+    if self:_isUnder(o) then return true end
+    if self:_isTop(o) then return true end
+    table.insert(self._colliders, o)
+  end,
+  resolve = function (self)
+    table.sort(self._colliders, function (o1, o2)
+      return o1.priority >= o2.priority
+    end)
+    for _,o in ipairs(self._colliders) do
+      self:_resolve(o)
     end
+    self._colliders = {}
   end,
 
   _addColState = function (self, state)
@@ -102,6 +122,7 @@ local IACollide = Trait:new({
 })
 
 local ICollideBlock = Trait:new({
+  priority = 100,
   _resolve = function (self, o)
     -- if (
     --   o.vector.x > 0 and -- moving right
@@ -142,6 +163,7 @@ local ICollideBlock = Trait:new({
 })
 
 local ICollidePush = Trait:new({
+    priority = 50,
     _resolve = function (self, o)
     if (
       self.vector.x > 0 and -- moving right
@@ -170,6 +192,7 @@ local ICollidePush = Trait:new({
 })
 
 local ICollideNot = Trait:new({
+  priority = 25,
   _resolve = function () return true end
 })
 
