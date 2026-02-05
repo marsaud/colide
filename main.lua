@@ -128,7 +128,7 @@ function love.load()
 		rect1,
 		rect3,
 		rect4,
-		--[[
+		---[[
 		rect2,
 		rect5,
 		--]]

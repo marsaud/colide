@@ -10,9 +10,6 @@ local colStates = {
 }
 
 local IACollide = Trait:new({
-  _byXs = {},
-  _byYs = {},
-  _colliders = {},
   _initColState = function (self)
     self._colState = {}
   end,
@@ -22,13 +19,16 @@ local IACollide = Trait:new({
   _isLeft = function (self, o)
     return (self.d.x + self.w) <= o.d.x
   end,
-  _isTop = function (self, o)
+  _isUnder = function (self, o)
     return self.d.y >= (o.d.y + o.h)
   end,
-  _isUnder = function (self, o)
+  _isTop = function (self, o)
     return (self.d.y + self.h) <= o.d.y
   end,
   submitCollider = function (self, o)
+    if (not self._colliders) then
+      self._colliders = {}
+    end
     if self:_isRight(o) then return true end
     if self:_isLeft(o) then return true end
     if self:_isUnder(o) then return true end
@@ -36,11 +36,15 @@ local IACollide = Trait:new({
     table.insert(self._colliders, o)
   end,
   resolve = function (self)
+    if (#self._colliders < 1) then
+      return
+    end
     table.sort(self._colliders, function (o1, o2)
       return o1.priority >= o2.priority
     end)
     for _,o in ipairs(self._colliders) do
       self:_resolve(o)
+      o:_resolve(self)
     end
     self._colliders = {}
   end,
@@ -50,6 +54,32 @@ local IACollide = Trait:new({
       self:_initColState()
     end
     table.insert(self._colState, state)
+  end,
+
+  _storeByX = function (self, o)
+    if not self._byXs then
+      self._byXs = {}
+    end
+    table.insert(self._byXs, o)
+  end,
+
+  _storeByY = function (self, o)
+    if not self._byYs then
+      self._byYs = {}
+    end
+    table.insert(self._byYs, o)
+  end,
+
+  _popByX = function (self)
+    if self._byXs then
+      return table.remove(self._byXs)
+    end
+  end,
+
+  _popByY = function (self)
+    if self._byYs then
+      return table.remove(self._byYs)
+    end
   end,
 
   blockX = function (self, ...)
@@ -63,9 +93,9 @@ local IACollide = Trait:new({
       y = self._d.y
     })
     self.d = self._d:round()
-    local pushBy = table.remove(self._byXs)
+    local pushBy = self:_popByX()
     if pushBy then
-      pushBy.blockX(self)
+      pushBy:blockX(self)
     end
     self:_addColState(colStates.BLOCK_1DX)
   end,
@@ -81,9 +111,9 @@ local IACollide = Trait:new({
       y = self._c.y
     })
     self.d = self._d:round()
-    local pushBy = table.remove(self._byYs)
+    local pushBy = self:_popByY()
     if pushBy then
-      pushBy.blockY(self)
+      pushBy:blockY(self)
     end
     self:_addColState(colStates.BLOCK_1DY)
   end,
@@ -91,7 +121,7 @@ local IACollide = Trait:new({
   pushX = function (self, ...)
     local bys = {...}
     local by = table.remove(bys)
-    table.insert(self._byXs, by)
+    self:_storeByX(by)
     self.vector = Vector:new({
       x = by.vector.x,
       y = self.vector.y
@@ -107,7 +137,7 @@ local IACollide = Trait:new({
   pushY = function (self, ...)
     local bys = {...}
     local by = table.remove(bys)
-    table.insert(self._byYs, by)
+    self:_storeByY(by)
     self.vector = Vector:new({
       x = self.vector.x,
       y = by.vector.y
@@ -163,8 +193,8 @@ local ICollideBlock = Trait:new({
 })
 
 local ICollidePush = Trait:new({
-    priority = 50,
-    _resolve = function (self, o)
+  priority = 50,
+  _resolve = function (self, o)
     if (
       self.vector.x > 0 and -- moving right
       self.d.x + self.w < o.d.x + o.w / 2 -- from the left
