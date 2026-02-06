@@ -1,8 +1,8 @@
 -- IMPORTS
 require("math-ext")
-local new, Trait = require("POO")()
-local COLOR, CONTROL, MOVE = require("Const")()
-local IAMove, IMoveMove, IMoveNot, moveVectors = require("Move")()
+local _, Trait = require("POO")()
+local _, CONTROL, MOVE = require("Const")()
+local _, _, _, moveVectors = require("Move")()
 -- END IMPORTS
 
 local IAControl = Trait:new({

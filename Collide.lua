@@ -10,6 +10,7 @@ local colStates = {
 }
 
 local IACollide = Trait:new({
+  IACollide = true,
   _initColState = function (self)
     self._colState = {}
   end,
@@ -29,11 +30,12 @@ local IACollide = Trait:new({
     if (not self._colliders) then
       self._colliders = {}
     end
-    if self:_isRight(o) then return true end
-    if self:_isLeft(o) then return true end
-    if self:_isUnder(o) then return true end
-    if self:_isTop(o) then return true end
+    if self:_isRight(o) then return end
+    if self:_isLeft(o) then return end
+    if self:_isUnder(o) then return end
+    if self:_isTop(o) then return end
     table.insert(self._colliders, o)
+    return true
   end,
   resolve = function (self)
     if (#self._colliders < 1) then
@@ -47,6 +49,11 @@ local IACollide = Trait:new({
       o:_resolve(self)
     end
     self._colliders = {}
+  end,
+
+  flushCollisionStates = function (self)
+    self._byXs = {}
+    self._byYs = {}
   end,
 
   _addColState = function (self, state)

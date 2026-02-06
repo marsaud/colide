@@ -39,10 +39,19 @@
 
 	local function resolveCollisions (objects)
 		for i = 1, (#objects - 1) do
-			for j = i + 1, (#objects) do
-				objects[i]:submitCollider(objects[j])
+			if (objects[i].IACollide) then
+				for j = i + 1, (#objects) do
+					if objects[j].IACollide then
+						p = p or objects[i]:submitCollider(objects[j])
+					end
+				end
+				objects[i]:resolve()
 			end
-			objects[i]:resolve()
+		end
+		for _, o in ipairs(objects) do
+			if (o.IACollide) then
+				o:flushCollisionStates()
+			end
 		end
 	end
 -- END MAIN UTILITIES
@@ -89,50 +98,163 @@ function love.load()
 	-- END GAME CLASSES
 
 	-- GAME OBJECTS
-	local rect1 = Rect2D:new({
-		x = 10,
-		y = 10,
-		speed = 120,
-		priority = 3,
-		color = COLOR.RED
-	})
-	local rect2 = Rect1DX:new({
-		x = 120,
-		y = 120,
-		speed = 50,
-		priority = 2,
-		color = COLOR.GREEN
-	})
-	local rect3 = RectPassive:new({
-		x = 230,
-		y = 230,
-		speed = 40,
-		priority = 1,
-		color = COLOR.BLUE
-	})
-	local rect4 = RectStatic:new({
-		x = 340,
-		y = 340,
-		speed = 110,
-		color = COLOR.YELLOW
-	})
-	local rect5 = Rect1DY:new({
-		x = 230,
-		y = 10,
-		speed = 90,
-		priority = 2,
-		color = COLOR.MAGENTA
-	})
+	local function load1()
+		local rect1 = Rect2D:new({
+			id = 'red',
+			x = 10,
+			y = 10,
+			speed = 120,
+			priority = 3,
+			color = COLOR.RED
+		})
+		local rect2 = Rect1DX:new({
+			id = 'green',
+			x = 120,
+			y = 120,
+			speed = 50,
+			priority = 2,
+			color = COLOR.GREEN
+		})
+		local rect3 = RectPassive:new({
+			id = 'blue',
+			x = 230,
+			y = 230,
+			speed = 40,
+			priority = 1,
+			color = COLOR.BLUE
+		})
+		local rect4 = RectStatic:new({
+			id = 'yellow',
+			x = 340,
+			y = 340,
+			speed = 110,
+			color = COLOR.YELLOW
+		})
+		local rect5 = Rect1DY:new({
+			id = 'magenta',
+			x = 230,
+			y = 10,
+			speed = 90,
+			priority = 2,
+			color = COLOR.MAGENTA
+		})
 
-	mObjects = {
-		rect1,
-		rect3,
-		rect4,
-		---[[
-		rect2,
-		rect5,
-		--]]
-	}
+		mObjects = {
+			---[[
+			rect1,
+			rect2,
+			rect3,
+			rect4,
+			rect5,
+			--]]
+		}
+	end
+
+	local function load2()
+		local rect1 = Rect2D:new({
+			id = 'red',
+			x = 10,
+			y = 10,
+			speed = 120,
+			priority = 3,
+			color = COLOR.RED
+		})
+		local rect2 = RectPassive:new({
+			id = 'green',
+			x = 120,
+			y = 10,
+			speed = 50,
+			priority = 2,
+			color = COLOR.GREEN
+		})
+		local rect3 = RectPassive:new({
+			id = 'blue',
+			x = 230,
+			y = 10,
+			speed = 40,
+			priority = 1,
+			color = COLOR.BLUE
+		})
+		local rect4 = RectStatic:new({
+			id = 'yellow',
+			x = 450,
+			y = 10,
+			speed = 110,
+			color = COLOR.YELLOW
+		})
+		local rect5 = RectPassive:new({
+			id = 'magenta',
+			x = 340,
+			y = 10,
+			speed = 90,
+			priority = 2,
+			color = COLOR.MAGENTA
+		})
+
+		mObjects = {
+			---[[
+			rect1,
+			rect2,
+			rect3,
+			rect4,
+			rect5,
+			--]]
+		}
+	end
+
+	local function load3()
+		local rect1 = Rect2D:new({
+			id = 'red',
+			x = 10,
+			y = 10,
+			speed = 120,
+			priority = 3,
+			color = COLOR.RED
+		})
+		local rect2 = RectPassive:new({
+			id = 'green',
+			x = 120,
+			y = 10,
+			speed = 50,
+			priority = 2,
+			color = COLOR.GREEN
+		})
+		local rect3 = RectPassive:new({
+			id = 'blue',
+			x = 230,
+			y = 10,
+			speed = 40,
+			priority = 1,
+			color = COLOR.BLUE
+		})
+		local rect4 = RectStatic:new({
+			id = 'yellow',
+			x = 450,
+			y = 10,
+			speed = 110,
+			color = COLOR.YELLOW
+		})
+		local rect5 = RectPassive:new({
+			id = 'magenta',
+			x = 340,
+			y = 10,
+			speed = 90,
+			priority = 2,
+			color = COLOR.MAGENTA
+		})
+
+		mObjects = {
+			rect1,
+			rect2,
+			rect3,
+			--[[
+			rect4,
+			rect5,
+			--]]
+		}
+	end
+
+	load3()
 	-- END GAME OBJECTS
 end
 
