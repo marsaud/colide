@@ -14,8 +14,8 @@ local COLOR = {
 	RED = { 1, 0, 0 },
 	GREEN = { 0, 1, 0 },
 	BLUE = { 0, 0, 1 },
-	YELLOW = { 1, 1, 0 },
 	MAGENTA = { 1, 0, 1 },
+	YELLOW = { 1, 1, 0 },
 	CYAN = { 0, 1, 1}
 }
 COLOR.DEFAULT = COLOR.WHITE
