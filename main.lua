@@ -98,59 +98,7 @@ function love.load()
 	-- END GAME CLASSES
 
 	-- GAME OBJECTS
-	local function load1()
-		local rect1 = Rect2D:new({
-			id = 'red',
-			x = 10,
-			y = 10,
-			speed = 120,
-			vector = moveVectors[MOVE.NONE]:copy(),
-			color = COLOR.RED
-		})
-		local rect2 = Rect1DX:new({
-			id = 'green',
-			x = 120,
-			y = 120,
-			speed = 50,
-			vector = moveVectors[MOVE.NONE]:copy(),
-			color = COLOR.GREEN
-		})
-		local rect3 = RectPassive:new({
-			id = 'blue',
-			x = 230,
-			y = 230,
-			speed = 40,
-			vector = moveVectors[MOVE.NONE]:copy(),
-			color = COLOR.BLUE
-		})
-		local rect4 = RectStatic:new({
-			id = 'yellow',
-			x = 340,
-			y = 340,
-			vector = moveVectors[MOVE.NONE]:copy(),
-			color = COLOR.YELLOW
-		})
-		local rect5 = Rect1DY:new({
-			id = 'magenta',
-			x = 230,
-			y = 10,
-			speed = 90,
-			vector = moveVectors[MOVE.NONE]:copy(),
-			color = COLOR.MAGENTA
-		})
-
-		mObjects = {
-			---[[
-			rect1,
-			rect2,
-			rect3,
-			rect4,
-			rect5,
-			--]]
-		}
-	end
-
-	local function load2()
+	local function load()
 		local rect1 = Rect2D:new({
 			id = 'red',
 			x = 10,
@@ -202,70 +150,17 @@ function love.load()
 
 		mObjects = {
 			---[[
+			rect1,
 			rect2,
 			rect3,
 			rect4,
 			rect5,
 			rect6,
-			rect1,
 			--]]
 		}
 	end
 
-	local function load3()
-		local rect1 = Rect2D:new({
-			id = 'red',
-			x = 10,
-			y = 10,
-			speed = 120,
-			vector = moveVectors[MOVE.NONE]:copy(),
-			color = COLOR.RED
-		})
-		local rect2 = RectPassive:new({
-			id = 'green',
-			x = 120,
-			y = 10,
-			speed = 50,
-			vector = moveVectors[MOVE.NONE]:copy(),
-			color = COLOR.GREEN
-		})
-		local rect3 = RectPassive:new({
-			id = 'blue',
-			x = 230,
-			y = 10,
-			speed = 40,
-			vector = moveVectors[MOVE.NONE]:copy(),
-			color = COLOR.BLUE
-		})
-		local rect4 = RectStatic:new({
-			id = 'yellow',
-			x = 450,
-			y = 10,
-			speed = 110,
-			vector = moveVectors[MOVE.NONE]:copy(),
-			color = COLOR.YELLOW
-		})
-		local rect5 = RectPassive:new({
-			id = 'magenta',
-			x = 340,
-			y = 10,
-			speed = 90,
-			vector = moveVectors[MOVE.NONE]:copy(),
-			color = COLOR.MAGENTA
-		})
-
-		mObjects = {
-			rect1,
-			rect2,
-			rect3,
-			--[[
-			rect4,
-			rect5,
-			--]]
-		}
-	end
-
-	load2()
+	load()
 	-- END GAME OBJECTS
 end
 
