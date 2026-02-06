@@ -76,15 +76,7 @@
 
 --]]
 
-local AGameUIObject = {
-	new = new,
-	x = 0,
-	y = 0,
-	w = 100,
-	h = 100,
-	speed = 100,
-	vector = moveVectors[MOVE.NONE]:copy()
-} .. IADraw .. IAMove .. IAControl .. IACollide
+local AGameUIObject = IADraw .. IAMove .. IAControl .. IACollide
 
 local mObjects
 
@@ -103,6 +95,8 @@ function love.load()
 			id = 'red',
 			x = 10,
 			y = 10,
+			w = 100,
+			h = 100,
 			speed = 120,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.RED
@@ -111,6 +105,8 @@ function love.load()
 			id = 'green',
 			x = 130,
 			y = 10,
+			w = 100,
+			h = 100,
 			speed = 50,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.GREEN
@@ -119,6 +115,8 @@ function love.load()
 			id = 'blue',
 			x = 250,
 			y = 10,
+			w = 100,
+			h = 100,
 			speed = 40,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.BLUE
@@ -127,6 +125,8 @@ function love.load()
 			id = 'magenta',
 			x = 370,
 			y = 10,
+			w = 100,
+			h = 100,
 			speed = 90,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.MAGENTA
@@ -135,6 +135,8 @@ function love.load()
 			id = 'yellow',
 			x = 490,
 			y = 10,
+			w = 100,
+			h = 100,
 			speed = 110,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.YELLOW
@@ -143,6 +145,8 @@ function love.load()
 			id = 'cyan',
 			x = 610,
 			y = 10,
+			w = 100,
+			h = 100,
 			speed = 110,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.CYAN
