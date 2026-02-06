@@ -4,8 +4,6 @@ local new = require("POO")()
 local Couple
 Couple = {
   new = new,
-  x = 0,
-  y = 0,
   __add = function (v1, v2)
 			return Couple:new({
 				x = v1.x + v2.x,

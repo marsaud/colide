@@ -42,7 +42,7 @@
 			if (objects[i].IACollide) then
 				for j = i + 1, (#objects) do
 					if objects[j].IACollide then
-						p = p or objects[i]:submitCollider(objects[j])
+						objects[i]:submitCollider(objects[j])
 					end
 				end
 				objects[i]:resolve()
@@ -104,7 +104,7 @@ function love.load()
 			x = 10,
 			y = 10,
 			speed = 120,
-			priority = 3,
+			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.RED
 		})
 		local rect2 = Rect1DX:new({
@@ -112,7 +112,7 @@ function love.load()
 			x = 120,
 			y = 120,
 			speed = 50,
-			priority = 2,
+			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.GREEN
 		})
 		local rect3 = RectPassive:new({
@@ -120,14 +120,14 @@ function love.load()
 			x = 230,
 			y = 230,
 			speed = 40,
-			priority = 1,
+			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.BLUE
 		})
 		local rect4 = RectStatic:new({
 			id = 'yellow',
 			x = 340,
 			y = 340,
-			speed = 110,
+			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.YELLOW
 		})
 		local rect5 = Rect1DY:new({
@@ -135,7 +135,7 @@ function love.load()
 			x = 230,
 			y = 10,
 			speed = 90,
-			priority = 2,
+			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.MAGENTA
 		})
 
@@ -156,7 +156,7 @@ function love.load()
 			x = 10,
 			y = 10,
 			speed = 120,
-			priority = 3,
+			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.RED
 		})
 		local rect2 = RectPassive:new({
@@ -164,7 +164,7 @@ function love.load()
 			x = 120,
 			y = 10,
 			speed = 50,
-			priority = 2,
+			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.GREEN
 		})
 		local rect3 = RectPassive:new({
@@ -172,7 +172,7 @@ function love.load()
 			x = 230,
 			y = 10,
 			speed = 40,
-			priority = 1,
+			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.BLUE
 		})
 		local rect4 = RectStatic:new({
@@ -180,6 +180,7 @@ function love.load()
 			x = 450,
 			y = 10,
 			speed = 110,
+			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.YELLOW
 		})
 		local rect5 = RectPassive:new({
@@ -187,7 +188,7 @@ function love.load()
 			x = 340,
 			y = 10,
 			speed = 90,
-			priority = 2,
+			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.MAGENTA
 		})
 
@@ -208,7 +209,7 @@ function love.load()
 			x = 10,
 			y = 10,
 			speed = 120,
-			priority = 3,
+			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.RED
 		})
 		local rect2 = RectPassive:new({
@@ -216,7 +217,7 @@ function love.load()
 			x = 120,
 			y = 10,
 			speed = 50,
-			priority = 2,
+			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.GREEN
 		})
 		local rect3 = RectPassive:new({
@@ -224,7 +225,7 @@ function love.load()
 			x = 230,
 			y = 10,
 			speed = 40,
-			priority = 1,
+			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.BLUE
 		})
 		local rect4 = RectStatic:new({
@@ -232,6 +233,7 @@ function love.load()
 			x = 450,
 			y = 10,
 			speed = 110,
+			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.YELLOW
 		})
 		local rect5 = RectPassive:new({
@@ -239,7 +241,7 @@ function love.load()
 			x = 340,
 			y = 10,
 			speed = 90,
-			priority = 2,
+			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.MAGENTA
 		})
 
