@@ -161,7 +161,7 @@ function love.load()
 		})
 		local rect2 = RectPassive:new({
 			id = 'green',
-			x = 120,
+			x = 130,
 			y = 10,
 			speed = 50,
 			vector = moveVectors[MOVE.NONE]:copy(),
@@ -169,36 +169,45 @@ function love.load()
 		})
 		local rect3 = RectPassive:new({
 			id = 'blue',
-			x = 230,
+			x = 250,
 			y = 10,
 			speed = 40,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.BLUE
 		})
-		local rect4 = RectStatic:new({
-			id = 'yellow',
-			x = 450,
-			y = 10,
-			speed = 110,
-			vector = moveVectors[MOVE.NONE]:copy(),
-			color = COLOR.YELLOW
-		})
-		local rect5 = RectPassive:new({
+		local rect4 = RectPassive:new({
 			id = 'magenta',
-			x = 340,
+			x = 370,
 			y = 10,
 			speed = 90,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.MAGENTA
 		})
+		local rect5 = RectPassive:new({
+			id = 'cyan',
+			x = 490,
+			y = 10,
+			speed = 110,
+			vector = moveVectors[MOVE.NONE]:copy(),
+			color = COLOR.YELLOW
+		})
+		local rect6 = RectStatic:new({
+			id = 'cyan',
+			x = 610,
+			y = 10,
+			speed = 110,
+			vector = moveVectors[MOVE.NONE]:copy(),
+			color = COLOR.CYAN
+		})
 
 		mObjects = {
 			---[[
-			rect1,
 			rect2,
 			rect3,
 			rect4,
 			rect5,
+			rect6,
+			rect1,
 			--]]
 		}
 	end
@@ -256,7 +265,7 @@ function love.load()
 		}
 	end
 
-	load3()
+	load2()
 	-- END GAME OBJECTS
 end
 
