@@ -132,7 +132,7 @@ function love.load()
 			color = COLOR.MAGENTA
 		})
 		local rect5 = RectPassive:new({
-			id = 'cyan',
+			id = 'yellow',
 			x = 490,
 			y = 10,
 			speed = 110,
