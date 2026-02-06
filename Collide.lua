@@ -46,7 +46,7 @@ local IACollide = Trait:new({
     end)
     for _,o in ipairs(self._colliders) do
       self:_resolve(o)
-      o:_resolve(self)
+      -- o:_resolve(self)
     end
     self._colliders = {}
   end,
