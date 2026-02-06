@@ -42,7 +42,7 @@ local IACollide = Trait:new({
       return
     end
     table.sort(self._colliders, function (o1, o2)
-      return o1.priority >= o2.priority
+      return o1.priority > o2.priority
     end)
     for _,o in ipairs(self._colliders) do
       self:_resolve(o)
