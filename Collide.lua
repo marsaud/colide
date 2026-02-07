@@ -26,29 +26,44 @@ local IACollide = Trait:new({
   _isTop = function (self, o)
     return (self.d.y + self.h) <= o.d.y
   end,
-  submitCollider = function (self, o)
-    if (not self._colliders) then
+  process = function (self, objects)
+    if self:submitColliders(objects) then
+      return self:resolve(objects)
+    end
+  end,
+  submitColliders = function (self, objects)
+    if not self._colliders then
       self._colliders = {}
     end
-    if self:_isRight(o) then return end
-    if self:_isLeft(o) then return end
-    if self:_isUnder(o) then return end
-    if self:_isTop(o) then return end
-    table.insert(self._colliders, o)
-    return true
+    local submitted = false
+    for _, o in ipairs(objects) do
+      local skip = o == self
+      skip = skip or not o.IACollide
+      skip = skip or self:_isRight(o)
+      skip = skip or self:_isLeft(o)
+      skip = skip or self:_isUnder(o)
+      skip = skip or self:_isTop(o)
+      if not skip then
+        table.insert(self._colliders, o)
+        submitted = true
+      end
+    end
+    return submitted
   end,
-  resolve = function (self)
+  resolve = function (self, objects)
     if (#self._colliders < 1) then
       return
     end
     table.sort(self._colliders, function (o1, o2)
-      return o1.priority > o2.priority
+      return o1.priority < o2.priority
     end)
-    for _,o in ipairs(self._colliders) do
-      self:_resolve(o)
-      -- o:_resolve(self)
+    local o = table.remove(self._colliders)
+    while o do
+      if self:_resolve(o) then
+        o:process(objects)
+      end
+      o = table.remove(self._colliders)
     end
-    self._colliders = {}
   end,
 
   flushCollisionStates = function (self)
@@ -183,7 +198,7 @@ local ICollideBlock = Trait:new({
     -- ) then
     --     o:blockY(self)
     -- end
-    return true
+    return false
   end,
 
   pushX = function (self, ...)
@@ -202,6 +217,7 @@ local ICollideBlock = Trait:new({
 local ICollidePush = Trait:new({
   priority = 50,
   _resolve = function (self, o)
+    local effect = false
     if (
       self.vector.x > 0 and -- moving right
       self.d.x + self.w < o.d.x + o.w / 2 -- from the left
@@ -211,6 +227,7 @@ local ICollidePush = Trait:new({
       self.vector.x < 0 and -- moving left
       self.d.x > o.d.x + o.w / 2 -- from the right
     ) then
+        effect = true
         o:pushX(self)
     end
     if (
@@ -222,15 +239,16 @@ local ICollidePush = Trait:new({
       self.vector.y < 0 and -- moving up
       self.d.y > o.d.y + o.h / 2 -- from under
     ) then
+        effect = true
         o:pushY(self)
     end
-    return true
+    return effect
   end
 })
 
 local ICollideNot = Trait:new({
   priority = 25,
-  _resolve = function () return true end
+  _resolve = function () return false end
 })
 
 return function () return

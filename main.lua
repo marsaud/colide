@@ -38,14 +38,9 @@
 	end
 
 	local function resolveCollisions (objects)
-		for i = 1, (#objects - 1) do
+		for i = 1, (#objects) do
 			if (objects[i].IACollide) then
-				for j = i + 1, (#objects) do
-					if objects[j].IACollide then
-						objects[i]:submitCollider(objects[j])
-					end
-				end
-				objects[i]:resolve()
+				objects[i]:process(objects)
 			end
 		end
 		for _, o in ipairs(objects) do
