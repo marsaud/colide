@@ -126,8 +126,14 @@ local IACollide = Trait:new({
       x = by.vector.x,
       y = self.vector.y
     })
+    local _x
+    if (math.sign(by.vector.x) < 0) then -- moving left
+      _x = by.d.x - self.w
+    else
+      _x = by.d.x + by.w
+    end
     self._d = Coord:new({
-      x = by.d.x + by.w * math.sign(by.vector.x),
+      x = _x,
       y = self._d.y
     })
     self.d = self._d:round()
@@ -141,9 +147,15 @@ local IACollide = Trait:new({
       x = self.vector.x,
       y = by.vector.y
     })
+    local _y
+    if (math.sign(by.vector.y) < 0) then -- moving up
+      _y = by.d.y - self.h
+    else
+      _y = by.d.y + by.h
+    end
     self._d = Coord:new({
       x = self._d.x,
-      y = by.d.y + by.h * math.sign(by.vector.y),
+      y = _y
     })
     self.d = self._d:round()
   end
@@ -172,7 +184,9 @@ local ICollidePush = Trait:new({
   priority = 50,
   _resolve = function (self, o)
     local effect = false
-    if (
+    if (not o:_isTop(self) and not o:_isUnder(self))
+    and
+    ((
       self.vector.x > 0 and -- moving right
       self.d.x + self.w < o.d.x + o.w / 2 -- from the left
     )
@@ -180,11 +194,13 @@ local ICollidePush = Trait:new({
     (
       self.vector.x < 0 and -- moving left
       self.d.x > o.d.x + o.w / 2 -- from the right
-    ) then
+    )) then
         effect = true
         o:pushX(self)
     end
-    if (
+    if (not o:_isRight(self) and not o:_isLeft(self))
+    and
+    ((
       self.vector.y > 0 and -- moving down
       self.d.y + self.h < o.d.y + o.h / 2 -- from top
     )
@@ -192,7 +208,7 @@ local ICollidePush = Trait:new({
     (
       self.vector.y < 0 and -- moving up
       self.d.y > o.d.y + o.h / 2 -- from under
-    ) then
+    )) then
         effect = true
         o:pushY(self)
     end
