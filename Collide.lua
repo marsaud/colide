@@ -183,7 +183,8 @@ local ICollideBlock = Trait:new({
 local ICollidePush = Trait:new({
   priority = 50,
   _resolve = function (self, o)
-    local effect = false
+    local effectX = false
+    local effectY = false
     if (not o:_isTop(self) and not o:_isUnder(self))
     and
     ((
@@ -195,9 +196,9 @@ local ICollidePush = Trait:new({
       self.vector.x < 0 and -- moving left
       self.d.x > o.d.x + o.w / 2 -- from the right
     )) then
-        effect = true
-        o:pushX(self)
+        effectX = true
     end
+
     if (not o:_isRight(self) and not o:_isLeft(self))
     and
     ((
@@ -209,10 +210,34 @@ local ICollidePush = Trait:new({
       self.vector.y < 0 and -- moving up
       self.d.y > o.d.y + o.h / 2 -- from under
     )) then
-        effect = true
-        o:pushY(self)
+        effectY = true
     end
-    return effect
+
+    if effectX and effectY then
+      local intX = math.min(
+        self.d.x + self.w - o.d.x,
+        self.w,
+        o.w,
+        o.d.x + o.w - self.d.x
+
+      )
+      local intY = math.min(
+        self.d.y + self.h - o.d.y,
+        self.h,
+        o.h,
+        o.d.y + o.h - self.d.y
+      )
+      if intX > intY then
+        effectX = false
+      elseif intY > intX then
+        effectY = false
+      end
+    end
+
+    if effectX then o:pushX(self) end
+    if effectY then o:pushY(self) end
+
+    return effectX or effectY
   end
 })
 
