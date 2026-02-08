@@ -58,4 +58,4 @@ local IMoveNot = Trait:new({
 	end
 })
 
-return function () return IAMove, IMoveMove, IMoveNot, moveVectors end
+return function () return moveVectors, IAMove, IMoveMove, IMoveNot end

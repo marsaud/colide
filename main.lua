@@ -1,9 +1,10 @@
 -- IMPORTS
 	require("math-ext")
-	local new, Trait = require("POO")()
-	local COLOR, CONTROL, MOVE = require("Const")()
-	local IAMove, IMoveMove, IMoveNot, moveVectors = require("Move")()
+	local _, Trait = require("POO")()
+	local COLOR, _, MOVE = require("Const")()
+	local moveVectors, IAMove, IMoveMove, IMoveNot = require("Move")()
 	local
+		pullControl,
 		IAControl,
 		IControl1DX,
 		IControl1DY,
@@ -30,13 +31,6 @@
 -- END DRAW INTERFACES
 
 -- MAIN UTILITIES
-	local function pullControl()
-		return (love.keyboard.isDown("up") and CONTROL.UP or 0) +
-		(love.keyboard.isDown("down") and CONTROL.DOWN or 0) +
-		(love.keyboard.isDown("left") and CONTROL.LEFT or 0) +
-		(love.keyboard.isDown("right") and CONTROL.RIGHT or 0)
-	end
-
 	local function resolveCollisions (objects)
 		for i = 1, (#objects) do
 			if (objects[i].IACollide) then

@@ -5,6 +5,15 @@ local _, CONTROL, MOVE = require("Const")()
 local _, _, _, moveVectors = require("Move")()
 -- END IMPORTS
 
+local function pullControl()
+	return
+	(love.keyboard.isDown("space") and CONTROL.ACT1 or 0) +
+	(love.keyboard.isDown("up") and CONTROL.UP or 0) +
+	(love.keyboard.isDown("down") and CONTROL.DOWN or 0) +
+	(love.keyboard.isDown("left") and CONTROL.LEFT or 0) +
+	(love.keyboard.isDown("right") and CONTROL.RIGHT or 0)
+end
+
 local IAControl = Trait:new({
 	control = function (self, m, dt)
 		if self._control then
@@ -21,6 +30,9 @@ local IControlNot = Trait:new({
 
 local IControl2D = Trait:new({
 	_control = function (self, m, dt)
+		if m >= CONTROL.ACT1 then m = m - CONTROL.ACT1 end
+		if m >= CONTROL.ACT2 then m = m - CONTROL.ACT2 end
+		if m >= CONTROL.ACT3 then m = m - CONTROL.ACT3 end
 		if m >= CONTROL.UP then
 			m = m - CONTROL.UP
 			self.vector = self.vector + moveVectors[CONTROL.UP]
@@ -42,6 +54,9 @@ local IControl2D = Trait:new({
 
 local IControl1DX = Trait:new({
 	_control = function (self, m, dt)
+		if m >= CONTROL.ACT1 then m = m - CONTROL.ACT1 end
+		if m >= CONTROL.ACT2 then m = m - CONTROL.ACT2 end
+		if m >= CONTROL.ACT3 then m = m - CONTROL.ACT3 end
 		if m >= CONTROL.UP then
 			m = m - CONTROL.UP
 		end
@@ -61,6 +76,9 @@ local IControl1DX = Trait:new({
 
 local IControl1DY = Trait:new({
 	_control = function (self, m, dt)
+		if m >= CONTROL.ACT1 then m = m - CONTROL.ACT1 end
+		if m >= CONTROL.ACT2 then m = m - CONTROL.ACT2 end
+		if m >= CONTROL.ACT3 then m = m - CONTROL.ACT3 end
 		if m >= CONTROL.UP then
 			m = m - CONTROL.UP
 			self.vector = self.vector + moveVectors[CONTROL.UP]
@@ -73,6 +91,7 @@ local IControl1DY = Trait:new({
 })
 
 return function () return
+	pullControl,
   IAControl,
   IControl1DX,
   IControl1DY,

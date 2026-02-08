@@ -1,4 +1,7 @@
 local CONTROL = {
+	ACT3 = 1000000,
+	ACT2 = 100000,
+	ACT1 = 10000,
 	UP = 1000,
 	DOWN = 100,
 	LEFT = 10,
