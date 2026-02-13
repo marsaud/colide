@@ -1,6 +1,6 @@
 require("math-ext")
 local _, Trait = require("POO")()
-local Coord, _, _, Vector = require("Couple")()
+local Coord, _, _, _ = require("Couple")()
 
 local IACollide = Trait:new({
   IACollide = true,
@@ -86,10 +86,7 @@ local IACollide = Trait:new({
 
   blockX = function (self, ...)
     local _ = {...}
-    self.vector = Vector:new({
-      x = 0,
-      y = self.vector.y
-    })
+    self.vector.x = 0
     self._d = Coord:new({
       x = self._c.x,
       y = self._d.y
@@ -103,10 +100,7 @@ local IACollide = Trait:new({
 
   blockY = function (self, ...)
     local _ = {...}
-    self.vector = Vector:new({
-      x = self.vector.x,
-      y = 0
-    })
+    self.vector.y = 0
     self._d = Coord:new({
       x = self._d.x,
       y = self._c.y
@@ -122,16 +116,16 @@ local IACollide = Trait:new({
     local bys = {...}
     local by = table.remove(bys)
     self:_storeByX(by)
-    self.vector = Vector:new({
-      x = by.vector.x,
-      y = self.vector.y
-    })
+    self.vector.x = by.vector.x
+
+    -- penetration
     local _x
     if (math.sign(by.vector.x) < 0) then -- moving left
       _x = by.d.x - self.w
     else
       _x = by.d.x + by.w
     end
+
     self._d = Coord:new({
       x = _x,
       y = self._d.y
@@ -143,16 +137,16 @@ local IACollide = Trait:new({
     local bys = {...}
     local by = table.remove(bys)
     self:_storeByY(by)
-    self.vector = Vector:new({
-      x = self.vector.x,
-      y = by.vector.y
-    })
+    self.vector.y = by.vector.y
+
+    -- penetration
     local _y
     if (math.sign(by.vector.y) < 0) then -- moving up
       _y = by.d.y - self.h
     else
       _y = by.d.y + by.h
     end
+
     self._d = Coord:new({
       x = self._d.x,
       y = _y
