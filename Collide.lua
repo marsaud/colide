@@ -56,6 +56,10 @@ local IACollide = Trait:new({
     end
   end,
 
+  _resolve = function (_, _)
+    return false
+  end,
+
   flushCollisionStates = function (self)
     self._byXs = {}
     self._byYs = {}
@@ -155,26 +159,35 @@ local IACollide = Trait:new({
   end
 })
 
-local ICollideBlock = Trait:new({
+local _blockPushX = function (self, ...)
+  local bys = {...}
+  local by = table.remove(bys)
+  by:blockX(self)
+end
+
+local _blockPushY = function (self, ...)
+  local bys = {...}
+  local by = table.remove(bys)
+  by:blockY(self)
+end
+
+local ICollideBlocker = Trait:new({
   priority = 100,
-  _resolve = function ()
-    return false
-  end,
-
-  pushX = function (self, ...)
-    local bys = {...}
-    local by = table.remove(bys)
-    by:blockX(self)
-  end,
-
-  pushY = function (self, ...)
-    local bys = {...}
-    local by = table.remove(bys)
-    by:blockY(self)
-  end
+  pushX = _blockPushX,
+  pushY = _blockPushY
 })
 
-local ICollidePush = Trait:new({
+local ICollideBlockerX = Trait:new({
+  priority = 80,
+  pushX = _blockPushX
+})
+
+local ICollideBlockerY = Trait:new({
+  priority = 80,
+  pushY = _blockPushY
+})
+
+local ICollidePusher = Trait:new({
   priority = 50,
   _resolve = function (self, o)
     local effectX = false
@@ -242,7 +255,9 @@ local ICollideNot = Trait:new({
 
 return function () return
   IACollide,
-  ICollideBlock,
+  ICollideBlocker,
+  ICollideBlockerX,
+  ICollideBlockerY,
   ICollideNot,
-  ICollidePush
+  ICollidePusher
 end

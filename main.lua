@@ -4,7 +4,13 @@
 	local COLOR, _, MOVE = require("Const")()
 	local moveVectors, IAMove, IMove, IMoveNot, IMoveX, IMoveY = require("Move")()
 	local pullControl = require("Control")()
-	local IACollide, ICollideBlock, _, ICollidePush = require("Collide")()
+	local
+		IACollide,
+		ICollideBlocker,
+		_,
+		_,
+		_,
+		ICollidePusher = require("Collide")()
 -- END IMPORTS
 
 -- DRAW INTERFACES
@@ -65,11 +71,11 @@ local mObjects
 
 function love.load()
 	local ARect = AGameUIObject:new(IRect)
-	local Rect2D = ARect:new(IMove .. ICollidePush)
-	local RectPassive = ARect:new (IMoveNot .. ICollidePush)
-	local Rect1DX = ARect:new(IMoveX .. ICollidePush)
-	local Rect1DY = ARect:new(IMoveY .. ICollidePush)
-	local RectStatic = ARect:new(IMoveNot .. ICollideBlock)
+	local Rect2D = ARect:new(IMove .. ICollidePusher)
+	local RectPassive = ARect:new (IMoveNot .. ICollidePusher)
+	local Rect1DX = ARect:new(IMoveX .. ICollidePusher)
+	local Rect1DY = ARect:new(IMoveY .. ICollidePusher)
+	local RectStatic = ARect:new(IMoveNot .. ICollideBlocker .. ICollidePusher)
 	-- END GAME CLASSES
 
 	-- GAME OBJECTS
@@ -77,7 +83,7 @@ function love.load()
 		local rect1 = Rect2D:new({
 			id = 'red',
 			x = 10,
-			y = 10,
+			y = 200,
 			w = 50,
 			h = 50,
 			speed = 120,
@@ -87,7 +93,7 @@ function love.load()
 		local rect2 = Rect1DX:new({
 			id = 'green',
 			x = 100,
-			y = 10,
+			y = 200,
 			w = 140,
 			h = 100,
 			speed = 50,
@@ -97,7 +103,7 @@ function love.load()
 		local rect3 = Rect1DY:new({
 			id = 'blue',
 			x = 250,
-			y = 10,
+			y = 200,
 			w = 110,
 			h = 25,
 			speed = 40,
@@ -107,7 +113,7 @@ function love.load()
 		local rect4 = RectPassive:new({
 			id = 'magenta',
 			x = 370,
-			y = 10,
+			y = 200,
 			w = 40,
 			h = 120,
 			speed = 90,
@@ -117,7 +123,7 @@ function love.load()
 		local rect5 = RectPassive:new({
 			id = 'yellow',
 			x = 490,
-			y = 10,
+			y = 200,
 			w = 60,
 			h = 90,
 			speed = 110,
@@ -127,7 +133,7 @@ function love.load()
 		local rect6 = RectStatic:new({
 			id = 'cyan',
 			x = 610,
-			y = 10,
+			y = 200,
 			w = 100,
 			h = 100,
 			speed = 110,
