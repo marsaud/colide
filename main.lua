@@ -2,14 +2,8 @@
 	require("math-ext")
 	local _, Trait = require("POO")()
 	local COLOR, _, MOVE = require("Const")()
-	local moveVectors, IAMove, IMoveMove, IMoveNot = require("Move")()
-	local
-		pullControl,
-		IAControl,
-		IControl1DX,
-		IControl1DY,
-		IControl2D,
-		IControlNot = require("Control")()
+	local moveVectors, IAMove, IMove, IMoveNot, IMoveX, IMoveY = require("Move")()
+	local pullControl = require("Control")()
 	local IACollide, ICollideBlock, _, ICollidePush = require("Collide")()
 -- END IMPORTS
 
@@ -65,17 +59,17 @@
 
 --]]
 
-local AGameUIObject = IADraw .. IAMove .. IAControl .. IACollide
+local AGameUIObject = IADraw .. IAMove .. IACollide
 
 local mObjects
 
 function love.load()
 	local ARect = AGameUIObject:new(IRect)
-	local Rect2D = ARect:new(IControl2D .. IMoveMove .. ICollidePush)
-	local RectPassive = ARect:new (IControlNot .. IMoveMove .. ICollidePush)
-	local Rect1DX = ARect:new(IControl1DX .. IMoveMove .. ICollidePush)
-	local Rect1DY = ARect:new(IControl1DY .. IMoveMove .. ICollidePush)
-	local RectStatic = ARect:new(IControlNot .. IMoveNot .. ICollideBlock)
+	local Rect2D = ARect:new(IMove .. ICollidePush)
+	local RectPassive = ARect:new (IMoveNot .. ICollidePush)
+	local Rect1DX = ARect:new(IMoveX .. ICollidePush)
+	local Rect1DY = ARect:new(IMoveY .. ICollidePush)
+	local RectStatic = ARect:new(IMoveNot .. ICollideBlock)
 	-- END GAME CLASSES
 
 	-- GAME OBJECTS
@@ -90,7 +84,7 @@ function love.load()
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.RED
 		})
-		local rect2 = RectPassive:new({
+		local rect2 = Rect1DX:new({
 			id = 'green',
 			x = 100,
 			y = 10,
@@ -100,7 +94,7 @@ function love.load()
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.GREEN
 		})
-		local rect3 = RectPassive:new({
+		local rect3 = Rect1DY:new({
 			id = 'blue',
 			x = 250,
 			y = 10,
@@ -158,10 +152,9 @@ function love.load()
 end
 
 function love.update(dt)
-	local move = pullControl()
+	local ctrl = pullControl()
 	for _, o in ipairs(mObjects) do
-		o:control(move, dt)
-		o:move()
+		o:move(ctrl, dt)
 	end
 
 	resolveCollisions(mObjects)

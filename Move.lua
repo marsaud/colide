@@ -2,7 +2,7 @@
 require("math-ext")
 local _, Trait = require("POO")()
 local Coord, _, _, Vector = require("Couple")()
-local _, _, MOVE = require("Const")()
+local _, CONTROL, MOVE = require("Const")()
 -- END IMPORTS
 
 local moveVectors = {
@@ -15,28 +15,40 @@ local moveVectors = {
 
 local IAMove = Trait:new({
 	_new = function (self)
-		self._c = Coord:new({x = self.x, y = self.y})
-		self._d = self._c:copy()
-		self.d = self._d:copy()
+		self._c = Coord:new({x = self.x, y = self.y})  -- internal coord
+		self._d = self._c:copy() -- internal destination
+		self.d = self._d:copy() -- visible destination
 	end,
-	move = function (self)
+	move = function (self, ctrl, dt)
+		if ctrl >= CONTROL.ACT1 then ctrl = ctrl - CONTROL.ACT1 end
+		if ctrl >= CONTROL.ACT2 then ctrl = ctrl - CONTROL.ACT2 end
+		if ctrl >= CONTROL.ACT3 then ctrl = ctrl - CONTROL.ACT3 end
+		if ctrl >= CONTROL.UP then
+			ctrl = ctrl - CONTROL.UP
+			self.vector = self.vector + moveVectors[CONTROL.UP]
+		end
+		if ctrl >= CONTROL.DOWN then
+			ctrl = ctrl - CONTROL.DOWN
+			self.vector = self.vector + moveVectors[CONTROL.DOWN]
+		end
+		if ctrl >= CONTROL.LEFT then
+			ctrl = ctrl -CONTROL.LEFT
+			self.vector = self.vector + moveVectors[CONTROL.LEFT]
+		end
+		if ctrl >= CONTROL.RIGHT then
+			self.vector = self.vector + moveVectors[CONTROL.RIGHT]
+		end
+		self.vector = (self.vector * self.speed * dt)
 		if self._move then
 			self:_move()
 		end
+		self._d = self._c + self.vector
+		self.d = self._d:round()
 	end,
 	commit = function (self)
 		if self._commit then
 			self:_commit()
 		end
-	end
-})
-
-local IMoveMove = Trait:new({
-	_move = function (self)
-		self._d = self._c + self.vector
-		self.d = self._d:round()
-	end,
-	_commit = function (self)
 		if not (self.d == self._d:round()) then
 			self._d = self.d:copy()
 		end
@@ -47,15 +59,33 @@ local IMoveMove = Trait:new({
 	end
 })
 
-local IMoveNot = Trait:new({
+local IMoveX = Trait:new({
 	_move = function (self)
-		self._d = self._c:copy()
-		self.d = self._c:copy()
+		self.vector.y = 0
 	end,
-	_commit = function (self)
-		self._d = self._c:copy()
-		self.d = self._c:copy()
-	end
 })
 
-return function () return moveVectors, IAMove, IMoveMove, IMoveNot end
+local IMoveY = Trait:new({
+	_move = function (self)
+		self.vector.x = 0
+	end,
+})
+
+local IMove = Trait:new({
+})
+
+local IMoveNot = Trait:new({
+	_move = function (self)
+		self.vector.x = 0
+		self.vector.y = 0
+	end,
+})
+
+return function () return
+	moveVectors,
+	IAMove,
+	IMove,
+	IMoveNot,
+	IMoveX,
+	IMoveY
+end
