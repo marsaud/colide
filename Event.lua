@@ -28,13 +28,17 @@ local EventManager = {
 }
 
 local IEventCatcher = Trait:new({
-  fire = function (self, event, ...)
+  fire = function (self, e, ...)
     local arg = {...}
-    local obj = arg[1]
-    if self == obj then return false end
-    if event == EVENT.MOVE then
+    local o = table.remove(arg)
+    while o do
+      if self == o then return false end
+      o = table.remove(arg)
+    end
+    o = ({...})[1]
+    if e == EVENT.MOVE then
       -- print(obj.id, '_resolve', self.id)
-      -- obj:rresolve(self)
+      o:rresolve(self, ...)
     end
   end
 })

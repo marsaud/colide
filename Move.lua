@@ -43,13 +43,13 @@ local IAMove = Trait:new({
 		if self._move then
 			self:_move()
 		end
+		self._d = self._c + self.vector
+		self.d = self._d:round()
 		if self.eventManager then
-			if self.vector ~= moveVectors[MOVE.NONE] then
+			if self._d ~= self._c then
 				self.eventManager:fire(EVENT.MOVE, self)
 			end
 		end
-		self._d = self._c + self.vector
-		self.d = self._d:round()
 	end,
 	commit = function (self)
 		if self._commit then

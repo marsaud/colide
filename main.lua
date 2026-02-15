@@ -167,7 +167,7 @@ function love.update(dt)
 		o:move(ctrl, dt)
 	end
 
-	resolveCollisions(mObjects)
+	-- resolveCollisions(mObjects)
 
 	for _, o in ipairs(mObjects) do
 		o:commit()

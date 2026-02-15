@@ -1,6 +1,7 @@
 require("math-ext")
 local _, Trait = require("POO")()
 local Coord, _, _, _ = require("Couple")()
+local EVENT, _ = require("Event")()
 
 local IACollide = Trait:new({
   IACollide = true,
@@ -40,14 +41,14 @@ local IACollide = Trait:new({
     end
     return submitted
   end,
-  rresolve = function (self, o)
+  rresolve = function (self, o, ...)
     if self == o then return false end
     if not o.IACollide then return false end
     if self:_isRight(o) then return false end
     if self:_isLeft(o) then return false end
     if self:_isUnder(o) then return false end
     if self:_isTop(o) then return false end
-    return self:_resolve(o)
+    return self:_resolve(o, ...)
   end,
   resolve = function (self, objects)
     if (#self._colliders < 1) then
@@ -141,6 +142,9 @@ local IACollide = Trait:new({
     if _x ~= self._d.x then
       self._d.x = _x
       self.d = self._d:round()
+      if self.eventManager then
+        self.eventManager:fire(EVENT.MOVE, self, by)
+      end
     end
   end,
 
@@ -160,6 +164,9 @@ local IACollide = Trait:new({
     if _y ~= self._d.y then
       self._d.y = _y
       self.d = self._d:round()
+      if self.eventManager then
+        self.eventManager:fire(EVENT.MOVE, self, by)
+      end
     end
   end
 })
@@ -194,7 +201,7 @@ local ICollideBlockerY = Trait:new({
 
 local ICollidePusher = Trait:new({
   priority = 50,
-  _resolve = function (self, o)
+  _resolve = function (self, o, ...)
     local effectX = false
     local effectY = false
     if (not o:_isTop(self) and not o:_isUnder(self))
@@ -246,8 +253,8 @@ local ICollidePusher = Trait:new({
       end
     end
 
-    if effectX then o:pushX(self) end
-    if effectY then o:pushY(self) end
+    if effectX then o:pushX(self, ...) end
+    if effectY then o:pushY(self, ...) end
 
     return effectX or effectY
   end
