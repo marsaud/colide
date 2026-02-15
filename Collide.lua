@@ -98,21 +98,19 @@ local IACollide = Trait:new({
     end
   end,
 
-  blockX = function (self, ...)
-    local _ = {...}
+  blockX = function (self, _, prevPusher, ...)
     self.vector.x = 0
     self._d = Coord:new({
       x = self._c.x,
       y = self._d.y
     })
     self.d = self._d:round()
-    local pushBy = self:_popByX()
-    if pushBy then
-      pushBy:blockX(self)
+    if prevPusher then
+      prevPusher:blockX(self, ...)
     end
   end,
 
-  blockY = function (self, ...)
+  blockY = function (self, _, prevPusher, ...)
     local _ = {...}
     self.vector.y = 0
     self._d = Coord:new({
@@ -120,15 +118,12 @@ local IACollide = Trait:new({
       y = self._c.y
     })
     self.d = self._d:round()
-    local pushBy = self:_popByY()
-    if pushBy then
-      pushBy:blockY(self)
+    if prevPusher then
+      prevPusher:blockY(self, ...)
     end
   end,
 
-  pushX = function (self, ...)
-    local bys = {...}
-    local by = table.remove(bys)
+  pushX = function (self, by, ...)
     self:_storeByX(by)
     self.vector.x = by.vector.x
 
@@ -143,14 +138,12 @@ local IACollide = Trait:new({
       self._d.x = _x
       self.d = self._d:round()
       if self.eventManager then
-        self.eventManager:fire(EVENT.MOVE, self, by)
+        self.eventManager:fire(EVENT.MOVE, self, by, ...)
       end
     end
   end,
 
-  pushY = function (self, ...)
-    local bys = {...}
-    local by = table.remove(bys)
+  pushY = function (self, by, ...)
     self:_storeByY(by)
     self.vector.y = by.vector.y
 
@@ -165,22 +158,18 @@ local IACollide = Trait:new({
       self._d.y = _y
       self.d = self._d:round()
       if self.eventManager then
-        self.eventManager:fire(EVENT.MOVE, self, by)
+        self.eventManager:fire(EVENT.MOVE, self, by, ...)
       end
     end
   end
 })
 
-local _blockPushX = function (self, ...)
-  local bys = {...}
-  local by = table.remove(bys)
-  by:blockX(self)
+local _blockPushX = function (self, by, ...)
+  by:blockX(self, ...)
 end
 
-local _blockPushY = function (self, ...)
-  local bys = {...}
-  local by = table.remove(bys)
-  by:blockY(self)
+local _blockPushY = function (self, by, ...)
+  by:blockY(self, ...)
 end
 
 local ICollideBlocker = Trait:new({
