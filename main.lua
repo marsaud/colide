@@ -11,6 +11,7 @@
 		_,
 		_,
 		ICollidePusher = require("Collide")()
+	local EVENT, EventManager, IEventCatcher = require("Event")()
 -- END IMPORTS
 
 -- DRAW INTERFACES
@@ -65,7 +66,7 @@
 
 --]]
 
-local AGameUIObject = IADraw .. IAMove .. IACollide
+local AGameUIObject = IADraw .. IAMove .. IACollide .. IEventCatcher
 
 local mObjects
 
@@ -151,6 +152,9 @@ function love.load()
 			rect6,
 			--]]
 		}
+
+		local eventManager = EventManager:new()
+		eventManager:addListener(EVENT.MOVE, rect1, rect2, rect3, rect4, rect5, rect6)
 	end
 
 	load()

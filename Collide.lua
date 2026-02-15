@@ -40,6 +40,15 @@ local IACollide = Trait:new({
     end
     return submitted
   end,
+  rresolve = function (self, o)
+    if self == o then return false end
+    if not o.IACollide then return false end
+    if self:_isRight(o) then return false end
+    if self:_isLeft(o) then return false end
+    if self:_isUnder(o) then return false end
+    if self:_isTop(o) then return false end
+    return self:_resolve(o)
+  end,
   resolve = function (self, objects)
     if (#self._colliders < 1) then
       return

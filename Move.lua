@@ -3,10 +3,11 @@ require("math-ext")
 local _, Trait = require("POO")()
 local Coord, _, _, Vector = require("Couple")()
 local _, CONTROL, MOVE = require("Const")()
+local EVENT, _ = require("Event")()
 -- END IMPORTS
 
 local moveVectors = {
-	[MOVE.UP] = Vector:new({ x  = 0, y = -1 }),
+	[MOVE.UP] = Vector:new({ x = 0, y = -1 }),
 	[MOVE.DOWN] = Vector:new({ x = 0, y = 1 }),
 	[MOVE.LEFT] = Vector:new({ x = -1, y = 0 }),
 	[MOVE.RIGHT] = Vector:new({ x = 1, y = 0 }),
@@ -41,6 +42,11 @@ local IAMove = Trait:new({
 		self.vector = (self.vector * self.speed * dt)
 		if self._move then
 			self:_move()
+		end
+		if self.eventManager then
+			if self.vector ~= moveVectors[MOVE.NONE] then
+				self.eventManager:fire(EVENT.MOVE, self)
+			end
 		end
 		self._d = self._c + self.vector
 		self.d = self._d:round()
