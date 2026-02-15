@@ -138,12 +138,10 @@ local IACollide = Trait:new({
     else
       _x = by.d.x + by.w
     end
-
-    self._d = Coord:new({
-      x = _x,
-      y = self._d.y
-    })
-    self.d = self._d:round()
+    if _x ~= self._d.x then
+      self._d.x = _x
+      self.d = self._d:round()
+    end
   end,
 
   pushY = function (self, ...)
@@ -159,12 +157,10 @@ local IACollide = Trait:new({
     else
       _y = by.d.y + by.h
     end
-
-    self._d = Coord:new({
-      x = self._d.x,
-      y = _y
-    })
-    self.d = self._d:round()
+    if _y ~= self._d.y then
+      self._d.y = _y
+      self.d = self._d:round()
+    end
   end
 })
 
@@ -258,8 +254,7 @@ local ICollidePusher = Trait:new({
 })
 
 local ICollideNot = Trait:new({
-  priority = 25,
-  _resolve = function () return false end
+  priority = 25
 })
 
 return function () return
