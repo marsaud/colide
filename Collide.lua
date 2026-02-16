@@ -18,31 +18,8 @@ local IACollide = Trait:new({
   _isTop = function (self, o)
     return (self.d.y + self.h) <= o.d.y
   end,
-  process = function (self, objects)
-    if self:submitColliders(objects) then
-      return self:resolve(objects)
-    end
-  end,
-  submitColliders = function (self, objects)
-    if not self._colliders then
-      self._colliders = {}
-    end
-    local submitted = false
-    for _, o in ipairs(objects) do
-      local skip = o == self
-      skip = skip or not o.IACollide
-      skip = skip or self:_isRight(o)
-      skip = skip or self:_isLeft(o)
-      skip = skip or self:_isUnder(o)
-      skip = skip or self:_isTop(o)
-      if not skip then
-        table.insert(self._colliders, o)
-        submitted = true
-      end
-    end
-    return submitted
-  end,
-  rresolve = function (self, o, ...)
+
+  resolve = function (self, o, ...)
     local effect = false
     local skip = o == self
     skip = skip or not o.IACollide
@@ -55,52 +32,9 @@ local IACollide = Trait:new({
     end
     return effect
   end,
-  resolve = function (self, objects)
-    if (#self._colliders < 1) then
-      return
-    end
-    table.sort(self._colliders, function (o1, o2)
-      return o1.priority < o2.priority
-    end)
-    local o = table.remove(self._colliders)
-    while o do
-      if self:_resolve(o) then
-        o:process(objects)
-      end
-      o = table.remove(self._colliders)
-    end
-  end,
 
   _resolve = function (_, _)
     return false
-  end,
-
-  flushCollisionStates = function (self)
-    self._byXs = {}
-    self._byYs = {}
-  end,
-
-  _storeByX = function (self, o)
-    if not self._byXs then
-      self._byXs = {}
-    end
-    table.insert(self._byXs, o)
-  end,
-  _storeByY = function (self, o)
-    if not self._byYs then
-      self._byYs = {}
-    end
-    table.insert(self._byYs, o)
-  end,
-  _popByX = function (self)
-    if self._byXs then
-      return table.remove(self._byXs)
-    end
-  end,
-  _popByY = function (self)
-    if self._byYs then
-      return table.remove(self._byYs)
-    end
   end,
 
   blockX = function (self, _, prevPusher, ...)
@@ -133,7 +67,6 @@ local IACollide = Trait:new({
   end,
 
   pushX = function (self, by, ...)
-    self:_storeByX(by)
     self.vector.x = by.vector.x
 
     -- penetration
@@ -157,7 +90,6 @@ local IACollide = Trait:new({
   end,
 
   pushY = function (self, by, ...)
-    self:_storeByY(by)
     self.vector.y = by.vector.y
 
     -- penetration
@@ -190,23 +122,19 @@ local _blockPushY = function (self, by, ...)
 end
 
 local ICollideBlocker = Trait:new({
-  priority = 100,
   pushX = _blockPushX,
   pushY = _blockPushY
 })
 
 local ICollideBlockerX = Trait:new({
-  priority = 80,
   pushX = _blockPushX
 })
 
 local ICollideBlockerY = Trait:new({
-  priority = 80,
   pushY = _blockPushY
 })
 
 local ICollidePusher = Trait:new({
-  priority = 50,
   _resolve = function (self, o, ...)
     local effectX = false
     local effectY = false
@@ -268,9 +196,7 @@ local ICollidePusher = Trait:new({
   end
 })
 
-local ICollideNot = Trait:new({
-  priority = 25
-})
+local ICollideNot = Trait:new()
 
 return function () return
   IACollide,

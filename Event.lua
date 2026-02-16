@@ -46,7 +46,7 @@ local IEventCatcher = Trait:new({
           return false
         end
       end
-      local r = o:rresolve(self,...)
+      local r = o:resolve(self,...)
       return r
     elseif e == EVENT.COMMIT then
       if not self.IAMove then return false end
