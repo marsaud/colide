@@ -1,6 +1,7 @@
 -- CONFORT TWEAKS
-local love = love
-table.unpack = unpack
+	local love = love
+	table.unpack = unpack
+-- END CONFORT TWEAKS
 -- IMPORTS
 	require("math-ext")
 	local _, Trait = require("POO")()
@@ -34,21 +35,6 @@ table.unpack = unpack
 	})
 -- END DRAW INTERFACES
 
--- MAIN UTILITIES
-	local function resolveCollisions (objects)
-		for i = 1, (#objects) do
-			if (objects[i].IACollide) then
-				objects[i]:process(objects)
-			end
-		end
-		for _, o in ipairs(objects) do
-			if (o.IACollide) then
-				o:flushCollisionStates()
-			end
-		end
-	end
--- END MAIN UTILITIES
-
 --[[ GAME CLASSES
 
 	An object may have interfaces:
@@ -80,7 +66,6 @@ function love.load()
 	local Rect1DX = ARect:new(IMoveX .. ICollidePusher)
 	local Rect1DY = ARect:new(IMoveY .. ICollidePusher)
 	local RectStatic = ARect:new(IMoveNot .. ICollideBlocker .. ICollidePusher)
-	-- END GAME CLASSES
 
 	-- GAME OBJECTS
 	local function load()
@@ -168,12 +153,6 @@ function love.update(dt)
 	for _, o in ipairs(mObjects) do
 		o:move(ctrl, dt)
 	end
-
-	-- resolveCollisions(mObjects)
-
-	-- for _, o in ipairs(mObjects) do
-	-- 	o:commit()
-	-- end
 end
 
 function love.draw()
