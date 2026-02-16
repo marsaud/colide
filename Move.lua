@@ -4,6 +4,7 @@ local _, Trait = require("POO")()
 local Coord, _, _, Vector = require("Couple")()
 local _, CONTROL, MOVE = require("Const")()
 local EVENT, _ = require("Event")()
+-- local debug = require("Debug")()
 -- END IMPORTS
 
 local moveVectors = {
@@ -51,17 +52,20 @@ local IAMove = Trait:new({
 			end
 		end
 	end,
-	commit = function (self)
+	commit = function (self, next, ...)
 		if self._commit then
 			self:_commit()
 		end
-		if not (self.d == self._d:round()) then
+		if self.d ~= self._d:round() then
 			self._d = self.d:copy()
 		end
 		self._c = self._d:copy()
 		self.x = math.round(self._c.x)
 		self.y = math.round(self._c.y)
 		self.vector = moveVectors[MOVE.NONE]:copy()
+		if next then
+			next:commit(...)
+		end
 	end
 })
 

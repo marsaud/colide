@@ -143,18 +143,23 @@ function love.load()
 		})
 
 		mObjects = {
-			---[[
 			rect1,
 			rect2,
 			rect3,
 			rect4,
 			rect5,
 			rect6,
-			--]]
 		}
 
 		local eventManager = EventManager:new()
-		eventManager:addListener(EVENT.MOVE, rect1, rect2, rect3, rect4, rect5, rect6)
+		eventManager:addListener(EVENT.MOVE,
+			rect1,
+			rect2,
+			rect3,
+			rect4,
+			rect5,
+			rect6
+		)
 	end
 
 	load()
@@ -169,9 +174,9 @@ function love.update(dt)
 
 	-- resolveCollisions(mObjects)
 
-	for _, o in ipairs(mObjects) do
-		o:commit()
-	end
+	-- for _, o in ipairs(mObjects) do
+	-- 	o:commit()
+	-- end
 end
 
 function love.draw()

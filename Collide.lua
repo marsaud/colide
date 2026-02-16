@@ -2,6 +2,7 @@ require("math-ext")
 local _, Trait = require("POO")()
 local Coord, _, _, _ = require("Couple")()
 local EVENT, _ = require("Event")()
+-- local debug = require("Debug")()
 
 local IACollide = Trait:new({
   IACollide = true,
@@ -42,13 +43,17 @@ local IACollide = Trait:new({
     return submitted
   end,
   rresolve = function (self, o, ...)
-    if self == o then return false end
-    if not o.IACollide then return false end
-    if self:_isRight(o) then return false end
-    if self:_isLeft(o) then return false end
-    if self:_isUnder(o) then return false end
-    if self:_isTop(o) then return false end
-    return self:_resolve(o, ...)
+    local effect = false
+    local skip = o == self
+    skip = skip or not o.IACollide
+    skip = skip or self:_isRight(o)
+    skip = skip or self:_isLeft(o)
+    skip = skip or self:_isUnder(o)
+    skip = skip or self:_isTop(o)
+    if not skip then
+      effect = self:_resolve(o, ...)
+    end
+    return effect-- or self:commit(...)
   end,
   resolve = function (self, objects)
     if (#self._colliders < 1) then
@@ -106,7 +111,9 @@ local IACollide = Trait:new({
     })
     self.d = self._d:round()
     if prevPusher then
-      prevPusher:blockX(self, ...)
+      return prevPusher:blockX(self, ...)
+    else
+      return true
     end
   end,
 
@@ -119,7 +126,9 @@ local IACollide = Trait:new({
     })
     self.d = self._d:round()
     if prevPusher then
-      prevPusher:blockY(self, ...)
+      return prevPusher:blockY(self, ...)
+    else
+      return true
     end
   end,
 
@@ -138,8 +147,12 @@ local IACollide = Trait:new({
       self._d.x = _x
       self.d = self._d:round()
       if self.eventManager then
-        self.eventManager:fire(EVENT.MOVE, self, by, ...)
+        return self.eventManager:fire(EVENT.MOVE, self, by, ...)
+      else
+        return true
       end
+    else
+      return false
     end
   end,
 
@@ -158,18 +171,22 @@ local IACollide = Trait:new({
       self._d.y = _y
       self.d = self._d:round()
       if self.eventManager then
-        self.eventManager:fire(EVENT.MOVE, self, by, ...)
+        return self.eventManager:fire(EVENT.MOVE, self, by, ...)
+      else
+        return true
       end
+    else
+      return false
     end
   end
 })
 
 local _blockPushX = function (self, by, ...)
-  by:blockX(self, ...)
+  return by:blockX(self, ...)
 end
 
 local _blockPushY = function (self, by, ...)
-  by:blockY(self, ...)
+  return by:blockY(self, ...)
 end
 
 local ICollideBlocker = Trait:new({
@@ -204,7 +221,7 @@ local ICollidePusher = Trait:new({
       self.vector.x < 0 and -- moving left
       self.d.x > o.d.x + o.w / 2 -- from the right
     )) then
-        effectX = true
+      effectX = true
     end
 
     if (not o:_isRight(self) and not o:_isLeft(self))
@@ -213,14 +230,13 @@ local ICollidePusher = Trait:new({
       self.vector.y > 0 and -- moving down
       self.d.y + self.h < o.d.y + o.h / 2 -- from top
     )
-      or
+    or
     (
       self.vector.y < 0 and -- moving up
       self.d.y > o.d.y + o.h / 2 -- from under
     )) then
-        effectY = true
+      effectY = true
     end
-
     if effectX and effectY then
       local intX = math.min(
         self.d.x + self.w - o.d.x,
@@ -241,11 +257,15 @@ local ICollidePusher = Trait:new({
         effectY = false
       end
     end
+    local effect = false
+    if effectX then
+      effect = o:pushX(self, ...) or effect
+    end
+    if effectY then
+      effect = o:pushY(self, ...) or effect
+    end
 
-    if effectX then o:pushX(self, ...) end
-    if effectY then o:pushY(self, ...) end
-
-    return effectX or effectY
+    return effect
   end
 })
 
