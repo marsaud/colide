@@ -16,6 +16,7 @@ local moveVectors = {
 }
 
 local IAMove = Trait:new({
+	IAMove = true,
 	_new = function (self)
 		self._c = Coord:new({x = self.x, y = self.y})  -- internal coord
 		self._d = self._c:copy() -- internal destination

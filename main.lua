@@ -1,3 +1,6 @@
+-- CONFORT TWEAKS
+local love = love
+table.unpack = unpack
 -- IMPORTS
 	require("math-ext")
 	local _, Trait = require("POO")()
@@ -152,14 +155,8 @@ function love.load()
 		}
 
 		local eventManager = EventManager:new()
-		eventManager:addListener(EVENT.MOVE,
-			rect1,
-			rect2,
-			rect3,
-			rect4,
-			rect5,
-			rect6
-		)
+		eventManager:addListener(EVENT.MOVE, table.unpack(mObjects))
+		eventManager:addListener(EVENT.COMMIT, table.unpack(mObjects))
 	end
 
 	load()

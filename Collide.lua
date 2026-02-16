@@ -53,7 +53,7 @@ local IACollide = Trait:new({
     if not skip then
       effect = self:_resolve(o, ...)
     end
-    return effect-- or self:commit(...)
+    return effect
   end,
   resolve = function (self, objects)
     if (#self._colliders < 1) then
@@ -264,7 +264,6 @@ local ICollidePusher = Trait:new({
     if effectY then
       effect = o:pushY(self, ...) or effect
     end
-
     return effect
   end
 })

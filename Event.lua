@@ -2,7 +2,8 @@ local new, Trait = require("POO")()
 -- local debug = require("Debug")()
 
 local EVENT = {
-  MOVE = 'eventMove'
+  MOVE = 'eventMove',
+  COMMIT = 'eventCommit'
 }
 
 local EventManager = {
@@ -28,8 +29,8 @@ local EventManager = {
         effect = l:fire(e, emitter, ...) or effect
       end
     end
-    if e == EVENT.MOVE and not effect then
-      emitter:commit(...)
+    if e == EVENT.MOVE and #{...} == 0 then
+      self:fire(EVENT.COMMIT)
     end
     return effect
   end
@@ -37,14 +38,19 @@ local EventManager = {
 
 local IEventCatcher = Trait:new({
   fire = function (self, e, o, ...)
-    local arg = {...}
     if e == EVENT.MOVE then
+      if not o.IACollide then return false end
+      local arg = {...}
       for _, _o in ipairs(arg) do
         if self == _o then
           return false
         end
       end
-      return o:rresolve(self, ...)
+      local r = o:rresolve(self,...)
+      return r
+    elseif e == EVENT.COMMIT then
+      if not self.IAMove then return false end
+      self:commit()
     else
       return false
     end
