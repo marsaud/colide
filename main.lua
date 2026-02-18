@@ -97,9 +97,17 @@ local AutoBounce = Trait:new({
 	autoVector = moveVectors[MOVE.UP]:copy() + moveVectors[MOVE.RIGHT]:copy(),
 	hit = function (self, vector)
 		if vector then
+			local x = self.autoVector.x
+			if vector.x ~= 0 then
+				x = x * math.sign(x) * math.sign(vector.x)
+			end
+			local y = self.autoVector.y
+			if vector.y ~= 0 then
+				y = y * math.sign(y) * math.sign(vector.y)
+			end
 			self.autoVector = Vector:new({
-				x = self.autoVector.x * vector.x,
-				y = self.autoVector.y * vector.y
+				x = x,
+				y = y
 			})
 			return true
 		else
@@ -209,32 +217,28 @@ function love.load()
 				x = 0,
 				y = 0,
 				w = 800,
-				h = 20,
-				vector = moveVectors[MOVE.NONE]:copy(),
+				h = 3,
 			}),
 			RectStatic:new({
 				id = 'wall',
 				x = 0,
-				y = 20,
-				w = 20,
-				h = 560,
-				vector = moveVectors[MOVE.NONE]:copy(),
+				y = 3,
+				w = 3,
+				h = 594,
 			}),
 			RectStatic:new({
 				id = 'wall',
-				x = 780,
-				y = 20,
-				w = 20,
-				h = 560,
-				vector = moveVectors[MOVE.NONE]:copy(),
+				x = 797,
+				y = 3,
+				w = 3,
+				h = 594,
 			}),
 			RectStatic:new({
 				id = 'wall',
 				x = 0,
-				y = 580,
+				y = 597,
 				w = 800,
-				h = 20,
-				vector = moveVectors[MOVE.NONE]:copy(),
+				h = 3,
 			})
 		}
 	end

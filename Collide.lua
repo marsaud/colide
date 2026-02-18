@@ -142,12 +142,12 @@ local ICollidePusher = Trait:new({
     and
     ((
       self.vector.x > 0 and -- moving right
-      self.d.x + self.w < o.d.x + o.w / 2 -- from the left
+      self.d.x + self.w / 2 <= o.d.x + o.w / 2 -- from the left
     )
       or
     (
       self.vector.x < 0 and -- moving left
-      self.d.x > o.d.x + o.w / 2 -- from the right
+      self.d.x + self.w / 2 > o.d.x + o.w / 2 -- from the right
     )) then
       effectX = true
     end
@@ -156,12 +156,12 @@ local ICollidePusher = Trait:new({
     and
     ((
       self.vector.y > 0 and -- moving down
-      self.d.y + self.h < o.d.y + o.h / 2 -- from top
+      self.d.y + self.h / 2 <= o.d.y + o.h / 2 -- from top
     )
     or
     (
       self.vector.y < 0 and -- moving up
-      self.d.y > o.d.y + o.h / 2 -- from under
+      self.d.y + self.h > o.d.y + o.h / 2 -- from under
     )) then
       effectY = true
     end
@@ -189,12 +189,12 @@ local ICollidePusher = Trait:new({
     if effectX then
       if self.eventManager then
         self.eventManager:fire(EVENT.HIT, self, Vector:new({
-          x = -1,
-          y = 1
+          x = -math.sign(self.vector.x),
+          y = 0
         }))
         self.eventManager:fire(EVENT.HIT, o, Vector:new({
-          x = math.sign(self.vector.x) * math.sign(o.vector.x),
-          y = 1
+          x = math.sign(self.vector.x),
+          y = 0
         }))
       end
       effect = o:pushX(self, ...) or effect
@@ -202,12 +202,12 @@ local ICollidePusher = Trait:new({
     if effectY then
       if self.eventManager then
         self.eventManager:fire(EVENT.HIT, self, Vector:new({
-          x = 1,
-          y = -1
+          x = 0,
+          y = -math.sign(self.vector.y)
         }))
         self.eventManager:fire(EVENT.HIT, o, Vector:new({
-          x = 1,
-          y = math.sign(self.vector.y) * math.sign(o.vector.y)
+          x = 0,
+          y = math.sign(self.vector.y)
         }))
       end
       effect = o:pushY(self, ...) or effect
