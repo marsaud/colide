@@ -1,3 +1,4 @@
+local love = love
 -- IMPORTS
 local _, CONTROL = require("Const")()
 -- END IMPORTS

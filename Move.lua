@@ -63,10 +63,13 @@ local IAMove = Trait:new({
 		self._c = self._d:copy()
 		self.x = math.round(self._c.x)
 		self.y = math.round(self._c.y)
-		self.vector = moveVectors[MOVE.NONE]:copy()
+		self.vector = self:_initVector()
 		if next then
 			next:commit(...)
 		end
+	end,
+	_initVector = function (_)
+		return moveVectors[MOVE.NONE]:copy()
 	end
 })
 
@@ -85,6 +88,14 @@ local IMoveY = Trait:new({
 local IMove = Trait:new({
 })
 
+local IMoveAuto = Trait:new({
+	_move = function (self, ctrl, dt)
+		if self.getMove then
+			self.vector = self:getMove(self.vector, ctrl, dt)
+		end
+	end
+})
+
 local IMoveNot = Trait:new({
 	_move = function (self)
 		self.vector.x = 0
@@ -96,6 +107,7 @@ return function () return
 	moveVectors,
 	IAMove,
 	IMove,
+	IMoveAuto,
 	IMoveNot,
 	IMoveX,
 	IMoveY

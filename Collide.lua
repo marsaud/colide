@@ -1,6 +1,6 @@
 require("math-ext")
 local _, Trait = require("POO")()
-local Coord, _, _, _ = require("Couple")()
+local Coord, _, _, Vector = require("Couple")()
 local EVENT, _ = require("Event")()
 -- local debug = require("Debug")()
 
@@ -187,9 +187,29 @@ local ICollidePusher = Trait:new({
     end
     local effect = false
     if effectX then
+      if self.eventManager then
+        self.eventManager:fire(EVENT.HIT, self, Vector:new({
+          x = -1,
+          y = 1
+        }))
+        self.eventManager:fire(EVENT.HIT, o, Vector:new({
+          x = math.sign(self.vector.x) * math.sign(o.vector.x),
+          y = 1
+        }))
+      end
       effect = o:pushX(self, ...) or effect
     end
     if effectY then
+      if self.eventManager then
+        self.eventManager:fire(EVENT.HIT, self, Vector:new({
+          x = 1,
+          y = -1
+        }))
+        self.eventManager:fire(EVENT.HIT, o, Vector:new({
+          x = 1,
+          y = math.sign(self.vector.y) * math.sign(o.vector.y)
+        }))
+      end
       effect = o:pushY(self, ...) or effect
     end
     return effect
