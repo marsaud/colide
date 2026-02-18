@@ -2,7 +2,7 @@ local function debug (...)
   local arg = {...}
   local r = {}
   for _, i in ipairs(arg) do
-    if i == true or i == false then
+    if i == true or i == false or type(i) == "number" then
       i = tostring(i)
     elseif (i.id) then
       i = i.id

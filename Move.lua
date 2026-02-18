@@ -41,10 +41,10 @@ local IAMove = Trait:new({
 		if ctrl >= CONTROL.RIGHT then
 			self.vector = self.vector + moveVectors[CONTROL.RIGHT]
 		end
-		self.vector = (self.vector * self.speed * dt)
 		if self._move then
-			self:_move()
+			self:_move(ctrl, dt)
 		end
+		self.vector = (self.vector * (self.speed or 1) * dt)
 		self._d = self._c + self.vector
 		self.d = self._d:round()
 		if self.eventManager then
@@ -71,13 +71,13 @@ local IAMove = Trait:new({
 })
 
 local IMoveX = Trait:new({
-	_move = function (self)
+	_move = function (self, _, _)
 		self.vector.y = 0
 	end,
 })
 
 local IMoveY = Trait:new({
-	_move = function (self)
+	_move = function (self, _, _)
 		self.vector.x = 0
 	end,
 })

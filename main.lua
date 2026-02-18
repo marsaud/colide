@@ -28,9 +28,14 @@
 		end
 	})
 
-	local IRect = Trait:new({
+	local IRectLine = Trait:new({
 		_draw = function (self)
 			love.graphics.rectangle("line", self.x, self.y,self.w, self.h)
+		end
+	})
+	local IRectFill = Trait:new({
+		_draw = function (self)
+			love.graphics.rectangle("fill", self.x, self.y,self.w, self.h)
 		end
 	})
 -- END DRAW INTERFACES
@@ -60,7 +65,7 @@ local AGameUIObject = IADraw .. IAMove .. IACollide .. IEventCatcher
 local mObjects
 
 function love.load()
-	local ARect = AGameUIObject:new(IRect)
+	local ARect = AGameUIObject:new(IRectLine)
 	local Rect2D = ARect:new(IMove .. ICollidePusher)
 	local RectPassive = ARect:new (IMoveNot .. ICollidePusher)
 	local Rect1DX = ARect:new(IMoveX .. ICollidePusher)
@@ -138,14 +143,13 @@ function love.load()
 			rect5,
 			rect6,
 		}
-
-		local eventManager = EventManager:new()
-		eventManager:addListener(EVENT.MOVE, table.unpack(mObjects))
-		eventManager:addListener(EVENT.COMMIT, table.unpack(mObjects))
 	end
 
 	load()
 	-- END GAME OBJECTS
+	local eventManager = EventManager:new()
+	eventManager:addListener(EVENT.MOVE, table.unpack(mObjects))
+	eventManager:addListener(EVENT.COMMIT, table.unpack(mObjects))
 end
 
 function love.update(dt)
