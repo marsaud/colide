@@ -1,9 +1,8 @@
 require("math-ext")
-local new = require("POO")()
+local Class = require("POO")()
 
 local Couple
-Couple = {
-  new = new,
+Couple = Class({
   __add = function (v1, v2)
 			return Couple:new({
 				x = v1.x + v2.x,
@@ -54,7 +53,7 @@ Couple = {
   round = function (self)
     return Couple:new({ x = math.round(self.x), y = math.round(self.y) })
   end
-}
+})
 
 local Coord = Couple
 local Point = Couple

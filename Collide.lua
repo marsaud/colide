@@ -1,10 +1,9 @@
 require("math-ext")
-local _, Trait = require("POO")()
 local Coord, _, _, Vector = require("Couple")()
 local EVENT, _ = require("Event")()
 -- local debug = require("Debug")()
 
-local IACollide = Trait:new({
+local IACollide = {
   IACollide = true,
   _isRight = function (self, o)
     return self.d.x >= (o.d.x + o.w)
@@ -111,7 +110,7 @@ local IACollide = Trait:new({
       return false
     end
   end
-})
+}
 
 local _blockPushX = function (self, by, ...)
   return by:blockX(self, ...)
@@ -121,20 +120,20 @@ local _blockPushY = function (self, by, ...)
   return by:blockY(self, ...)
 end
 
-local ICollideBlocker = Trait:new({
+local ICollideBlocker = {
   pushX = _blockPushX,
   pushY = _blockPushY
-})
+}
 
-local ICollideBlockerX = Trait:new({
+local ICollideBlockerX = {
   pushX = _blockPushX
-})
+}
 
-local ICollideBlockerY = Trait:new({
+local ICollideBlockerY = {
   pushY = _blockPushY
-})
+}
 
-local ICollidePusher = Trait:new({
+local ICollidePusher = {
   _resolve = function (self, o, ...)
     local effectX = false
     local effectY = false
@@ -214,9 +213,9 @@ local ICollidePusher = Trait:new({
     end
     return effect
   end
-})
+}
 
-local ICollideNot = Trait:new()
+local ICollideNot = {}
 
 return function () return
   IACollide,

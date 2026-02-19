@@ -1,6 +1,5 @@
 -- IMPORTS
 require("math-ext")
-local _, Trait = require("POO")()
 local Coord, _, _, Vector = require("Couple")()
 local _, CONTROL, MOVE = require("Const")()
 local EVENT, _ = require("Event")()
@@ -15,7 +14,7 @@ local moveVectors = {
 	[MOVE.NONE] = Vector:new({ x = 0, y = 0 })
 }
 
-local IAMove = Trait:new({
+local IAMove = {
 	IAMove = true,
 	_new = function (self)
 		self._c = Coord:new({x = self.x, y = self.y})  -- internal coord
@@ -71,37 +70,35 @@ local IAMove = Trait:new({
 	_initVector = function (_)
 		return moveVectors[MOVE.NONE]:copy()
 	end
-})
+}
 
-local IMoveX = Trait:new({
+local IMoveX = {
 	_move = function (self, _, _)
 		self.vector.y = 0
 	end,
-})
+}
 
-local IMoveY = Trait:new({
+local IMoveY = {
 	_move = function (self, _, _)
 		self.vector.x = 0
 	end,
-})
+}
 
-local IMove = Trait:new({
-})
+local IMove = {}
 
-local IMoveAuto = Trait:new({
+local IMoveAuto = {
 	_move = function (self, ctrl, dt)
 		if self.getMove then
 			self.vector = self:getMove(self.vector, ctrl, dt)
 		end
 	end
-})
+}
 
-local IMoveNot = Trait:new({
+local IMoveNot = {
 	_move = function (self)
-		self.vector.x = 0
-		self.vector.y = 0
+		self.vector = Vector:new({ x = 0, y = 0 })
 	end,
-})
+}
 
 return function () return
 	moveVectors,

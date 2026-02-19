@@ -1,5 +1,16 @@
-local function new (self, o)
-  o = o or {}
+local function _aggregateTables (...)
+  local arg = {...}
+  local agg = {}
+  for _, t in ipairs(arg) do
+    for k, v in pairs(t) do
+      agg[k] = v
+    end
+  end
+  return agg
+end
+
+local function new (self, ...)
+  local o = _aggregateTables(...)
   setmetatable(o, self)
   self.__index = self
   if o._new then
@@ -8,19 +19,8 @@ local function new (self, o)
   return o
 end
 
-local Trait
-Trait = {
-  new = new,
-  __concat = function (t1, t2)
-    local t3 = {}
-    for k, v in pairs(t1) do
-      t3[k] = v
-    end
-    for k, v in pairs(t2) do
-      t3[k] = v
-    end
-    return Trait:new(t3)
-  end
-}
+local function Class (...)
+  return _aggregateTables({new = new}, ...)
+end
 
-return function () return new, Trait end
+return function () return Class end

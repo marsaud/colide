@@ -1,4 +1,4 @@
-local new, Trait = require("POO")()
+local Class = require("POO")()
 -- local debug = require("Debug")()
 
 local EVENT = {
@@ -7,8 +7,7 @@ local EVENT = {
   HIT = 'eventHit'
 }
 
-local EventManager = {
-  new = new,
+local EventManager = Class({
   _new = function (self)
     self._listeners = {}
   end,
@@ -33,9 +32,9 @@ local EventManager = {
     end
     return effect
   end
-}
+})
 
-local IEventCatcher = Trait:new({
+local IEventCatcher = {
   fire = function (self, e, o, ...)
     if e == EVENT.MOVE then
       if self == o then return false end
@@ -60,6 +59,6 @@ local IEventCatcher = Trait:new({
       return false
     end
   end
-})
+}
 
 return function () return EVENT, EventManager, IEventCatcher end

@@ -5,7 +5,7 @@
 -- IMPORTS
 	-- local debug = require("Debug")()
 	require("math-ext")
-	local _, Trait = require("POO")()
+	local Class = require("POO")()
 	local COLOR, _, MOVE = require("Const")()
 	local
 		moveVectors,
@@ -28,25 +28,26 @@
 -- END IMPORTS
 
 -- DRAW INTERFACES
-	local IADraw = Trait:new({
+	local IADraw = {
 		draw = function (self)
 			love.graphics.setColor(self.color or COLOR.DEFAULT)
 			if self._draw then
 				self:_draw()
 			end
 		end
-	})
+	}
 
-	local IRectLine = Trait:new({
+	local IRectLine = {
 		_draw = function (self)
 			love.graphics.rectangle("line", self.x, self.y,self.w, self.h)
 		end
-	})
-	local IRectFill = Trait:new({
+	}
+
+	local IRectFill = {
 		_draw = function (self)
 			love.graphics.rectangle("fill", self.x, self.y,self.w, self.h)
 		end
-	})
+	}
 -- END DRAW INTERFACES
 
 --[[ GAME CLASSES
@@ -69,9 +70,9 @@
 
 --]]
 
-local AGameUIObject = IADraw .. IAMove .. IACollide .. IEventCatcher
+local AGameUIObject = Class(IADraw, IAMove, IACollide, IEventCatcher)
 
-local AutoMove = Trait:new({
+local AutoMove = {
 	stateIndex = 1,
 	stateTimer = 0,
 	states = {
@@ -91,9 +92,9 @@ local AutoMove = Trait:new({
 		end
 		return self.states[self.stateIndex]:copy()
 	end
-})
+}
 
-local AutoBounce = Trait:new({
+local AutoBounce = {
 	autoVector = moveVectors[MOVE.UP]:copy() + moveVectors[MOVE.RIGHT]:copy(),
 	hit = function (self, vector)
 		if vector then
@@ -117,19 +118,19 @@ local AutoBounce = Trait:new({
 	getMove = function (self, _, _, _)
 		return self.autoVector:copy()
 	end
-})
+}
 
 local mObjects
 
 function love.load()
-	local ARectLine = AGameUIObject:new(IRectLine)
-	local ARectFill = AGameUIObject:new(IRectFill)
-	local Rect2D = ARectLine:new(IMove .. ICollidePusher)
-	local RectAuto = ARectLine:new(IMoveAuto .. ICollidePusher)
-	local RectPassive = ARectLine:new (IMoveNot .. ICollidePusher)
-	local Rect1DX = ARectLine:new(IMoveX .. ICollidePusher)
-	local Rect1DY = ARectLine:new(IMoveY .. ICollidePusher)
-	local RectStatic = ARectFill:new(IMoveNot .. ICollideBlocker .. ICollidePusher)
+	local Rect2D = AGameUIObject:new(IMove, ICollidePusher)
+	local RectAuto = AGameUIObject:new(IMoveAuto, ICollidePusher)
+	local RectPassive = AGameUIObject:new (IMoveNot, ICollidePusher)
+	local Rect1DX = AGameUIObject:new(IMoveX, ICollidePusher)
+	local Rect1DY = AGameUIObject:new(IMoveY, ICollidePusher)
+	local RectStatic = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollidePusher, IRectFill)
+
+	local Bat = AGameUIObject:new(IMoveX, ICollideBlocker, ICollidePusher)
 
 	-- GAME OBJECTS
 	local function load()
@@ -142,7 +143,7 @@ function love.load()
 			speed = 120,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.RED
-		})
+		}, IRectLine)
 		local rect2 = Rect1DX:new({
 			id = 'green',
 			x = 125,
@@ -152,7 +153,7 @@ function love.load()
 			speed = 50,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.GREEN
-		})
+		}, IRectLine)
 		local rect3 = Rect1DY:new({
 			id = 'blue',
 			x = 265,
@@ -162,7 +163,7 @@ function love.load()
 			speed = 40,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.BLUE
-		})
+		}, IRectLine)
 		local rect4 = RectPassive:new({
 			id = 'magenta',
 			x = 385,
@@ -172,7 +173,7 @@ function love.load()
 			speed = 90,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.MAGENTA
-		})
+		}, IRectLine)
 		local rect5 = RectAuto:new({
 			id = 'yellow',
 			x = 505,
@@ -182,7 +183,7 @@ function love.load()
 			speed = 110,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.YELLOW
-		} .. AutoMove)
+		}, AutoMove, IRectLine)
 		local rect6 = RectStatic:new({
 			id = 'cyan',
 			x = 625,
@@ -202,7 +203,7 @@ function love.load()
 			speed = 240,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.ORANGE
-		} .. AutoBounce)
+		}, AutoBounce, IRectLine)
 
 		mObjects = {
 			rect1,
@@ -244,74 +245,52 @@ function love.load()
 	end
 
 	local function load2()
-		local rect1 = Rect2D:new({
+		local bat = Bat:new({
 			id = 'red',
-			x = 10,
-			y = 200,
-			w = 50,
-			h = 50,
-			speed = 120,
-			vector = moveVectors[MOVE.NONE]:copy(),
-			color = COLOR.RED
-		})
-		local rect2 = RectPassive:new({
-			id = 'green',
-			x = 100,
-			y = 200,
-			w = 140,
-			h = 100,
-			speed = 50,
-			vector = moveVectors[MOVE.NONE]:copy(),
-			color = COLOR.GREEN
-		})
-		local rect3 = RectStatic:new({
-			id = 'blue',
-			x = 610,
-			y = 200,
-			w = 100,
-			h = 100,
-			speed = 110,
+			x = 200,
+			y = 580,
+			w = 150,
+			h = 10,
+			speed = 300,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.CYAN
-		})
-		local rect4 = Rect2D:new({
-			id = 'magenta',
-			x = 10,
-			y = 10,
-			w = 50,
-			h = 50,
-			speed = 120,
+		}, IRectLine)
+
+		local ball = RectAuto:new({
+			id = 'bouncer',
+			x = 400,
+			y = 300,
+			w = 10,
+			h = 10,
+			speed = 240,
 			vector = moveVectors[MOVE.NONE]:copy(),
-			color = COLOR.RED
-		})
-		local rect5 = RectPassive:new({
-			id = 'yellow',
-			x = 100,
-			y = 10,
-			w = 140,
-			h = 100,
-			speed = 50,
-			vector = moveVectors[MOVE.NONE]:copy(),
-			color = COLOR.GREEN
-		})
-		local rect6 = RectStatic:new({
-			id = 'cyan',
-			x = 610,
-			y = 10,
-			w = 100,
-			h = 100,
-			speed = 110,
-			vector = moveVectors[MOVE.NONE]:copy(),
-			color = COLOR.CYAN
-		})
+			color = COLOR.YELLOW
+		}, AutoBounce, IRectLine)
 
 		mObjects = {
-			rect1,
-			rect2,
-			rect3,
-			rect4,
-			rect5,
-			rect6,
+			bat,
+			ball,
+			RectStatic:new({
+				id = 'ceil',
+				x = 0,
+				y = 0,
+				w = 800,
+				h = 3,
+			}),
+			RectStatic:new({
+				id = 'left',
+				x = 0,
+				y = 3,
+				w = 3,
+				h = 597,
+			}),
+			RectStatic:new({
+				id = 'right',
+				x = 797,
+				y = 3,
+				w = 3,
+				h = 597,
+			}),
 		}
 	end
 
