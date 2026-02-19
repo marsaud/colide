@@ -8,10 +8,16 @@ local EVENT = {
 }
 
 local EventManager = Class({
-  _new = function (self)
-    self._listeners = {}
+  init = function (self, objects)
+    self._objects = objects
+    for _, v in pairs(EVENT) do
+      self:addListener(v, table.unpack(self._objects))
+    end
   end,
   addListener = function (self, e, ...)
+    if not self._listeners then
+      self._listeners = {}
+    end
     if not self._listeners[e] then
       self._listeners[e] = {}
     end
@@ -69,7 +75,7 @@ local IEventCatcher = {
     elseif e == EVENT.HIT then
       local arg = {...}
       if self == o and self.hit then
-        return self:hit(arg[1])
+        return self:hit(arg[1], arg[2])
       end
     else
       return false

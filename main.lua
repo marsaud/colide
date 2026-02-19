@@ -23,7 +23,7 @@
 		_,
 		_,
 		ICollidePusher = require("Collide")()
-	local EVENT, EventManager, IEventCatcher = require("Event")()
+	local _, EventManager, IEventCatcher = require("Event")()
 	local _, _, _, Vector = require("Couple")()
 -- END IMPORTS
 
@@ -96,7 +96,7 @@ local AutoMove = {
 
 local AutoBounce = {
 	autoVector = moveVectors[MOVE.UP]:copy() + moveVectors[MOVE.RIGHT]:copy(),
-	_hit = function (self, vector)
+	_hit = function (self, _, vector)
 		if vector then
 			local x = self.autoVector.x
 			if vector.x ~= 0 then
@@ -122,7 +122,7 @@ local AutoBounce = {
 
 local ICollapse = {
 	health = 50,
-	_hit = function (self, _)
+	_hit = function (self, _, _)
 		self.health = self.health - 50
 		if self.health <= 0 and self.eventManager then
 			self.eventManager:purge(self)
@@ -319,10 +319,7 @@ function love.load()
 	load2()
 	-- END GAME OBJECTS
 	local eventManager = EventManager:new()
-	eventManager._objects = mObjects
-	eventManager:addListener(EVENT.MOVE, table.unpack(mObjects))
-	eventManager:addListener(EVENT.COMMIT, table.unpack(mObjects))
-	eventManager:addListener(EVENT.HIT, table.unpack(mObjects))
+	eventManager:init(mObjects)
 end
 
 local pause = false

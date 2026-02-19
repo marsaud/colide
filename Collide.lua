@@ -111,9 +111,9 @@ local IACollide = {
     end
   end,
 
-  hit = function (self, vector)
+  hit = function (self, by, vector)
     if self._hit then
-      return self:_hit(vector)
+      return self:_hit(by, vector)
     else
       return false
     end
@@ -195,11 +195,11 @@ local ICollidePusher = {
     local effect = false
     if effectX then
       if self.eventManager then
-        self.eventManager:fire(EVENT.HIT, self, Vector:new({
+        self.eventManager:fire(EVENT.HIT, self, o, Vector:new({
           x = -math.sign(self.vector.x),
           y = 0
         }))
-        self.eventManager:fire(EVENT.HIT, o, Vector:new({
+        self.eventManager:fire(EVENT.HIT, o, self, Vector:new({
           x = math.sign(self.vector.x),
           y = 0
         }))
@@ -208,11 +208,11 @@ local ICollidePusher = {
     end
     if effectY then
       if self.eventManager then
-        self.eventManager:fire(EVENT.HIT, self, Vector:new({
+        self.eventManager:fire(EVENT.HIT, self, o, Vector:new({
           x = 0,
           y = -math.sign(self.vector.y)
         }))
-        self.eventManager:fire(EVENT.HIT, o, Vector:new({
+        self.eventManager:fire(EVENT.HIT, o, self, Vector:new({
           x = 0,
           y = math.sign(self.vector.y)
         }))
