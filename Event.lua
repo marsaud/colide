@@ -31,6 +31,22 @@ local EventManager = Class({
       self:fire(EVENT.COMMIT)
     end
     return effect
+  end,
+  purge = function (self, o)
+    for _, list in pairs(self._listeners) do
+      for i, v in ipairs(list) do
+        if v == o then
+          table.remove(list, i)
+          break
+        end
+      end
+      for i, _o in ipairs(self._objects) do
+        if _o == o then
+          table.remove(self._objects, i)
+          break
+        end
+      end
+    end
   end
 })
 

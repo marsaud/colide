@@ -96,7 +96,7 @@ local AutoMove = {
 
 local AutoBounce = {
 	autoVector = moveVectors[MOVE.UP]:copy() + moveVectors[MOVE.RIGHT]:copy(),
-	hit = function (self, vector)
+	_hit = function (self, vector)
 		if vector then
 			local x = self.autoVector.x
 			if vector.x ~= 0 then
@@ -120,6 +120,16 @@ local AutoBounce = {
 	end
 }
 
+local ICollapse = {
+	health = 50,
+	_hit = function (self, _)
+		self.health = self.health - 50
+		if self.health <= 0 and self.eventManager then
+			self.eventManager:purge(self)
+		end
+	end
+}
+
 local mObjects
 
 function love.load()
@@ -131,6 +141,8 @@ function love.load()
 	local RectStatic = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollidePusher, IRectFill)
 
 	local Bat = AGameUIObject:new(IMoveX, ICollideBlocker, ICollidePusher)
+
+	local Brick = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollapse, IRectFill)
 
 	-- GAME OBJECTS
 	local function load()
@@ -291,12 +303,23 @@ function love.load()
 				w = 3,
 				h = 597,
 			}),
+
 		}
+		for x = 50, 700, 50 do
+			table.insert(mObjects, Brick:new({
+				id = 'brick',
+				x = x,
+				y = 150,
+				w = 45,
+				h = 35
+			}))
+		end
 	end
 
-	load()
+	load2()
 	-- END GAME OBJECTS
 	local eventManager = EventManager:new()
+	eventManager._objects = mObjects
 	eventManager:addListener(EVENT.MOVE, table.unpack(mObjects))
 	eventManager:addListener(EVENT.COMMIT, table.unpack(mObjects))
 	eventManager:addListener(EVENT.HIT, table.unpack(mObjects))

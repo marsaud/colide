@@ -109,6 +109,14 @@ local IACollide = {
     else
       return false
     end
+  end,
+
+  hit = function (self, vector)
+    if self._hit then
+      return self:_hit(vector)
+    else
+      return false
+    end
   end
 }
 
