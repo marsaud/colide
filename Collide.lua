@@ -23,18 +23,18 @@ local IACollide = {
     local skip = o == self
     local previous = {...}
     for _, _o in ipairs(previous) do
-      if o == _o then
+      if self == _o then
         skip = true
         break
       end
     end
     skip = skip or not o.IACollide
-    skip = skip or self:_isRight(o)
-    skip = skip or self:_isLeft(o)
-    skip = skip or self:_isUnder(o)
-    skip = skip or self:_isTop(o)
+    skip = skip or o:_isRight(self)
+    skip = skip or o:_isLeft(self)
+    skip = skip or o:_isUnder(self)
+    skip = skip or o:_isTop(self)
     if not skip then
-      effect = self:_resolve(o, ...)
+      effect = o:_resolve(self, ...)
     end
     return effect
   end,

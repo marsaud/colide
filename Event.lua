@@ -3,9 +3,9 @@ local Class = require("POO")()
 
 local EVENT = {
   CTRL ='eventCtrl',
-  MOVE = 'eventMove',
-  COMMIT = 'eventCommit',
-  HIT = 'eventHit'
+  MOVE = 'resolve',
+  COMMIT = 'commit',
+  HIT = 'hit'
 }
 
 local EventManager = Class({
@@ -54,23 +54,14 @@ local EventManager = Class({
         end
       end
     end
+    o.eventManager = nil
   end
 })
 
 local IEventCatcher = {
-  fire = function (self, e, o, ...)
-    if e == EVENT.MOVE then
-      if not self.resolve then return false end
-      return o:resolve(self,...)
-    elseif e == EVENT.COMMIT then
-      if not self.commit then return false end
-      return self:commit()
-    elseif e == EVENT.HIT then
-      if not self.hit then return false end
-      return self:hit(o, ...)
-    else
-      return false
-    end
+  fire = function (self, e, ...)
+    if not self[e] then return false end
+    return self[e](self, ...)
   end
 }
 
