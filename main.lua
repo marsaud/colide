@@ -23,7 +23,7 @@
 		_,
 		_,
 		ICollidePusher = require("Collide")()
-	local _, EventManager, IEventCatcher = require("Event")()
+	local EVENT, EventManager, IEventCatcher = require("Event")()
 	local _, _, _, Vector = require("Couple")()
 -- END IMPORTS
 
@@ -328,8 +328,6 @@ function love.load()
 	local context2 = EventManager:new()
 	context2:init(boot2())
 	contexts[2] = context2
-
-
 end
 
 local pause = false
@@ -343,6 +341,7 @@ function love.update(dt)
 	for _, o in ipairs(contexts[currentContextIndex]:getObjects()) do
 		o:move(ctrl, dt)
 	end
+	contexts[currentContextIndex]:fire(EVENT.COMMIT)
 end
 
 function love.draw()

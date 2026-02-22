@@ -37,9 +37,6 @@ local EventManager = Class({
     for _, l in ipairs(ls) do
       effect = l:fire(e, ...) or effect
     end
-    if e == EVENT.MOVE and #{...} == 0 then
-      self:fire(EVENT.COMMIT)
-    end
     return effect
   end,
   purge = function (self, o)
