@@ -96,7 +96,7 @@ local AutoMove = {
 
 local AutoBounce = {
 	autoVector = moveVectors[MOVE.UP]:copy() + moveVectors[MOVE.RIGHT]:copy(),
-	_hit = function (self, _, vector)
+	_hit = function (self, _, _, vector)
 		if vector then
 			local x = self.autoVector.x
 			if vector.x ~= 0 then
@@ -122,7 +122,7 @@ local AutoBounce = {
 
 local ICollapse = {
 	health = 50,
-	_hit = function (self, _, _)
+	_hit = function (self, _, _, _)
 		self.health = self.health - 50
 		if self.health <= 0 and self.eventManager then
 			self.eventManager:purge(self)

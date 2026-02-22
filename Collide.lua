@@ -21,6 +21,13 @@ local IACollide = {
   resolve = function (self, o, ...)
     local effect = false
     local skip = o == self
+    local previous = {...}
+    for _, _o in ipairs(previous) do
+      if o == _o then
+        skip = true
+        break
+      end
+    end
     skip = skip or not o.IACollide
     skip = skip or self:_isRight(o)
     skip = skip or self:_isLeft(o)
@@ -111,9 +118,10 @@ local IACollide = {
     end
   end,
 
-  hit = function (self, by, vector)
+  hit = function (self, who, by, vector)
+    if who ~= self then return false end
     if self._hit then
-      return self:_hit(by, vector)
+      return self:_hit(who, by, vector)
     else
       return false
     end

@@ -2,6 +2,7 @@ local Class = require("POO")()
 -- local debug = require("Debug")()
 
 local EVENT = {
+  CTRL ='eventCtrl',
   MOVE = 'eventMove',
   COMMIT = 'eventCommit',
   HIT = 'eventHit'
@@ -30,11 +31,11 @@ local EventManager = Class({
       l.eventManager = self
     end
   end,
-  fire = function (self, e, emitter, ...)
+  fire = function (self, e, ...)
     local ls = self._listeners[e] or {}
     local effect = false
     for _, l in ipairs(ls) do
-      effect = l:fire(e, emitter, ...) or effect
+      effect = l:fire(e, ...) or effect
     end
     if e == EVENT.MOVE and #{...} == 0 then
       self:fire(EVENT.COMMIT)
@@ -62,24 +63,14 @@ local EventManager = Class({
 local IEventCatcher = {
   fire = function (self, e, o, ...)
     if e == EVENT.MOVE then
-      if self == o then return false end
-      if not o.IACollide then return false end
-      local arg = {...}
-      for _, _o in ipairs(arg) do
-        if self == _o then
-          return false
-        end
-      end
-      local r = o:resolve(self,...)
-      return r
+      if not self.resolve then return false end
+      return o:resolve(self,...)
     elseif e == EVENT.COMMIT then
-      if not self.IAMove then return false end
-      self:commit()
+      if not self.commit then return false end
+      return self:commit()
     elseif e == EVENT.HIT then
-      local arg = {...}
-      if self == o and self.hit then
-        return self:hit(arg[1], arg[2])
-      end
+      if not self.hit then return false end
+      return self:hit(o, ...)
     else
       return false
     end

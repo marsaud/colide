@@ -64,8 +64,9 @@ local IAMove = {
 		self.y = math.round(self._c.y)
 		self.vector = self:_initVector()
 		if next then
-			next:commit(...)
+			return next:commit(...)
 		end
+		return true
 	end,
 	_initVector = function (_)
 		return moveVectors[MOVE.NONE]:copy()
