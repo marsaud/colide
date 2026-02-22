@@ -1,6 +1,6 @@
 require("math-ext")
 local Coord, _, _, Vector = require("Couple")()
-local EVENT, _ = require("Event")()
+local _, _, EVENT, _ = require("Const")()
 -- local debug = require("Debug")()
 
 local IACollide = {

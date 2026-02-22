@@ -1,7 +1,6 @@
 local love = love
 -- IMPORTS
-local _, CONTROL = require("Const")()
-local EVENT, _, _ = require("Event")()
+local _, CONTROL, EVENT, _ = require("Const")()
 -- END IMPORTS
 
 local function pullControl(eventManager, dt)

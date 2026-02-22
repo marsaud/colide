@@ -24,4 +24,11 @@ local COLOR = {
 }
 COLOR.DEFAULT = COLOR.WHITE
 
-return function () return COLOR, CONTROL, MOVE end
+local EVENT = {
+  CONTROL ='control',
+  MOVE = 'resolve',
+  COMMIT = 'commit',
+  HIT = 'hit'
+}
+
+return function () return COLOR, CONTROL, EVENT, MOVE end

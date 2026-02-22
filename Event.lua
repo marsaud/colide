@@ -1,12 +1,7 @@
 local Class = require("POO")()
+local pullControl = require("Control")()
+local _, _, EVENT, _ = require("Const")()
 -- local debug = require("Debug")()
-
-local EVENT = {
-  CONTROL ='control',
-  MOVE = 'resolve',
-  COMMIT = 'commit',
-  HIT = 'hit'
-}
 
 local EventManager = Class({
   init = function (self, objects)
@@ -14,6 +9,9 @@ local EventManager = Class({
     for _, v in pairs(EVENT) do
       self:addListener(v, table.unpack(self._objects))
     end
+  end,
+  tick = function (self, dt)
+    pullControl(self, dt)
   end,
   getObjects = function (self)
     return self._objects
@@ -36,6 +34,9 @@ local EventManager = Class({
     local effect = false
     for _, l in ipairs(ls) do
       effect = l:fire(e, ...) or effect
+    end
+    if e == EVENT.MOVE and #{...} <= 1 then
+      self:fire(EVENT.COMMIT)
     end
     return effect
   end,
@@ -65,4 +66,4 @@ local IEventCatcher = {
   end
 }
 
-return function () return EVENT, EventManager, IEventCatcher end
+return function () return EventManager, IEventCatcher end

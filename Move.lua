@@ -1,8 +1,7 @@
 -- IMPORTS
 require("math-ext")
 local Coord, _, _, Vector = require("Couple")()
-local _, CONTROL, MOVE = require("Const")()
-local EVENT, _ = require("Event")()
+local _, CONTROL, EVENT, MOVE = require("Const")()
 -- local debug = require("Debug")()
 -- END IMPORTS
 

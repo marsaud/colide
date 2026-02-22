@@ -6,7 +6,7 @@
 	-- local debug = require("Debug")()
 	require("math-ext")
 	local Class = require("POO")()
-	local COLOR, _, MOVE = require("Const")()
+	local COLOR, _, _, MOVE = require("Const")()
 	local
 		moveVectors,
 		IAMove,
@@ -15,7 +15,6 @@
 		IMoveNot,
 		IMoveX,
 		IMoveY = require("Move")()
-	local pullControl = require("Control")()
 	local
 		IACollide,
 		ICollideBlocker,
@@ -23,7 +22,7 @@
 		_,
 		_,
 		ICollidePusher = require("Collide")()
-	local EVENT, EventManager, IEventCatcher = require("Event")()
+	local EventManager, IEventCatcher = require("Event")()
 	local _, _, _, Vector = require("Couple")()
 -- END IMPORTS
 
@@ -337,12 +336,7 @@ local currentContextIndex
 function love.update(dt)
 	currentContextIndex = contextIndex
 	if pause then return end
-	-- local ctrl = pullControl()
-	-- for _, o in ipairs(contexts[currentContextIndex]:getObjects()) do
-	-- 	o:move(ctrl, dt)
-	-- end
-	pullControl(contexts[currentContextIndex], dt)
-	contexts[currentContextIndex]:fire(EVENT.COMMIT)
+	contexts[currentContextIndex]:tick(dt)
 end
 
 function love.draw()
