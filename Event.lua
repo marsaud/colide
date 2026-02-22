@@ -14,6 +14,9 @@ local EventManager = Class({
       self:addListener(v, table.unpack(self._objects))
     end
   end,
+  getObjects = function (self)
+    return self._objects
+  end,
   addListener = function (self, e, ...)
     if not self._listeners then
       self._listeners = {}

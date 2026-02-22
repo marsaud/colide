@@ -130,7 +130,7 @@ local ICollapse = {
 	end
 }
 
-local mObjects
+local contexts = {}
 
 function love.load()
 	local Rect2D = AGameUIObject:new(IMove, ICollidePusher)
@@ -145,7 +145,7 @@ function love.load()
 	local Brick = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollapse, IRectFill)
 
 	-- GAME OBJECTS
-	local function load()
+	local function boot1()
 		local rect1 = Rect2D:new({
 			id = 'red',
 			x = 25,
@@ -217,7 +217,7 @@ function love.load()
 			color = COLOR.ORANGE
 		}, AutoBounce, IRectLine)
 
-		mObjects = {
+		local objects = {
 			rect1,
 			rect2,
 			rect3,
@@ -254,9 +254,11 @@ function love.load()
 				h = 3,
 			})
 		}
+
+		return objects
 	end
 
-	local function load2()
+	local function boot2()
 		local bat = Bat:new({
 			id = 'red',
 			x = 200,
@@ -279,7 +281,7 @@ function love.load()
 			color = COLOR.YELLOW
 		}, AutoBounce, IRectLine)
 
-		mObjects = {
+		local objects = {
 			bat,
 			ball,
 			RectStatic:new({
@@ -306,7 +308,7 @@ function love.load()
 
 		}
 		for x = 50, 700, 50 do
-			table.insert(mObjects, Brick:new({
+			table.insert(objects, Brick:new({
 				id = 'brick',
 				x = x,
 				y = 150,
@@ -314,31 +316,43 @@ function love.load()
 				h = 35
 			}))
 		end
+
+		return objects
 	end
 
-	load2()
 	-- END GAME OBJECTS
-	local eventManager = EventManager:new()
-	eventManager:init(mObjects)
+	local context1 = EventManager:new()
+	context1:init(boot1())
+	contexts[1] = context1
+
+	local context2 = EventManager:new()
+	context2:init(boot2())
+	contexts[2] = context2
+
+
 end
 
 local pause = false
+local contextIndex = 1
+local currentContextIndex
 
 function love.update(dt)
+	currentContextIndex = contextIndex
 	if pause then return end
 	local ctrl = pullControl()
-	for _, o in ipairs(mObjects) do
+	for _, o in ipairs(contexts[currentContextIndex]:getObjects()) do
 		o:move(ctrl, dt)
 	end
 end
 
 function love.draw()
-	for _, o in ipairs(mObjects) do
+	for _, o in ipairs(contexts[currentContextIndex]:getObjects()) do
 		o:draw()
 	end
 end
 
 function love.keypressed (key)
 	if key == "p" then pause = not pause end
+	if key == "c" then contextIndex = contextIndex + 1 end
+	if contextIndex > #contexts then contextIndex = 1 end
 end
-
