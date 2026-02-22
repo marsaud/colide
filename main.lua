@@ -337,10 +337,11 @@ local currentContextIndex
 function love.update(dt)
 	currentContextIndex = contextIndex
 	if pause then return end
-	local ctrl = pullControl()
-	for _, o in ipairs(contexts[currentContextIndex]:getObjects()) do
-		o:move(ctrl, dt)
-	end
+	-- local ctrl = pullControl()
+	-- for _, o in ipairs(contexts[currentContextIndex]:getObjects()) do
+	-- 	o:move(ctrl, dt)
+	-- end
+	pullControl(contexts[currentContextIndex], dt)
 	contexts[currentContextIndex]:fire(EVENT.COMMIT)
 end
 

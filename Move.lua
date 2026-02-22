@@ -21,6 +21,9 @@ local IAMove = {
 		self._d = self._c:copy() -- internal destination
 		self.d = self._d:copy() -- visible destination
 	end,
+	control = function (self, ctrl, dt)
+		return self:move(ctrl, dt)
+	end,
 	move = function (self, ctrl, dt)
 		if ctrl >= CONTROL.ACT1 then ctrl = ctrl - CONTROL.ACT1 end
 		if ctrl >= CONTROL.ACT2 then ctrl = ctrl - CONTROL.ACT2 end

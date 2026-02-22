@@ -2,7 +2,7 @@ local Class = require("POO")()
 -- local debug = require("Debug")()
 
 local EVENT = {
-  CTRL ='eventCtrl',
+  CONTROL ='control',
   MOVE = 'resolve',
   COMMIT = 'commit',
   HIT = 'hit'
