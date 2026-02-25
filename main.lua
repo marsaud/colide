@@ -294,7 +294,7 @@ function love.load()
 			y = 580,
 			w = 150,
 			h = 10,
-			speed = 300,
+			speed = 400,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.CYAN
 		}, IRectLine)
@@ -352,14 +352,16 @@ function love.load()
 			}),
 		}
 		for x = 50, 700, 50 do
-			table.insert(objects, Brick:new({
-				id = 'brick',
-				health = 50,
-				x = x,
-				y = 150,
-				w = 45,
-				h = 35
-			}))
+			for y = 10, 210, 40 do
+				table.insert(objects, Brick:new({
+					id = 'brick',
+					health = 50,
+					x = x,
+					y = y,
+					w = 45,
+					h = 35
+				}))
+			end
 		end
 
 		return objects
