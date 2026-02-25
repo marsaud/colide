@@ -67,6 +67,14 @@
 	- anim (callback)
 	- collide (callback), life, strength
 
+	IAMove:control
+	IAMove:move
+		_move
+		IMoveAuto:getMove
+	resolve _resolve
+	commit _commit
+	hit _hit getHit
+
 --]]
 
 local AGameUIObject = Class(IADraw, IAMove, IACollide, IEventCatcher)
@@ -120,9 +128,9 @@ local AutoBounce = {
 }
 
 local ICollapse = {
-	health = 50,
-	_hit = function (self, _, _, _)
-		self.health = self.health - 50
+	_hit = function (self, who, by, _)
+		local damage = by.getHit and by:getHit(who) or 0
+		self.health = self.health - damage
 		if self.health <= 0 and self.eventManager then
 			self.eventManager:purge(self)
 		end
@@ -138,10 +146,6 @@ function love.load()
 	local Rect1DX = AGameUIObject:new(IMoveX, ICollidePusher)
 	local Rect1DY = AGameUIObject:new(IMoveY, ICollidePusher)
 	local RectStatic = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollidePusher, IRectFill)
-
-	local Bat = AGameUIObject:new(IMoveX, ICollideBlocker, ICollidePusher)
-
-	local Brick = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollapse, IRectFill)
 
 	-- GAME OBJECTS
 	local function boot1()
@@ -258,8 +262,15 @@ function love.load()
 	end
 
 	local function boot2()
+		local Bat = AGameUIObject:new(IMoveX, ICollideBlocker, ICollidePusher)
+		local Brick = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollapse, IRectFill)
+		local Ball = RectAuto:new(AutoBounce, IRectLine, ICollapse,
+		{
+			getHit = function (_, _) return 50 end
+		})
+
 		local bat = Bat:new({
-			id = 'red',
+			id = 'bat',
 			x = 200,
 			y = 580,
 			w = 150,
@@ -269,8 +280,8 @@ function love.load()
 			color = COLOR.CYAN
 		}, IRectLine)
 
-		local ball = RectAuto:new({
-			id = 'bouncer',
+		local ball = Ball:new({
+			id = 'ball',
 			x = 400,
 			y = 300,
 			w = 10,
@@ -304,11 +315,25 @@ function love.load()
 				w = 3,
 				h = 597,
 			}),
+			-- RectStatic:new({
+			-- 	id = 'floor',
+			-- 	x = 3,
+			-- 	y = 597,
+			-- 	w = 794,
+			-- 	h = 3,
+			-- 	color = COLOR.RED,
+			-- 	getHit = function (_, who)
+			-- 		if (who and who.id == 'ball') then
+			-- 			return 100
+			-- 		end
+			-- 	end
+			-- }),
 
 		}
 		for x = 50, 700, 50 do
 			table.insert(objects, Brick:new({
 				id = 'brick',
+				health = 50,
 				x = x,
 				y = 150,
 				w = 45,
