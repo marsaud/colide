@@ -120,6 +120,9 @@ local IACollide = {
 
   hit = function (self, who, by, vector)
     if who ~= self then return false end
+    if self.runPlugins then
+      self:runPlugins('_hit', self, who, by, vector)
+    end
     if self._hit then
       return self:_hit(who, by, vector)
     else
@@ -220,6 +223,8 @@ local ICollidePusher = {
           x = 0,
           y = -math.sign(self.vector.y)
         }))
+      end
+      if self.eventManager then
         self.eventManager:fire(EVENT.HIT, o, self, Vector:new({
           x = 0,
           y = math.sign(self.vector.y)

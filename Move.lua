@@ -92,14 +92,6 @@ local IMoveY = {
 
 local IMove = {}
 
-local IMoveAuto = {
-	_move = function (self, ctrl, dt)
-		if self.getMove then
-			self.vector = self:getMove(self.vector, ctrl, dt)
-		end
-	end
-}
-
 local IMoveNot = {
 	_move = function (self)
 		self.vector = Vector:new({ x = 0, y = 0 })
@@ -110,7 +102,6 @@ return function () return
 	moveVectors,
 	IAMove,
 	IMove,
-	IMoveAuto,
 	IMoveNot,
 	IMoveX,
 	IMoveY

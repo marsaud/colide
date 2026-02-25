@@ -11,7 +11,6 @@
 		moveVectors,
 		IAMove,
 		IMove,
-		IMoveAuto,
 		IMoveNot,
 		IMoveX,
 		IMoveY = require("Move")()
@@ -77,7 +76,28 @@
 
 --]]
 
-local AGameUIObject = Class(IADraw, IAMove, IACollide, IEventCatcher)
+local PluginManager = {
+	_initPluginManager = function (self)
+		if self._pluginManagerInit then return end
+		self._plugins = {}
+		self._pluginManagerInit = true
+	end,
+	addPlugin = function (self, id, func)
+		self:_initPluginManager()
+		if not self._plugins[id] then
+			self._plugins[id] = {}
+		end
+		table.insert(self._plugins[id], func)
+	end,
+	runPlugins = function (self, id, ...)
+		self:_initPluginManager()
+		for _, func in ipairs(self._plugins[id] or {}) do
+			func(...)
+		end
+	end
+}
+
+local AGameUIObject = Class(IADraw, IAMove, IACollide, IEventCatcher, PluginManager)
 
 local AutoMove = {
 	stateIndex = 1,
@@ -285,10 +305,13 @@ function love.load()
 			y = 300,
 			w = 10,
 			h = 10,
+			health = 100,
 			speed = 240,
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.YELLOW
 		}, AutoBounce, IRectLine)
+
+		ball:addPlugin('_hit', ICollapse._hit)
 
 		local objects = {
 			bat,
@@ -314,20 +337,19 @@ function love.load()
 				w = 3,
 				h = 597,
 			}),
-			-- RectStatic:new({
-			-- 	id = 'floor',
-			-- 	x = 3,
-			-- 	y = 597,
-			-- 	w = 794,
-			-- 	h = 3,
-			-- 	color = COLOR.RED,
-			-- 	getHit = function (_, who)
-			-- 		if (who and who.id == 'ball') then
-			-- 			return 100
-			-- 		end
-			-- 	end
-			-- }),
-
+			RectStatic:new({
+				id = 'floor',
+				x = 3,
+				y = 597,
+				w = 794,
+				h = 3,
+				color = COLOR.RED,
+				getHit = function (_, who)
+					if (who and who.id == 'ball') then
+						return 100
+					end
+				end
+			}),
 		}
 		for x = 50, 700, 50 do
 			table.insert(objects, Brick:new({
