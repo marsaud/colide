@@ -5,21 +5,20 @@ local _, _, EVENT, _ = require("Const")()
 
 local EventManager = Class({
   init = function (self, objects)
+    self._listeners = {}
     self._objects = objects
     for _, v in pairs(EVENT) do
       self:addListener(v, table.unpack(self._objects))
     end
   end,
   tick = function (self, dt)
-    pullControl(self, dt)
+    local ctrl = pullControl()
+    self:fire(EVENT.CONTROL, ctrl, dt)
   end,
   getObjects = function (self)
     return self._objects
   end,
   addListener = function (self, e, ...)
-    if not self._listeners then
-      self._listeners = {}
-    end
     if not self._listeners[e] then
       self._listeners[e] = {}
     end

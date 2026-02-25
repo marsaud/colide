@@ -42,6 +42,9 @@ local IAMove = {
 		if ctrl >= CONTROL.RIGHT then
 			self.vector = self.vector + moveVectors[CONTROL.RIGHT]
 		end
+		if self.getMove then
+			self.vector = self:getMove(self.vector, ctrl, dt)
+		end
 		if self._move then
 			self:_move(ctrl, dt)
 		end

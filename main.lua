@@ -141,7 +141,6 @@ local contexts = {}
 
 function love.load()
 	local Rect2D = AGameUIObject:new(IMove, ICollidePusher)
-	local RectAuto = AGameUIObject:new(IMoveAuto, ICollidePusher)
 	local RectPassive = AGameUIObject:new (IMoveNot, ICollidePusher)
 	local Rect1DX = AGameUIObject:new(IMoveX, ICollidePusher)
 	local Rect1DY = AGameUIObject:new(IMoveY, ICollidePusher)
@@ -189,7 +188,7 @@ function love.load()
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.MAGENTA
 		}, IRectLine)
-		local rect5 = RectAuto:new({
+		local rect5 = Rect2D:new({
 			id = 'yellow',
 			x = 505,
 			y = 300,
@@ -209,7 +208,7 @@ function love.load()
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.CYAN
 		})
-		local rect7 = RectAuto:new({
+		local rect7 = Rect2D:new({
 			id = 'bouncer',
 			x = 25,
 			y = 400,
@@ -264,7 +263,7 @@ function love.load()
 	local function boot2()
 		local Bat = AGameUIObject:new(IMoveX, ICollideBlocker, ICollidePusher)
 		local Brick = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollapse, IRectFill)
-		local Ball = RectAuto:new(AutoBounce, IRectLine, ICollapse,
+		local Ball = Rect2D:new(AutoBounce, IRectLine, ICollapse,
 		{
 			getHit = function (_, _) return 50 end
 		})
