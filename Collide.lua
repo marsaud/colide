@@ -223,8 +223,6 @@ local ICollidePusher = {
           x = 0,
           y = -math.sign(self.vector.y)
         }))
-      end
-      if self.eventManager then
         self.eventManager:fire(EVENT.HIT, o, self, Vector:new({
           x = 0,
           y = math.sign(self.vector.y)

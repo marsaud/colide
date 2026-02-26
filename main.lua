@@ -6,7 +6,7 @@
 	-- local debug = require("Debug")()
 	require("math-ext")
 	local Class = require("POO")()
-	local COLOR, _, _, MOVE = require("Const")()
+	local COLOR, CONTROL, _, MOVE = require("Const")()
 	local
 		moveVectors,
 		IAMove,
@@ -152,7 +152,7 @@ local ICollapse = {
 		local damage = by.getHit and by:getHit(who) or 0
 		self.health = self.health - damage
 		if self.health <= 0 and self.eventManager then
-			self.eventManager:purge(self)
+			self.eventManager:delete(self)
 		end
 	end
 }
@@ -417,15 +417,57 @@ function love.load()
 		for x = 20, 620, 50 do
 			for y = 50, 300, 50 do
 				table.insert(objects, Rect2D:new({
+					id = 'vessel',
 					x = x,
 					y = y,
 					w = 40,
 					h = 40,
+					health = 100,
 					speed = 10,
-					vector = moveVectors[MOVE.NONE]:copy()
-				}, IRectLine, Vessel))
+					vector = moveVectors[MOVE.NONE]:copy(),
+					getHit = function (_, _) return 100 end,
+				}, IRectLine, ICollapse, Vessel))
 			end
 		end
+
+		local Missile = Rect1DY:new({
+			getHit = function (_, _) return 100 end,
+			getMove = function () return moveVectors[MOVE.UP] end
+		}, ICollapse)
+
+		local shipFire = function (self, ctrl, dt)
+			if ctrl >= CONTROL.ACT3 then ctrl = ctrl - CONTROL.ACT3 end
+			if ctrl >= CONTROL.ACT2 then ctrl = ctrl - CONTROL.ACT2 end
+			if ctrl >= CONTROL.ACT1 then
+				if self.eventManager then
+					local missile = Missile:new({
+						id = 'missile',
+						x = self.x + 18,
+						y = self.y - 10,
+						w = 4,
+						h = 10,
+						speed = 50,
+						vector = moveVectors[MOVE.NONE],
+						health = 100
+					}, IRectFill)
+					self.eventManager:addObject(missile)
+				end
+			end
+		end
+
+		local Ship = AGameUIObject:new(IMoveX, ICollideBlocker, ICollidePusher, {
+			_control = shipFire
+		})
+		local ship = Ship:new({
+			id = 'ship',
+			x = 400,
+			y = 550,
+			w = 40,
+			h = 40,
+			speed = 300,
+			vector = moveVectors[MOVE.NONE]:copy(),
+		}, IRectLine)
+		table.insert(objects, ship)
 
 		return objects
 	end)
@@ -440,13 +482,13 @@ function love.load()
 	pause = false
 end
 
-
 local currentContextIndex
 
 function love.update(dt)
 	currentContextIndex = contextIndex
 	if pause then return end
 	contexts[currentContextIndex]:tick(dt)
+	contexts[currentContextIndex]:purge()
 end
 
 function love.draw()

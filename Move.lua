@@ -21,12 +21,15 @@ local IAMove = {
 		self.d = self._d:copy() -- visible destination
 	end,
 	control = function (self, ctrl, dt)
+		if self._control then
+			self:_control(ctrl, dt)
+		end
 		return self:move(ctrl, dt)
 	end,
 	move = function (self, ctrl, dt)
-		if ctrl >= CONTROL.ACT1 then ctrl = ctrl - CONTROL.ACT1 end
-		if ctrl >= CONTROL.ACT2 then ctrl = ctrl - CONTROL.ACT2 end
 		if ctrl >= CONTROL.ACT3 then ctrl = ctrl - CONTROL.ACT3 end
+		if ctrl >= CONTROL.ACT2 then ctrl = ctrl - CONTROL.ACT2 end
+		if ctrl >= CONTROL.ACT1 then ctrl = ctrl - CONTROL.ACT1 end
 		if ctrl >= CONTROL.UP then
 			ctrl = ctrl - CONTROL.UP
 			self.vector = self.vector + moveVectors[CONTROL.UP]

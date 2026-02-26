@@ -7,18 +7,24 @@ local EventManager = Class({
   init = function (self, objects)
     self._listeners = {}
     self._objects = objects
-    for _, v in pairs(EVENT) do
-      self:addListener(v, table.unpack(self._objects))
+    for _, e in pairs(EVENT) do
+      self:addListeners(e, table.unpack(self._objects))
     end
   end,
   tick = function (self, dt)
     local ctrl = pullControl()
-    self:fire(EVENT.CONTROL, ctrl, dt)
+    return self:fire(EVENT.CONTROL, ctrl, dt)
   end,
   getObjects = function (self)
     return self._objects
   end,
-  addListener = function (self, e, ...)
+  addObject = function (self, o)
+    for _, e in pairs(EVENT) do
+      self:addListeners(e, o)
+    end
+    table.insert(self._objects, o)
+  end,
+  addListeners = function (self, e, ...)
     if not self._listeners[e] then
       self._listeners[e] = {}
     end
@@ -39,22 +45,23 @@ local EventManager = Class({
     end
     return effect
   end,
-  purge = function (self, o)
+  delete = function (_, o)
+    o._EV_DELETE = true
+  end,
+  purge = function (self)
     for _, list in pairs(self._listeners) do
       for i, v in ipairs(list) do
-        if v == o then
+        if v._EV_DELETE then
           table.remove(list, i)
-          break
-        end
-      end
-      for i, _o in ipairs(self._objects) do
-        if _o == o then
-          table.remove(self._objects, i)
-          break
         end
       end
     end
-    o.eventManager = nil
+    for i, _o in ipairs(self._objects) do
+      if _o._EV_DELETE then
+        table.remove(self._objects, i)
+        _o.eventManager = nil
+      end
+    end
   end
 })
 
