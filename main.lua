@@ -440,17 +440,22 @@ function love.load()
 			if ctrl >= CONTROL.ACT2 then ctrl = ctrl - CONTROL.ACT2 end
 			if ctrl >= CONTROL.ACT1 then
 				if self.eventManager then
-					local missile = Missile:new({
-						id = 'missile',
-						x = self.x + 18,
-						y = self.y - 10,
-						w = 4,
-						h = 10,
-						speed = 50,
-						vector = moveVectors[MOVE.NONE]:copy(),
-						health = 100
-					}, IRectFill)
-					self.eventManager:addObjects(missile)
+					if self._SHIP_FIRE_DELAY and self._SHIP_FIRE_DELAY >= 0 then
+						self._SHIP_FIRE_DELAY = self._SHIP_FIRE_DELAY - dt
+					else
+						local missile = Missile:new({
+							id = 'missile',
+							x = self.x + 18,
+							y = self.y - 10,
+							w = 4,
+							h = 10,
+							speed = 50,
+							vector = moveVectors[MOVE.NONE]:copy(),
+							health = 100
+						}, IRectFill)
+						self.eventManager:addObjects(missile)
+						self._SHIP_FIRE_DELAY = 0.3
+					end
 				end
 			end
 		end
