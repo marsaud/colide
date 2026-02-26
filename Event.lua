@@ -4,13 +4,6 @@ local _, _, EVENT, _ = require("Const")()
 -- local debug = require("Debug")()
 
 local EventManager = Class({
-  init = function (self, objects)
-    self._listeners = {}
-    self._objects = objects
-    for _, e in pairs(EVENT) do
-      self:addListeners(e, table.unpack(self._objects))
-    end
-  end,
   tick = function (self, dt)
     local ctrl = pullControl()
     return self:fire(EVENT.CONTROL, ctrl, dt)
@@ -18,26 +11,20 @@ local EventManager = Class({
   getObjects = function (self)
     return self._objects
   end,
-  addObject = function (self, o)
-    for _, e in pairs(EVENT) do
-      self:addListeners(e, o)
-    end
-    table.insert(self._objects, o)
-  end,
-  addListeners = function (self, e, ...)
-    if not self._listeners[e] then
-      self._listeners[e] = {}
+  addObjects = function (self, ...)
+    if not self._objects then
+      self._objects = {}
     end
     local arg = {...}
-    for _, l in ipairs(arg) do
-      table.insert(self._listeners[e], l)
-      l.eventManager = self
+    for _, o in ipairs(arg) do
+      table.insert(self._objects, o)
+      o.eventManager = self
     end
   end,
   fire = function (self, e, ...)
-    local ls = self._listeners[e] or {}
+    local objs = self._objects or {}
     local effect = false
-    for _, l in ipairs(ls) do
+    for _, l in ipairs(objs) do
       effect = l:fire(e, ...) or effect
     end
     if e == EVENT.MOVE and #{...} <= 1 then
@@ -49,17 +36,11 @@ local EventManager = Class({
     o._EV_DELETE = true
   end,
   purge = function (self)
-    for _, list in pairs(self._listeners) do
-      for i, v in ipairs(list) do
-        if v._EV_DELETE then
-          table.remove(list, i)
-        end
-      end
-    end
-    for i, _o in ipairs(self._objects) do
-      if _o._EV_DELETE then
-        table.remove(self._objects, i)
-        _o.eventManager = nil
+    local objs = self._objects or {}
+    for i, o in ipairs(objs) do
+      if o._EV_DELETE then
+        table.remove(objs, i)
+        o.eventManager = nil
       end
     end
   end

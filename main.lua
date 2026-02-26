@@ -447,10 +447,10 @@ function love.load()
 						w = 4,
 						h = 10,
 						speed = 50,
-						vector = moveVectors[MOVE.NONE],
+						vector = moveVectors[MOVE.NONE]:copy(),
 						health = 100
 					}, IRectFill)
-					self.eventManager:addObject(missile)
+					self.eventManager:addObjects(missile)
 				end
 			end
 		end
@@ -474,7 +474,7 @@ function love.load()
 
 	for _, b in ipairs(boots) do
 		local c = EventManager:new()
-		c:init(b())
+		c:addObjects(table.unpack(b()))
 		table.insert(contexts, c)
 	end
 
