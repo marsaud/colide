@@ -22,7 +22,7 @@
 		_,
 		ICollidePusher = require("Collide")()
 	local EventManager, IEventCatcher = require("Event")()
-	local _, _, _, Vector = require("Couple")()
+	local _, _, Point, Vector = require("Couple")()
 -- END IMPORTS
 
 -- DRAW INTERFACES
@@ -158,6 +158,8 @@ local ICollapse = {
 }
 
 local contexts = {}
+local pause
+local contextIndex
 
 function love.load()
 	local Rect2D = AGameUIObject:new(IMove, ICollidePusher)
@@ -166,8 +168,9 @@ function love.load()
 	local Rect1DY = AGameUIObject:new(IMoveY, ICollidePusher)
 	local RectStatic = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollidePusher, IRectFill)
 
-	-- GAME OBJECTS
-	local function boot1()
+	local boots = {}
+
+	table.insert(boots, function ()
 		local rect1 = Rect2D:new({
 			id = 'red',
 			x = 25,
@@ -278,9 +281,9 @@ function love.load()
 		}
 
 		return objects
-	end
+	end)
 
-	local function boot2()
+	table.insert(boots, function ()
 		local Bat = AGameUIObject:new(IMoveX, ICollideBlocker, ICollidePusher)
 		local Brick = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollapse, IRectFill)
 		local Ball = Rect2D:new(AutoBounce, IRectLine, ICollapse,
@@ -365,20 +368,79 @@ function love.load()
 		end
 
 		return objects
+	end)
+
+	table.insert(boots, function ()
+		local Vessel = {
+			vesselStateIndex = 1,
+			vesselStates = {
+				MOVE.RIGHT,
+				MOVE.DOWN,
+				MOVE.LEFT,
+				MOVE.DOWN,
+			},
+			getMove = function (self, _, _, _)
+				if not self.vesselOrigin then
+					self.vesselOrigin = Point:new({x = self.x, y = self.y})
+				end
+				if self.vesselStateIndex == 1 then
+					local delta = self.x - self.vesselOrigin.x
+					if delta >= 100 then
+						self.vesselStateIndex = 2
+					end
+				end
+				if self.vesselStateIndex == 2 then
+					local delta = self.y - self.vesselOrigin.y
+					if delta >= 50 then
+						self.vesselStateIndex = 3
+					end
+				end
+				if self.vesselStateIndex == 3 then
+					local delta = self.x - self.vesselOrigin.x
+					if delta <= 0 then
+						self.vesselStateIndex = 4
+					end
+				end
+				if self.vesselStateIndex == 4 then
+					local delta = self.y - self.vesselOrigin.y
+					if delta >= 100 then
+						self.vesselStateIndex = 1
+						self.vesselOrigin = Point:new({x = self.x, y = self.y})
+					end
+				end
+				return moveVectors[self.vesselStates[self.vesselStateIndex]]:copy()
+			end
+		}
+
+		local objects = {}
+
+		for x = 20, 620, 50 do
+			for y = 50, 300, 50 do
+				table.insert(objects, Rect2D:new({
+					x = x,
+					y = y,
+					w = 40,
+					h = 40,
+					speed = 10,
+					vector = moveVectors[MOVE.NONE]:copy()
+				}, IRectLine, Vessel))
+			end
+		end
+
+		return objects
+	end)
+
+	for _, b in ipairs(boots) do
+		local c = EventManager:new()
+		c:init(b())
+		table.insert(contexts, c)
 	end
 
-	-- END GAME OBJECTS
-	local context1 = EventManager:new()
-	context1:init(boot1())
-	contexts[1] = context1
-
-	local context2 = EventManager:new()
-	context2:init(boot2())
-	contexts[2] = context2
+	contextIndex = #contexts
+	pause = false
 end
 
-local pause = false
-local contextIndex = 1
+
 local currentContextIndex
 
 function love.update(dt)
