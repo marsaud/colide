@@ -1,5 +1,5 @@
 require("math-ext")
-local Class = require("POO")()
+local Class = require("OOP")()
 
 local Couple
 Couple = Class({

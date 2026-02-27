@@ -1,4 +1,4 @@
-local Class = require("POO")()
+local Class = require("OOP")()
 local pullControl = require("Control")()
 local _, _, EVENT, _ = require("Const")()
 -- local debug = require("Debug")()

@@ -5,7 +5,7 @@
 -- IMPORTS
 	-- local debug = require("Debug")()
 	require("math-ext")
-	local Class = require("POO")()
+	local Class = require("OOP")()
 	local COLOR, CONTROL, _, MOVE = require("Const")()
 	local
 		moveVectors,
