@@ -32,18 +32,18 @@ local IAMove = {
 		if ctrl >= CONTROL.ACT1 then ctrl = ctrl - CONTROL.ACT1 end
 		if ctrl >= CONTROL.UP then
 			ctrl = ctrl - CONTROL.UP
-			self.vector = self.vector + moveVectors[CONTROL.UP]
+			self.vector = self.vector + moveVectors[MOVE.UP]
 		end
 		if ctrl >= CONTROL.DOWN then
 			ctrl = ctrl - CONTROL.DOWN
-			self.vector = self.vector + moveVectors[CONTROL.DOWN]
+			self.vector = self.vector + moveVectors[MOVE.DOWN]
 		end
 		if ctrl >= CONTROL.LEFT then
 			ctrl = ctrl -CONTROL.LEFT
-			self.vector = self.vector + moveVectors[CONTROL.LEFT]
+			self.vector = self.vector + moveVectors[MOVE.LEFT]
 		end
 		if ctrl >= CONTROL.RIGHT then
-			self.vector = self.vector + moveVectors[CONTROL.RIGHT]
+			self.vector = self.vector + moveVectors[MOVE.RIGHT]
 		end
 		if self.getMove then
 			self.vector = self:getMove(self.vector, ctrl, dt)

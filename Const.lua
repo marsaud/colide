@@ -9,11 +9,9 @@ local CONTROL = {
 	NONE = 0
 }
 
-local MOVE = CONTROL
-
 local COLOR = {
-	WHITE = {1, 1, 1},
-	BLACK = {0, 0, 0},
+	WHITE = { 1, 1, 1 },
+	BLACK = { 0, 0, 0 },
 	RED = { 1, 0, 0 },
 	GREEN = { 0, 1, 0 },
 	BLUE = { 0, 0, 1 },
@@ -29,6 +27,14 @@ local EVENT = {
   MOVE = 'resolve',
   COMMIT = 'commit',
   HIT = 'hit'
+}
+
+local MOVE = {
+	UP = 'up',
+	DOWN = 'down',
+	LEFT = 'left',
+	RIGHT = 'right',
+	NONE = 'none'
 }
 
 return function () return COLOR, CONTROL, EVENT, MOVE end
