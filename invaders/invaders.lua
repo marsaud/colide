@@ -1,5 +1,8 @@
+local bit = bit
+
 local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
 local _, CONTROL, _, MOVE = require("Const")()
+local _, testControl = require("Control")()
 local _, Point, _, _ = require("Couple")()
 local _, IRectFill, IRectLine = require("Draw")()
 local moveVectors, _, IMove, _, IMoveX, IMoveY = require("Move")()
@@ -74,9 +77,7 @@ local function invaders ()
 		}, IMoveY, ICollidePusher, ICollapse)
 
 		local shipFire = function (self, ctrl, dt)
-			if ctrl >= CONTROL.ACT3 then ctrl = ctrl - CONTROL.ACT3 end
-			if ctrl >= CONTROL.ACT2 then ctrl = ctrl - CONTROL.ACT2 end
-			if ctrl >= CONTROL.ACT1 then
+			if testControl(ctrl, CONTROL.ACT1) then
 				if self.eventManager then
 					if self._SHIP_FIRE_DELAY and self._SHIP_FIRE_DELAY >= 0 then
 						self._SHIP_FIRE_DELAY = self._SHIP_FIRE_DELAY - dt

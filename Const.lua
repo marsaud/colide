@@ -1,10 +1,10 @@
 local CONTROL = {
-	ACT3 = 1000000,
-	ACT2 = 100000,
-	ACT1 = 10000,
-	UP = 1000,
-	DOWN = 100,
-	LEFT = 10,
+	ACT3 = 64,
+	ACT2 = 32,
+	ACT1 = 16,
+	UP = 8,
+	DOWN = 4,
+	LEFT = 2,
 	RIGHT = 1,
 	NONE = 0
 }

@@ -1,7 +1,9 @@
+local bit = bit
 -- IMPORTS
 require("math-ext")
 local Coord, _, _, Vector = require("Couple")()
 local _, CONTROL, EVENT, MOVE = require("Const")()
+local _, testControl = require("Control")()
 -- local debug = require("Debug")()
 -- END IMPORTS
 
@@ -27,22 +29,16 @@ local IAMove = {
 		return self:move(ctrl, dt)
 	end,
 	move = function (self, ctrl, dt)
-		if ctrl >= CONTROL.ACT3 then ctrl = ctrl - CONTROL.ACT3 end
-		if ctrl >= CONTROL.ACT2 then ctrl = ctrl - CONTROL.ACT2 end
-		if ctrl >= CONTROL.ACT1 then ctrl = ctrl - CONTROL.ACT1 end
-		if ctrl >= CONTROL.UP then
-			ctrl = ctrl - CONTROL.UP
+		if testControl(ctrl, CONTROL.UP) then
 			self.vector = self.vector + moveVectors[MOVE.UP]
 		end
-		if ctrl >= CONTROL.DOWN then
-			ctrl = ctrl - CONTROL.DOWN
+		if testControl(ctrl, CONTROL.DOWN) then
 			self.vector = self.vector + moveVectors[MOVE.DOWN]
 		end
-		if ctrl >= CONTROL.LEFT then
-			ctrl = ctrl -CONTROL.LEFT
+		if testControl(ctrl, CONTROL.LEFT) then
 			self.vector = self.vector + moveVectors[MOVE.LEFT]
 		end
-		if ctrl >= CONTROL.RIGHT then
+		if testControl(ctrl, CONTROL.RIGHT) then
 			self.vector = self.vector + moveVectors[MOVE.RIGHT]
 		end
 		if self.getMove then

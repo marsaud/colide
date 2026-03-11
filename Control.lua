@@ -12,6 +12,10 @@ local function pullControl()
 	(love.keyboard.isDown("right") and CONTROL.RIGHT or 0)
 end
 
+local function testControl(state, value)
+	return bit.band(state, value) ~= 0
+end
+
 return function () return
-	pullControl
+	pullControl, testControl
 end
