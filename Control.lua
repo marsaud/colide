@@ -1,4 +1,5 @@
 local love = love
+local bit = bit
 -- IMPORTS
 local _, CONTROL, _, _ = require("Const")()
 -- END IMPORTS
