@@ -54,6 +54,7 @@ local function bricks ()
 		{
 			getHit = function (_, _) return 50 end,
 		})
+		Ball:addPlugin('_hit', ICollapse._hit)
 
 		local bat = Bat:new({
 			id = 'bat',
@@ -77,8 +78,6 @@ local function bricks ()
 			vector = moveVectors[MOVE.NONE]:copy(),
 			color = COLOR.YELLOW
 		}, AutoBounce, IRectLine)
-
-		ball:addPlugin('_hit', ICollapse._hit)
 
 		local objects = {
 			bat,

@@ -100,6 +100,7 @@ local function invaders ()
 		end
 
 		local Ship = AGameUIObject:new(IMoveX, ICollideBlocker, ICollidePusher)
+		Ship:addPlugin('_control', shipFire)
 		local ship = Ship:new({
 			id = 'ship',
 			x = 400,
@@ -109,7 +110,7 @@ local function invaders ()
 			speed = 300,
 			vector = moveVectors[MOVE.NONE]:copy(),
 		}, IRectLine)
-		ship:addPlugin('_control', shipFire)
+
 		table.insert(objects, ship)
 
 		return objects
