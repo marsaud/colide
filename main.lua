@@ -79,6 +79,9 @@ end
 
 function love.keypressed (key)
 	if key == "p" then pause = not pause end
+	if key == "r" then love.event.quit("restart") end
+	if key == "escape" then love.event.quit(0) end
+
 	if key == "c" then contextIndex = contextIndex + 1 end
 	if contextIndex > #contexts then contextIndex = 1 end
 end

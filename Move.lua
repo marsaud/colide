@@ -22,10 +22,7 @@ local IAMove = {
 		self._d = self._c:copy() -- internal destination
 		self.d = self._d:copy() -- visible destination
 	end,
-	control = function (self, ctrl, dt)
-		if self._control then
-			self:_control(ctrl, dt)
-		end
+	_control = function (self, ctrl, dt)
 		return self:move(ctrl, dt)
 	end,
 	move = function (self, ctrl, dt)

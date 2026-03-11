@@ -4,17 +4,24 @@ local PluginManager = {
 		self._plugins = {}
 		self._pluginManagerInit = true
 	end,
-	addPlugin = function (self, id, func)
+	addPlugin = function (self, id, funcOrObj)
 		self:_initPluginManager()
 		if not self._plugins[id] then
 			self._plugins[id] = {}
 		end
-		table.insert(self._plugins[id], func)
+		if type(funcOrObj) == 'table' and not funcOrObj[id] then
+			error('invalid plugin')
+		end
+		table.insert(self._plugins[id], funcOrObj)
 	end,
 	runPlugins = function (self, id, ...)
 		self:_initPluginManager()
-		for _, func in ipairs(self._plugins[id] or {}) do
-			func(...)
+		for _, funcOrObj in ipairs(self._plugins[id] or {}) do
+			if type(funcOrObj) == 'table' and funcOrObj[id] then
+				funcOrObj[id](funcOrObj, ...)
+			elseif type(funcOrObj) == 'function' then
+				funcOrObj(...)
+			end
 		end
 	end
 }

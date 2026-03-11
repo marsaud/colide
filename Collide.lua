@@ -18,6 +18,7 @@ local IACollide = {
     return (self.d.y + self.h) <= o.d.y
   end,
 
+  -- analyse how "o" will react on self on collision
   resolve = function (self, o, ...)
     local effect = false
     local skip = o == self
