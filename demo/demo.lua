@@ -92,7 +92,7 @@ local function demo ()
     speed = 50,
     vector = moveVectors[MOVE.NONE]:copy(),
     color = COLOR.GREEN
-  }, IMoveX, ICollidePusher, IRectLine)
+  })
 
   local rect3 = Rect1DY:new({
     id = 'blue',
@@ -103,7 +103,7 @@ local function demo ()
     speed = 40,
     vector = moveVectors[MOVE.NONE]:copy(),
     color = COLOR.BLUE
-  }, IMoveY, ICollidePusher, IRectLine)
+  })
 
   local rect4 = RectPassive:new({
     id = 'magenta',

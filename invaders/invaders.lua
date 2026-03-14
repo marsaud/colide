@@ -1,3 +1,4 @@
+---@diagnostic disable-next-line: undefined-global
 local bit = bit
 
 local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()

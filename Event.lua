@@ -32,14 +32,17 @@ local EventManager = Class({
     end
     return effect
   end,
+
   delete = function (_, o)
     o._EV_DELETE = true
   end,
+
   purge = function (self)
     local objs = self._objects or {}
     for i, o in ipairs(objs) do
       if o._EV_DELETE then
         table.remove(objs, i)
+        o._EV_DELETE = nil
         o.eventManager = nil
       end
     end

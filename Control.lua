@@ -1,4 +1,6 @@
+---@diagnostic disable-next-line: undefined-global
 local love = love
+---@diagnostic disable-next-line: undefined-global
 local bit = bit
 -- IMPORTS
 local _, CONTROL, _, _ = require("Const")()

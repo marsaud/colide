@@ -1,3 +1,5 @@
+require("workHelpers")
+
 local function debug (...)
   local arg = {...}
   local r = {}
@@ -13,7 +15,7 @@ local function debug (...)
     end
     table.insert(r, i)
   end
-  print(unpack(r))
+  print(table.unpack(r))
 end
 
 local function noop () end

@@ -1,3 +1,4 @@
+---@diagnostic disable-next-line: undefined-global
 local bit = bit
 -- IMPORTS
 require("math-ext")

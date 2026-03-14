@@ -1,6 +1,6 @@
 -- CONFORT TWEAKS
+	require("workHelpers")
 	local love = love
-	table.unpack = unpack
 -- END CONFORT TWEAKS
 
 -- IMPORTS
