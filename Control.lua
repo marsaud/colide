@@ -21,6 +21,7 @@ end
 
 local IAControl = {
 	control = function (self, ctrl, dt)
+		if self.group then return end
 		if self.runPlugins then
 			self:runPlugins('_control', self, ctrl, dt)
 		end

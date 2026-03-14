@@ -16,7 +16,25 @@ local EventManager = Class({
   getObjects = function (self)
     return self._objects
   end,
+
   addObjects = function (self, ...)
+    if not self._objects then
+      self._objects = {}
+    end
+    local arg = {...}
+    for _, o in ipairs(arg) do
+      if o.group then
+        error("EventManager: don not add objects belonging to groups")
+      end
+      table.insert(self._objects, o)
+      if o._group then
+        self:_addObjects(table.unpack(o._group))
+      end
+      o.eventManager = self
+    end
+  end,
+
+  _addObjects = function (self, ...)
     if not self._objects then
       self._objects = {}
     end
@@ -26,6 +44,38 @@ local EventManager = Class({
       o.eventManager = self
     end
   end,
+
+  removeObjects = function (self, ...)
+    local args = {...}
+    local objs = self._objects or {}
+    for _, v in ipairs(args) do
+      if not v.group then
+        for i, o in ipairs(objs) do
+          if v == o then
+              if o._group then
+                self:_removeObjects(table.unpack(o._group))
+              end
+              table.remove(objs, i)
+              o.eventManager = nil
+          end
+        end
+      end
+    end
+  end,
+
+  _removeObjects = function (self, ...)
+    local args = {...}
+    local objs = self._objects or {}
+    for _, v in ipairs(args) do
+      for i, o in ipairs(objs) do
+        if v == o then
+            table.remove(objs, i)
+            o.eventManager = nil
+        end
+      end
+    end
+  end,
+
   fire = function (self, e, ...)
     local objs = self._objects or {}
     local effect = false

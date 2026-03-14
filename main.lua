@@ -52,6 +52,9 @@ function love.load()
 	local invaders = require("invaders/invaders")
 	table.insert(boots, invaders)
 
+	local groupDemo = require("groupDemo/groupDemo")
+	table.insert(boots, groupDemo)
+
 	for _, b in ipairs(boots) do
 		local c = EventManager:new()
 		c:addObjects(table.unpack(b()))
