@@ -72,9 +72,7 @@ function love.update(dt)
 end
 
 function love.draw()
-	for _, o in ipairs(contexts[currentContextIndex]:getObjects()) do
-		o:draw()
-	end
+	contexts[currentContextIndex]:draw()
 end
 
 function love.keypressed (key)

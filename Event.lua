@@ -8,6 +8,11 @@ local EventManager = Class({
     local ctrl = pullControl()
     return self:fire(EVENT.CONTROL, ctrl, dt)
   end,
+
+  draw = function (self)
+    return self:fire(EVENT.DRAW)
+  end,
+
   getObjects = function (self)
     return self._objects
   end,
@@ -25,7 +30,9 @@ local EventManager = Class({
     local objs = self._objects or {}
     local effect = false
     for _, l in ipairs(objs) do
-      effect = l:fire(e, ...) or effect
+      if l.fire then
+        effect = l:fire(e, ...) or effect
+      end
     end
     if e == EVENT.MOVE and #{...} <= 1 then
       self:fire(EVENT.COMMIT)

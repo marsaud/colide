@@ -26,7 +26,8 @@ local EVENT = {
   CONTROL ='control',
   MOVE = 'resolve',
   COMMIT = 'commit',
-  HIT = 'hit'
+  HIT = 'hit',
+  DRAW = 'draw'
 }
 
 local MOVE = {
