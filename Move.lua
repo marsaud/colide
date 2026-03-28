@@ -18,32 +18,20 @@ local moveVectors = {
 
 local IAMove = {
 	IAMove = true,
+
 	_new = function (self)
 		self._c = Coord:new({x = self.x, y = self.y})  -- internal coord
 		self._d = self._c:copy() -- internal destination
 		self.d = self._d:copy() -- visible destination
 	end,
+
 	_control = function (self, ctrl, dt)
 		return self:move(ctrl, dt)
 	end,
+
 	move = function (self, ctrl, dt)
-		if testControl(ctrl, CONTROL.UP) then
-			self.vector = self.vector + moveVectors[MOVE.UP]
-		end
-		if testControl(ctrl, CONTROL.DOWN) then
-			self.vector = self.vector + moveVectors[MOVE.DOWN]
-		end
-		if testControl(ctrl, CONTROL.LEFT) then
-			self.vector = self.vector + moveVectors[MOVE.LEFT]
-		end
-		if testControl(ctrl, CONTROL.RIGHT) then
-			self.vector = self.vector + moveVectors[MOVE.RIGHT]
-		end
-		if self.getMove then
-			self.vector = self:getMove(self.vector, ctrl, dt)
-		end
 		if self._move then
-			self:_move(ctrl, dt)
+			self.vector = self:_move(self.vector, ctrl, dt)
 		end
 		self.vector = (self.vector * (self.speed or 1) * dt)
 		self._d = self._c + self.vector
@@ -54,10 +42,16 @@ local IAMove = {
 			end
 		end
 	end,
-	commit = function (self, next, ...)
+
+	commit = function (self)
+		if self.group then return end
 		if self._commit then
 			self:_commit()
 		end
+		return true
+	end,
+
+	_commit = function (self)
 		if self.d ~= self._d:round() then
 			self._d = self.d:copy()
 		end
@@ -65,34 +59,72 @@ local IAMove = {
 		self.x = math.round(self._c.x)
 		self.y = math.round(self._c.y)
 		self.vector = self:_initVector()
-		if next then
-			return next:commit(...)
-		end
-		return true
 	end,
+
 	_initVector = function (_)
 		return moveVectors[MOVE.NONE]:copy()
-	end
+	end,
+}
+
+local IMove = {
+	_move = function (_, v, ctrl, _)
+		if v == nil then
+			v = moveVectors[MOVE.NONE]
+		else
+			v = v:copy()
+		end
+		if testControl(ctrl, CONTROL.UP) then
+			v = v + moveVectors[MOVE.UP]
+		end
+		if testControl(ctrl, CONTROL.DOWN) then
+			v = v + moveVectors[MOVE.DOWN]
+		end
+		if testControl(ctrl, CONTROL.LEFT) then
+			v = v + moveVectors[MOVE.LEFT]
+		end
+		if testControl(ctrl, CONTROL.RIGHT) then
+			v = v + moveVectors[MOVE.RIGHT]
+		end
+		return v
+	end,
 }
 
 local IMoveX = {
-	_move = function (self, _, _)
-		self.vector.y = 0
+	_move = function (_, v, ctrl, _)
+		v = v:copy()
+		if testControl(ctrl, CONTROL.LEFT) then
+			v = v + moveVectors[MOVE.LEFT]
+		end
+		if testControl(ctrl, CONTROL.RIGHT) then
+			v = v + moveVectors[MOVE.RIGHT]
+		end
+		return v
 	end,
 }
 
 local IMoveY = {
-	_move = function (self, _, _)
-		self.vector.x = 0
+	_move = function (_, v, ctrl, _)
+		v = v:copy()
+		if testControl(ctrl, CONTROL.UP) then
+			v = v + moveVectors[MOVE.UP]
+		end
+		if testControl(ctrl, CONTROL.DOWN) then
+			v = v + moveVectors[MOVE.DOWN]
+		end
+		return v
 	end,
 }
 
-local IMove = {}
-
 local IMoveNot = {
-	_move = function (self)
-		self.vector = Vector:new({ x = 0, y = 0 })
+	_move = function (self, _, _, _)
+		return moveVectors[MOVE.NONE]:copy()
 	end,
+}
+
+local IMoveGroup = {
+	_move = function (self, v, ctrl, dt)
+		return self.group:_move(v, ctrl, dt)
+	end
 }
 
 return function () return
@@ -101,5 +133,6 @@ return function () return
 	IMove,
 	IMoveNot,
 	IMoveX,
-	IMoveY
+	IMoveY,
+	IMoveGroup
 end

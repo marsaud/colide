@@ -33,7 +33,7 @@ local function demo ()
       moveVectors[MOVE.DOWN],
       moveVectors[MOVE.LEFT],
     },
-    getMove = function (self, _, _, dt)
+    _move = function (self, _, _, dt)
       self.stateTimer = self.stateTimer + dt
       if self.stateTimer > 2 then
         self.stateTimer = 0
@@ -67,7 +67,7 @@ local function demo ()
         return false
       end
     end,
-    getMove = function (self, _, _, _)
+    _move = function (self, _, _, _)
       return self.autoVector:copy()
     end
   }

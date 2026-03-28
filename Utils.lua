@@ -9,9 +9,7 @@ local PluginManager = require("Plugin")()
 local AGameUIObject = Class(IAControl, IADraw, IAMove, IACollide, IEventCatcher, PluginManager)
 
 local Group = Class(
-  IAControl,
   IEventCatcher,
-  IADraw,
   {
     add = function (self, ...)
       if not self._group then
@@ -42,13 +40,6 @@ local Group = Class(
       end
       return o
     end,
-    _control = function (self, ctrl, dt)
-      for _, o in ipairs(self._group) do
-        if o._control then
-          o:_control(ctrl, dt)
-        end
-      end
-    end
   })
 
 return function () return AGameUIObject, Group end

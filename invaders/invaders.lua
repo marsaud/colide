@@ -1,6 +1,3 @@
----@diagnostic disable-next-line: undefined-global
-local bit = bit
-
 local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
 local _, CONTROL, _, MOVE = require("Const")()
 local _, testControl = require("Control")()
@@ -21,7 +18,7 @@ local function invaders ()
 				MOVE.LEFT,
 				MOVE.DOWN,
 			},
-			getMove = function (self, _, _, _)
+			_move = function (self, _, _, _)
 				if not self.vesselOrigin then
 					self.vesselOrigin = Point:new({x = self.x, y = self.y})
 				end
@@ -68,14 +65,14 @@ local function invaders ()
 					speed = 10,
 					vector = moveVectors[MOVE.NONE]:copy(),
 					getHit = function (_, _) return 100 end,
-				}, IMove, ICollidePusher, IRectLine, ICollapse, Vessel))
+				}, ICollidePusher, IRectLine, ICollapse, Vessel))
 			end
 		end
 
 		local Missile = AGameUIObject:new({
 			getHit = function (_, _) return 100 end,
-			getMove = function () return moveVectors[MOVE.UP] end
-		}, IMoveY, ICollidePusher, ICollapse)
+			_move = function () return moveVectors[MOVE.UP] end
+		}, ICollidePusher, ICollapse)
 
 		local shipFire = function (self, ctrl, dt)
 			if testControl(ctrl, CONTROL.ACT1) then

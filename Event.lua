@@ -24,7 +24,7 @@ local EventManager = Class({
     local arg = {...}
     for _, o in ipairs(arg) do
       if o.group then
-        error("EventManager: don not add objects belonging to groups")
+        error("EventManager: do not add objects belonging to groups")
       end
       table.insert(self._objects, o)
       if o._group then
@@ -95,6 +95,7 @@ local EventManager = Class({
   end,
 
   purge = function (self)
+    -- rewrite relying on private methods handling groups
     local objs = self._objects or {}
     for i, o in ipairs(objs) do
       if o._EV_DELETE then
