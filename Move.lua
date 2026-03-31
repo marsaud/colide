@@ -1,12 +1,11 @@
+-- local debug = require("Debug")()
 ---@diagnostic disable-next-line: undefined-global
 local bit = bit
--- IMPORTS
+
 require("math-ext")
 local Coord, _, _, Vector = require("Couple")()
 local _, CONTROL, EVENT, MOVE = require("Const")()
 local _, testControl = require("Control")()
--- local debug = require("Debug")()
--- END IMPORTS
 
 local moveVectors = {
 	[MOVE.UP] = Vector:new({ x = 0, y = -1 }),
@@ -29,9 +28,13 @@ local IAMove = {
 		return self:move(ctrl, dt)
 	end,
 
-	move = function (self, ctrl, dt)
+	move = function (self, ctrl, dt, v)
 		if self._move then
-			self.vector = self:_move(self.vector, ctrl, dt)
+			self.vector = self:_move(ctrl, dt)
+		end
+		if v then
+			v = v:copy()
+			self.vector = self.vector + v
 		end
 		self.vector = (self.vector * (self.speed or 1) * dt)
 		self._d = self._c + self.vector
@@ -67,64 +70,60 @@ local IAMove = {
 }
 
 local IMove = {
-	_move = function (_, v, ctrl, _)
-		if v == nil then
-			v = moveVectors[MOVE.NONE]
-		else
-			v = v:copy()
+	_move = function (self, ctrl, _)
+		if self.vector == nil then
+			self.vector = moveVectors[MOVE.NONE]:copy()
 		end
 		if testControl(ctrl, CONTROL.UP) then
-			v = v + moveVectors[MOVE.UP]
+			self.vector = self.vector + moveVectors[MOVE.UP]
 		end
 		if testControl(ctrl, CONTROL.DOWN) then
-			v = v + moveVectors[MOVE.DOWN]
+			self.vector = self.vector + moveVectors[MOVE.DOWN]
 		end
 		if testControl(ctrl, CONTROL.LEFT) then
-			v = v + moveVectors[MOVE.LEFT]
+			self.vector = self.vector + moveVectors[MOVE.LEFT]
 		end
 		if testControl(ctrl, CONTROL.RIGHT) then
-			v = v + moveVectors[MOVE.RIGHT]
+			self.vector = self.vector + moveVectors[MOVE.RIGHT]
 		end
-		return v
+		return self.vector
 	end,
 }
 
 local IMoveX = {
-	_move = function (_, v, ctrl, _)
-		v = v:copy()
+	_move = function (self, ctrl, _)
+		if self.vector == nil then
+			self.vector = moveVectors[MOVE.NONE]:copy()
+		end
 		if testControl(ctrl, CONTROL.LEFT) then
-			v = v + moveVectors[MOVE.LEFT]
+			self.vector = self.vector + moveVectors[MOVE.LEFT]
 		end
 		if testControl(ctrl, CONTROL.RIGHT) then
-			v = v + moveVectors[MOVE.RIGHT]
+			self.vector = self.vector + moveVectors[MOVE.RIGHT]
 		end
-		return v
+		return self.vector
 	end,
 }
 
 local IMoveY = {
-	_move = function (_, v, ctrl, _)
-		v = v:copy()
+	_move = function (self, ctrl, _)
+		if self.vector == nil then
+			self.vector = moveVectors[MOVE.NONE]:copy()
+		end
 		if testControl(ctrl, CONTROL.UP) then
-			v = v + moveVectors[MOVE.UP]
+			self.vector = self.vector + moveVectors[MOVE.UP]
 		end
 		if testControl(ctrl, CONTROL.DOWN) then
-			v = v + moveVectors[MOVE.DOWN]
+			self.vector = self.vector + moveVectors[MOVE.DOWN]
 		end
-		return v
+		return self.vector
 	end,
 }
 
 local IMoveNot = {
-	_move = function (self, _, _, _)
+	_move = function (self, _, _)
 		return moveVectors[MOVE.NONE]:copy()
 	end,
-}
-
-local IMoveGroup = {
-	_move = function (self, v, ctrl, dt)
-		return self.group:_move(v, ctrl, dt)
-	end
 }
 
 return function () return
@@ -133,6 +132,5 @@ return function () return
 	IMove,
 	IMoveNot,
 	IMoveX,
-	IMoveY,
-	IMoveGroup
+	IMoveY
 end

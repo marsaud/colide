@@ -2,9 +2,8 @@
 local love = love
 ---@diagnostic disable-next-line: undefined-global
 local bit = bit
--- IMPORTS
+
 local _, CONTROL, _, _ = require("Const")()
--- END IMPORTS
 
 local function pullControl()
 	return
@@ -21,7 +20,6 @@ end
 
 local IAControl = {
 	control = function (self, ctrl, dt)
-		if self.group then return end
 		if self.runPlugins then
 			self:runPlugins('_control', self, ctrl, dt)
 		end

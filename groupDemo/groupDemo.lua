@@ -1,3 +1,4 @@
+-- local debug = require("Debug")()
 local Class = require("OOP")()
 local _, IEventCatcher = require("Event")()
 local COLOR, _, _, MOVE = require("Const")()
@@ -11,8 +12,7 @@ local
 		IMove,
 		IMoveNot,
 		IMoveX,
-		IMoveY,
-    IMoveGroup = require("Move")()
+		IMoveY = require("Move")()
 	local
 		IACollide,
 		ICollideBlocker,
@@ -83,9 +83,10 @@ local function demo ()
     IMove,
     {
       _control = function (self, ctrl, dt)
+        local v = self:_move(ctrl, dt)
         for _, o in ipairs(self._group) do
-          if o._control then
-            o:_control(ctrl, dt)
+          if o.move then
+            o:move(ctrl, dt, v)
           end
         end
       end,
@@ -95,6 +96,7 @@ local function demo ()
             o:_commit()
           end
         end
+        self.vector = self:_initVector()
       end,
     }
   )
@@ -116,8 +118,9 @@ local function demo ()
       w = 50,
       h = 50,
       speed = 120,
+      vector = moveVectors[MOVE.NONE]:copy(),
       color = COLOR.RED
-    }, IMoveGroup),
+    }),
     RectNoMove:new({
       id = 'red',
       x = 25,
@@ -125,8 +128,9 @@ local function demo ()
       w = 50,
       h = 50,
       speed = 120,
+      vector = moveVectors[MOVE.NONE]:copy(),
       color = COLOR.RED
-    }, IMoveGroup),
+    }),
     RectNoMove:new({
       id = 'red',
       x = 125,
@@ -134,8 +138,9 @@ local function demo ()
       w = 50,
       h = 50,
       speed = 120,
+      vector = moveVectors[MOVE.NONE]:copy(),
       color = COLOR.RED
-    }, IMoveGroup)
+    })
   )
 
   -- local rect2 = Rect1DX:new({
