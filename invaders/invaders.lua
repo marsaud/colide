@@ -18,7 +18,7 @@ local function invaders ()
 				MOVE.LEFT,
 				MOVE.DOWN,
 			},
-			_move = function (self, _, _, _)
+			_move = function (self, _, _)
 				if not self.vesselOrigin then
 					self.vesselOrigin = Point:new({x = self.x, y = self.y})
 				end
@@ -71,7 +71,7 @@ local function invaders ()
 
 		local Missile = AGameUIObject:new({
 			getHit = function (_, _) return 100 end,
-			_move = function () return moveVectors[MOVE.UP] end
+			_move = function (_, _, _) return moveVectors[MOVE.UP] end
 		}, ICollidePusher, ICollapse)
 
 		local shipFire = function (self, ctrl, dt)

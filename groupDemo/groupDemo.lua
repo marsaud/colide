@@ -29,27 +29,30 @@ local function demo ()
   local Rect1DY = AGameUIObject:new(IMoveY, ICollidePusher, IRectLine)
   local RectStatic = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollidePusher, IRectFill)
 
-  local AutoMove = {
-    stateIndex = 1,
-    stateTimer = 0,
-    states = {
-      moveVectors[MOVE.UP],
-      moveVectors[MOVE.RIGHT],
-      moveVectors[MOVE.DOWN],
-      moveVectors[MOVE.LEFT],
-    },
-    _move = function (self, _, _, dt)
-      self.stateTimer = self.stateTimer + dt
-      if self.stateTimer > 2 then
-        self.stateTimer = 0
-        self.stateIndex = self.stateIndex + 1
-        if self.stateIndex > #self.states then
-          self.stateIndex = 1
+  local autoMove = function (time)
+    local AutoMove = {
+      stateIndex = 1,
+      stateTimer = 0,
+      states = {
+        moveVectors[MOVE.UP],
+        moveVectors[MOVE.RIGHT],
+        moveVectors[MOVE.DOWN],
+        moveVectors[MOVE.LEFT],
+      },
+      _move = function (self, _, dt)
+        self.stateTimer = self.stateTimer + dt
+        if self.stateTimer > 0.10 then
+          self.stateTimer = 0
+          self.stateIndex = self.stateIndex + 1
+          if self.stateIndex > #self.states then
+            self.stateIndex = 1
+          end
         end
+        return self.states[self.stateIndex]:copy()
       end
-      return self.states[self.stateIndex]:copy()
-    end
-  }
+    }
+    return AutoMove
+  end
 
   local AutoBounce = {
     autoVector = moveVectors[MOVE.UP]:copy() + moveVectors[MOVE.RIGHT]:copy(),
@@ -79,24 +82,18 @@ local function demo ()
 
   local ControlGroup = Group:new(
     IAControl,
-    IAMove,
     IMove,
     {
       _control = function (self, ctrl, dt)
-        local v = self:_move(ctrl, dt)
+        local v = self:_move(ctrl, dt) * (self.speed or 0) * dt
         for _, o in ipairs(self._group) do
           if o.move then
-            o:move(ctrl, dt, v)
+            o:move(ctrl, dt, v, self.speed)
           end
         end
       end,
-      _commit = function (self)
-        for _, o in ipairs(self._group) do
-          if o._commit then
-            o:_commit()
-          end
-        end
-        self.vector = self:_initVector()
+      commit = function (self)
+        self.vector = moveVectors[MOVE.NONE]:copy()
       end,
     }
   )
@@ -106,7 +103,7 @@ local function demo ()
     y = 0,
     w = 0,
     h = 0,
-    speed = 120,
+    speed = 240,
     vector = moveVectors[MOVE.NONE]:copy()
   })
 
@@ -117,30 +114,30 @@ local function demo ()
       y = 300,
       w = 50,
       h = 50,
-      speed = 120,
+      speed = 360,
       vector = moveVectors[MOVE.NONE]:copy(),
       color = COLOR.RED
-    }),
+    }, autoMove(0.10)),
     RectNoMove:new({
-      id = 'red',
+      id = 'green',
       x = 25,
       y = 100,
       w = 50,
       h = 50,
-      speed = 120,
+      speed = 90,
       vector = moveVectors[MOVE.NONE]:copy(),
-      color = COLOR.RED
-    }),
+      color = COLOR.GREEN
+    }, autoMove(1)),
     RectNoMove:new({
-      id = 'red',
+      id = 'blue',
       x = 125,
       y = 100,
       w = 50,
       h = 50,
-      speed = 120,
+      speed = 150,
       vector = moveVectors[MOVE.NONE]:copy(),
-      color = COLOR.RED
-    })
+      color = COLOR.BLUE
+    }, autoMove(0.20))
   )
 
   -- local rect2 = Rect1DX:new({

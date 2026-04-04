@@ -15,6 +15,14 @@ local moveVectors = {
 	[MOVE.NONE] = Vector:new({ x = 0, y = 0 })
 }
 
+--[[
+	_move(
+		self
+		ctrl: (number) control bit mask
+		dt: (number) love provided delta time
+	)
+]]
+
 local IAMove = {
 	IAMove = true,
 
@@ -30,13 +38,12 @@ local IAMove = {
 
 	move = function (self, ctrl, dt, v)
 		if self._move then
-			self.vector = self:_move(ctrl, dt)
+			self.vector = self:_move(ctrl, dt) * (self.speed or 0) * dt
 		end
 		if v then
 			v = v:copy()
 			self.vector = self.vector + v
 		end
-		self.vector = (self.vector * (self.speed or 1) * dt)
 		self._d = self._c + self.vector
 		self.d = self._d:round()
 		if self.eventManager then
@@ -47,7 +54,6 @@ local IAMove = {
 	end,
 
 	commit = function (self)
-		if self.group then return end
 		if self._commit then
 			self:_commit()
 		end
