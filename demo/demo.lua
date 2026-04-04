@@ -2,24 +2,12 @@ local COLOR, _, _, MOVE = require("Const")()
 local AGameUIObject = require("Utils")()
 local _, _, _, Vector = require("Couple")()
 local _, IRectFill, IRectLine = require("Draw")()
-local
-		moveVectors,
-		_,
-		IMove,
-		IMoveNot,
-		IMoveX,
-		IMoveY = require("Move")()
-	local
-		_,
-		ICollideBlocker,
-		_,
-		_,
-		_,
-		ICollidePusher = require("Collide")()
+local moveVectors, _, IMove, IMoveNot, IMoveX, IMoveY = require("Move")()
+local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
 
-local function demo ()
+local function demo()
   local Rect2D = AGameUIObject:new(IMove, ICollidePusher, IRectLine)
-  local RectPassive = AGameUIObject:new (IMoveNot, ICollidePusher, IRectLine)
+  local RectPassive = AGameUIObject:new(IMoveNot, ICollidePusher, IRectLine)
   local Rect1DX = AGameUIObject:new(IMoveX, ICollidePusher, IRectLine)
   local Rect1DY = AGameUIObject:new(IMoveY, ICollidePusher, IRectLine)
   local RectStatic = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollidePusher, IRectFill)
@@ -33,7 +21,7 @@ local function demo ()
       moveVectors[MOVE.DOWN],
       moveVectors[MOVE.LEFT],
     },
-    _move = function (self, _, dt)
+    _move = function(self, _, dt)
       self.stateTimer = self.stateTimer + dt
       if self.stateTimer > 2 then
         self.stateTimer = 0
@@ -43,12 +31,12 @@ local function demo ()
         end
       end
       return self.states[self.stateIndex]:copy()
-    end
+    end,
   }
 
   local AutoBounce = {
     autoVector = moveVectors[MOVE.UP]:copy() + moveVectors[MOVE.RIGHT]:copy(),
-    _hit = function (self, _, _, vector)
+    _hit = function(self, _, _, vector)
       if vector then
         local x = self.autoVector.x
         if vector.x ~= 0 then
@@ -60,93 +48,93 @@ local function demo ()
         end
         self.autoVector = Vector:new({
           x = x,
-          y = y
+          y = y,
         })
         return true
       else
         return false
       end
     end,
-    _move = function (self, _, _)
+    _move = function(self, _, _)
       return self.autoVector:copy()
-    end
+    end,
   }
 
   local rect1 = Rect2D:new({
-    id = 'red',
+    id = "red",
     x = 25,
     y = 300,
     w = 50,
     h = 50,
     speed = 120,
     vector = moveVectors[MOVE.NONE]:copy(),
-    color = COLOR.RED
+    color = COLOR.RED,
   })
 
   local rect2 = Rect1DX:new({
-    id = 'green',
+    id = "green",
     x = 125,
     y = 300,
     w = 140,
     h = 100,
     speed = 50,
     vector = moveVectors[MOVE.NONE]:copy(),
-    color = COLOR.GREEN
+    color = COLOR.GREEN,
   })
 
   local rect3 = Rect1DY:new({
-    id = 'blue',
+    id = "blue",
     x = 265,
     y = 300,
     w = 110,
     h = 25,
     speed = 40,
     vector = moveVectors[MOVE.NONE]:copy(),
-    color = COLOR.BLUE
+    color = COLOR.BLUE,
   })
 
   local rect4 = RectPassive:new({
-    id = 'magenta',
+    id = "magenta",
     x = 385,
     y = 300,
     w = 40,
     h = 120,
     speed = 90,
     vector = moveVectors[MOVE.NONE]:copy(),
-    color = COLOR.MAGENTA
+    color = COLOR.MAGENTA,
   })
 
   local rect5 = Rect2D:new({
-    id = 'yellow',
+    id = "yellow",
     x = 505,
     y = 300,
     w = 60,
     h = 90,
     speed = 110,
     vector = moveVectors[MOVE.NONE]:copy(),
-    color = COLOR.YELLOW
+    color = COLOR.YELLOW,
   }, AutoMove)
 
   local rect6 = RectStatic:new({
-    id = 'cyan',
+    id = "cyan",
     x = 625,
     y = 300,
     w = 100,
     h = 100,
     speed = 110,
     vector = moveVectors[MOVE.NONE]:copy(),
-    color = COLOR.CYAN
+    color = COLOR.CYAN,
   })
 
   local rect7 = Rect2D:new({
-    id = 'bouncer',
+    id = "bouncer",
     x = 25,
     y = 400,
     w = 60,
     h = 90,
     speed = 240,
     vector = moveVectors[MOVE.NONE]:copy(),
-    color = COLOR.ORANGE
+    color = COLOR.ORANGE,
   }, AutoBounce)
 
   local objects = {
@@ -158,33 +146,33 @@ local function demo ()
     rect6,
     rect7,
     RectStatic:new({
-      id = 'wall',
+      id = "wall",
       x = 0,
       y = 0,
       w = 800,
       h = 3,
     }),
     RectStatic:new({
-      id = 'wall',
+      id = "wall",
       x = 0,
       y = 3,
       w = 3,
       h = 594,
     }),
     RectStatic:new({
-      id = 'wall',
+      id = "wall",
       x = 797,
       y = 3,
       w = 3,
       h = 594,
     }),
     RectStatic:new({
-      id = 'wall',
+      id = "wall",
       x = 0,
       y = 597,
       w = 800,
       h = 3,
-    })
+    }),
   }
 
   return objects

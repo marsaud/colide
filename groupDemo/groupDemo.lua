@@ -6,30 +6,18 @@ local _, _, IAControl = require("Control")()
 local AGameUIObject, Group = require("Utils")()
 local _, _, _, Vector = require("Couple")()
 local IADraw, IRectFill, IRectLine = require("Draw")()
-local
-		moveVectors,
-		IAMove,
-		IMove,
-		IMoveNot,
-		IMoveX,
-		IMoveY = require("Move")()
-	local
-		IACollide,
-		ICollideBlocker,
-		_,
-		_,
-		_,
-		ICollidePusher = require("Collide")()
+local moveVectors, IAMove, IMove, IMoveNot, IMoveX, IMoveY = require("Move")()
+local IACollide, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
 
-local function demo ()
+local function demo()
   local RectNoMove = Class(IAMove, IADraw, IRectLine, IACollide, ICollidePusher, IEventCatcher)
   local Rect2D = AGameUIObject:new(IMove, ICollidePusher, IRectLine)
-  local RectPassive = AGameUIObject:new (IMoveNot, ICollidePusher, IRectLine)
+  local RectPassive = AGameUIObject:new(IMoveNot, ICollidePusher, IRectLine)
   local Rect1DX = AGameUIObject:new(IMoveX, ICollidePusher, IRectLine)
   local Rect1DY = AGameUIObject:new(IMoveY, ICollidePusher, IRectLine)
   local RectStatic = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollidePusher, IRectFill)
 
-  local autoMove = function (time)
+  local autoMove = function(time)
     local AutoMove = {
       stateIndex = 1,
       stateTimer = 0,
@@ -39,7 +27,7 @@ local function demo ()
         moveVectors[MOVE.DOWN],
         moveVectors[MOVE.LEFT],
       },
-      _move = function (self, _, dt)
+      _move = function(self, _, dt)
         self.stateTimer = self.stateTimer + dt
         if self.stateTimer > 0.10 then
           self.stateTimer = 0
@@ -49,14 +37,14 @@ local function demo ()
           end
         end
         return self.states[self.stateIndex]:copy()
-      end
+      end,
     }
     return AutoMove
   end
 
   local AutoBounce = {
     autoVector = moveVectors[MOVE.UP]:copy() + moveVectors[MOVE.RIGHT]:copy(),
-    _hit = function (self, _, _, vector)
+    _hit = function(self, _, _, vector)
       if vector then
         local x = self.autoVector.x
         if vector.x ~= 0 then
@@ -68,35 +56,31 @@ local function demo ()
         end
         self.autoVector = Vector:new({
           x = x,
-          y = y
+          y = y,
         })
         return true
       else
         return false
       end
     end,
-    _move = function (self, _, _, _)
+    _move = function(self, _, _, _)
       return self.autoVector:copy()
-    end
+    end,
   }
 
-  local ControlGroup = Group:new(
-    IAControl,
-    IMove,
-    {
-      _control = function (self, ctrl, dt)
-        local v = self:_move(ctrl, dt) * (self.speed or 0) * dt
-        for _, o in ipairs(self._group) do
-          if o.move then
-            o:move(ctrl, dt, v, self.speed)
-          end
+  local ControlGroup = Group:new(IAControl, IMove, {
+    _control = function(self, ctrl, dt)
+      local v = self:_move(ctrl, dt) * (self.speed or 0) * dt
+      for _, o in ipairs(self._group) do
+        if o.move then
+          o:move(ctrl, dt, v, self.speed)
         end
-      end,
-      commit = function (self)
-        self.vector = moveVectors[MOVE.NONE]:copy()
-      end,
-    }
-  )
+      end
+    end,
+    commit = function(self)
+      self.vector = moveVectors[MOVE.NONE]:copy()
+    end,
+  })
 
   local group = ControlGroup:new({
     x = 0,
@@ -104,39 +88,39 @@ local function demo ()
     w = 0,
     h = 0,
     speed = 240,
-    vector = moveVectors[MOVE.NONE]:copy()
+    vector = moveVectors[MOVE.NONE]:copy(),
   })
 
   group:add(
     RectNoMove:new({
-      id = 'red',
+      id = "red",
       x = 25,
       y = 300,
       w = 50,
       h = 50,
       speed = 360,
       vector = moveVectors[MOVE.NONE]:copy(),
-      color = COLOR.RED
+      color = COLOR.RED,
     }, autoMove(0.10)),
     RectNoMove:new({
-      id = 'green',
+      id = "green",
       x = 25,
       y = 100,
       w = 50,
       h = 50,
       speed = 90,
       vector = moveVectors[MOVE.NONE]:copy(),
-      color = COLOR.GREEN
+      color = COLOR.GREEN,
     }, autoMove(1)),
     RectNoMove:new({
-      id = 'blue',
+      id = "blue",
       x = 125,
       y = 100,
       w = 50,
       h = 50,
       speed = 150,
       vector = moveVectors[MOVE.NONE]:copy(),
-      color = COLOR.BLUE
+      color = COLOR.BLUE,
     }, autoMove(0.20))
   )
 
@@ -215,33 +199,33 @@ local function demo ()
     -- rect6,
     -- rect7,
     RectStatic:new({
-      id = 'wall',
+      id = "wall",
       x = 0,
       y = 0,
       w = 800,
       h = 3,
     }),
     RectStatic:new({
-      id = 'wall',
+      id = "wall",
       x = 0,
       y = 3,
       w = 3,
       h = 594,
     }),
     RectStatic:new({
-      id = 'wall',
+      id = "wall",
       x = 797,
       y = 3,
       w = 3,
       h = 594,
     }),
     RectStatic:new({
-      id = 'wall',
+      id = "wall",
       x = 0,
       y = 597,
       w = 800,
       h = 3,
-    })
+    }),
   }
 
   return objects
