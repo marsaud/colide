@@ -24,13 +24,20 @@ local moveVectors = {
 ]]
 
 local IAMove = {
-  IAMove = true,
-
-  _new = function(self)
-    self._c = Coord:new({ x = self.x, y = self.y }) -- internal coord
-    self._d = self._c:copy() -- internal destination
-    self.d = self._d:copy() -- visible destination
-  end,
+  _constructors = {
+    IAMove = function(self)
+      if not self.x then
+        self.x = 0
+      end
+      if not self.y then
+        self.y = 0
+      end
+      print("IAMove:constructor", self.id, self.x, self.y)
+      self._c = Coord:new({ x = self.x, y = self.y }) -- internal coord
+      self._d = self._c:copy() -- internal destination
+      self.d = self._d:copy() -- visible destination
+    end,
+  },
 
   _control = function(self, ctrl, dt)
     return self:move(ctrl, dt)
