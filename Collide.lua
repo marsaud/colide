@@ -191,8 +191,7 @@ local ICollidePusher = {
       effectY = true
     end
     if effectX and effectY then
-      local intX = math.min(self.d.x + self.w - o.d.x, self.w, o.w, o.d.x + o.w - self.d.x
-)
+      local intX = math.min(self.d.x + self.w - o.d.x, self.w, o.w, o.d.x + o.w - self.d.x)
       local intY = math.min(self.d.y + self.h - o.d.y, self.h, o.h, o.d.y + o.h - self.d.y)
       if intX > intY then
         effectX = false

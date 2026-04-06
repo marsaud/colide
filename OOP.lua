@@ -1,13 +1,15 @@
+local OrderedTable = require("OrderedTable")()
+
 local function _aggregateTables(...)
   local arg = { ... }
   local agg = {
-    _constructors = {},
+    _constructors = OrderedTable:new(),
   }
   for _, t in ipairs(arg) do
     for key, val in pairs(t) do
       if key == "_constructors" then
         for name, constructor in pairs(val) do
-          agg._constructors[name] = constructor
+          agg._constructors:set(name, constructor)
         end
       else
         agg[key] = val
@@ -19,15 +21,16 @@ end
 
 local function new(self, ...)
   local o = _aggregateTables(...)
-  local _constructors = self._constructors or {}
-  for key, val in pairs(o._constructors) do
-    _constructors[key] = val
+  local _constructors = self._constructors or OrderedTable:new()
+  for key, val in o._constructors:iterate() do
+    _constructors:set(key, val)
   end
+  self._constructors = _constructors
   o._constructors = nil
   setmetatable(o, self)
   self.__index = self
   if self._constructors then
-    for _, c in pairs(self._constructors) do
+    for _, c in self._constructors:iterate() do
       c(o)
     end
   end
