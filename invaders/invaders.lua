@@ -5,6 +5,7 @@ local _, Point, _, _ = require("Couple")()
 local _, IRectFill, IRectLine = require("Draw")()
 local moveVectors, _, IMove, _, IMoveX, IMoveY = require("Move")()
 local AGameUIObject = require("Utils")()
+local _, _, _, IControlMove = require("Control")()
 
 local helpers = require("helpers")
 local ICollapse = helpers.ICollapse
@@ -69,7 +70,7 @@ local function invaders()
           getHit = function(_, _)
             return 100
           end,
-        }, ICollidePusher, IRectLine, ICollapse, Vessel)
+        }, IControlMove, ICollidePusher, IRectLine, ICollapse, Vessel)
       )
     end
   end
@@ -81,7 +82,7 @@ local function invaders()
     _move = function(_, _, _)
       return moveVectors[MOVE.UP]
     end,
-  }, ICollidePusher, ICollapse)
+  }, IControlMove, ICollidePusher, ICollapse)
 
   local shipFire = function(self, ctrl, dt)
     if testControl(ctrl, CONTROL.ACT1) then
@@ -106,7 +107,7 @@ local function invaders()
     end
   end
 
-  local Ship = AGameUIObject:new(IMoveX, ICollideBlocker, ICollidePusher)
+  local Ship = AGameUIObject:new(IControlMove, IMoveX, ICollideBlocker, ICollidePusher)
   Ship:addPlugin("_control", shipFire)
   local ship = Ship:new({
     id = "ship",

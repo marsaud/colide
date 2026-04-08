@@ -32,10 +32,6 @@ local IAMove = {
     end,
   },
 
-  _control = function(self, ctrl, dt)
-    return self:move(ctrl, dt)
-  end,
-
   move = function(self, ctrl, dt, v)
     if self._move then
       self.vector = self:_move(ctrl, dt) * (self.speed or 0) * dt

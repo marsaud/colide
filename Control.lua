@@ -28,6 +28,14 @@ local IAControl = {
   end,
 }
 
+local IControlMove = {
+  _control = function(self, ctrl, dt)
+    if self.move then
+      return self:move(ctrl, dt)
+    end
+  end,
+}
+
 return function()
-  return pullControl, testControl, IAControl
+  return pullControl, testControl, IAControl, IControlMove
 end

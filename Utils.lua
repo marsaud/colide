@@ -8,9 +8,9 @@ local Class = require("OOP")()
 local PluginManager = require("Plugin")()
 
 local AGameUIObject =
-  Class(IAControl, IAPlace, IADraw, IAMove, IACollide, IEventCatcher, PluginManager)
+  Class(IAControl, IAPlace, IAMove, IACollide, IEventCatcher, IADraw, PluginManager)
 
-local Group = Class(IEventCatcher, {
+local Group = Class({
   add = function(self, ...)
     if not self._group then
       self._group = {}
@@ -40,7 +40,7 @@ local Group = Class(IEventCatcher, {
     end
     return o
   end,
-})
+}, IEventCatcher)
 
 return function()
   return AGameUIObject, Group

@@ -2,15 +2,19 @@
 local Class = require("OOP")()
 local _, IEventCatcher = require("Event")()
 local COLOR, _, _, MOVE = require("Const")()
-local _, _, IAControl = require("Control")()
+local _, _, IAControl, IControlMove = require("Control")()
 local AGameUIObject, Group = require("Utils")()
 local _, _, _, Vector = require("Couple")()
 local IADraw, IRectFill, IRectLine = require("Draw")()
+local IAPlace = require("Place")()
 local moveVectors, IAMove, IMove, IMoveNot, IMoveX, IMoveY = require("Move")()
 local IACollide, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
 
 local function demo()
-  local RectNoMove = Class(IAMove, IADraw, IRectLine, IACollide, ICollidePusher, IEventCatcher)
+  --  local RectNoMove = AGameUIObject:new(ICollidePusher, IRectLine)
+  -- IAControl, IAPlace, IAMove, IACollide, IEventCatcher, IADraw, PluginManager
+  local RectNoMove =
+    Class(IAPlace, IAMove, IADraw, IRectLine, IACollide, ICollidePusher, IEventCatcher)
   local Rect2D = AGameUIObject:new(IMove, ICollidePusher, IRectLine)
   local RectPassive = AGameUIObject:new(IMoveNot, ICollidePusher, IRectLine)
   local Rect1DX = AGameUIObject:new(IMoveX, ICollidePusher, IRectLine)
@@ -29,7 +33,7 @@ local function demo()
       },
       _move = function(self, _, dt)
         self.stateTimer = self.stateTimer + dt
-        if self.stateTimer > 0.10 then
+        if self.stateTimer > time then
           self.stateTimer = 0
           self.stateIndex = self.stateIndex + 1
           if self.stateIndex > #self.states then
@@ -68,7 +72,7 @@ local function demo()
     end,
   }
 
-  local ControlGroup = Group:new(IAControl, IMove, {
+  local ControlGroup = Group:new(IAControl, IAPlace, IControlMove, IMove, {
     _control = function(self, ctrl, dt)
       local v = self:_move(ctrl, dt) * (self.speed or 0) * dt
       for _, o in ipairs(self._group) do

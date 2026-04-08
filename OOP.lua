@@ -8,8 +8,14 @@ local function _aggregateTables(...)
   for _, t in ipairs(arg) do
     for key, val in pairs(t) do
       if key == "_constructors" then
-        for name, constructor in pairs(val) do
-          agg._constructors:set(name, constructor)
+        if val.iterate then
+          for name, constructor in val:iterate() do
+            agg._constructors:set(name, constructor)
+          end
+        else
+          for name, constructor in pairs(val) do
+            agg._constructors:set(name, constructor)
+          end
         end
       else
         agg[key] = val

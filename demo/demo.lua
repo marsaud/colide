@@ -4,12 +4,13 @@ local _, _, _, Vector = require("Couple")()
 local _, IRectFill, IRectLine = require("Draw")()
 local moveVectors, _, IMove, IMoveNot, IMoveX, IMoveY = require("Move")()
 local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
+local _, _, _, IControlMove = require("Control")()
 
 local function demo()
-  local Rect2D = AGameUIObject:new(IMove, ICollidePusher, IRectLine)
+  local Rect2D = AGameUIObject:new(IControlMove, IMove, ICollidePusher, IRectLine)
   local RectPassive = AGameUIObject:new(IMoveNot, ICollidePusher, IRectLine)
-  local Rect1DX = AGameUIObject:new(IMoveX, ICollidePusher, IRectLine)
-  local Rect1DY = AGameUIObject:new(IMoveY, ICollidePusher, IRectLine)
+  local Rect1DX = AGameUIObject:new(IControlMove, IMoveX, ICollidePusher, IRectLine)
+  local Rect1DY = AGameUIObject:new(IControlMove, IMoveY, ICollidePusher, IRectLine)
   local RectStatic = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollidePusher, IRectFill)
 
   local AutoMove = {
