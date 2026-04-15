@@ -3,7 +3,7 @@
 local bit = bit
 
 require("math-ext")
-local Coord, _, _, Vector = require("Couple")()
+local _, _, _, Vector = require("Couple")()
 local _, CONTROL, EVENT, MOVE = require("Const")()
 local _, testControl = require("Control")()
 
@@ -26,7 +26,6 @@ local moveVectors = {
 local IAMove = {
   _constructors = {
     IAMove = function(self)
-      print("IAMove:constructor", self.id, self.x, self.y)
       self._d = self._c:copy() -- internal destination
       self.d = self._d:copy() -- visible destination
     end,

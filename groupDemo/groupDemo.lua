@@ -72,7 +72,7 @@ local function demo()
     end,
   }
 
-  local ControlGroup = Group:new(IAControl, IAPlace, IControlMove, IMove, {
+  local ControlGroup = Group:new(IAControl, IAPlace, IMove, {
     _control = function(self, ctrl, dt)
       local v = self:_move(ctrl, dt) * (self.speed or 0) * dt
       for _, o in ipairs(self._group) do

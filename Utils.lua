@@ -31,7 +31,7 @@ local Group = Class({
     if not self._group then
       self._group = {}
     end
-    for i, v in ipairs(self._group) do
+    for _, v in ipairs(self._group) do
       if v == o then
         table.remove(self._group, v)
         v.group = nil
