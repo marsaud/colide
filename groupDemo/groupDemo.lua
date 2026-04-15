@@ -2,24 +2,17 @@
 local Class = require("OOP")()
 local _, IEventCatcher = require("Event")()
 local COLOR, _, _, MOVE = require("Const")()
-local _, _, IAControl, IControlMove = require("Control")()
+local _, _, IAControl, _ = require("Control")()
 local AGameUIObject, Group = require("Utils")()
-local _, _, _, Vector = require("Couple")()
 local IADraw, IRectFill, IRectLine = require("Draw")()
 local IAPlace = require("Place")()
-local moveVectors, IAMove, IMove, IMoveNot, IMoveX, IMoveY = require("Move")()
+local moveVectors, IAMove, IMove, _, _, _ = require("Move")()
 local IACollide, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
 
 local function demo()
-  --  local RectNoMove = AGameUIObject:new(ICollidePusher, IRectLine)
-  -- IAControl, IAPlace, IAMove, IACollide, IEventCatcher, IADraw, PluginManager
   local RectNoMove =
     Class(IAPlace, IAMove, IADraw, IRectLine, IACollide, ICollidePusher, IEventCatcher)
-  local Rect2D = AGameUIObject:new(IMove, ICollidePusher, IRectLine)
-  local RectPassive = AGameUIObject:new(IMoveNot, ICollidePusher, IRectLine)
-  local Rect1DX = AGameUIObject:new(IMoveX, ICollidePusher, IRectLine)
-  local Rect1DY = AGameUIObject:new(IMoveY, ICollidePusher, IRectLine)
-  local RectStatic = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollidePusher, IRectFill)
+  local RectStatic = AGameUIObject:new(ICollideBlocker, ICollidePusher, IRectFill)
 
   local autoMove = function(time)
     local AutoMove = {
@@ -45,32 +38,6 @@ local function demo()
     }
     return AutoMove
   end
-
-  local AutoBounce = {
-    autoVector = moveVectors[MOVE.UP]:copy() + moveVectors[MOVE.RIGHT]:copy(),
-    _hit = function(self, _, _, vector)
-      if vector then
-        local x = self.autoVector.x
-        if vector.x ~= 0 then
-          x = x * math.sign(x) * math.sign(vector.x)
-        end
-        local y = self.autoVector.y
-        if vector.y ~= 0 then
-          y = y * math.sign(y) * math.sign(vector.y)
-        end
-        self.autoVector = Vector:new({
-          x = x,
-          y = y,
-        })
-        return true
-      else
-        return false
-      end
-    end,
-    _move = function(self, _, _, _)
-      return self.autoVector:copy()
-    end,
-  }
 
   local ControlGroup = Group:new(IAControl, IAPlace, IMove, {
     _control = function(self, ctrl, dt)
@@ -128,80 +95,8 @@ local function demo()
     }, autoMove(0.20))
   )
 
-  -- local rect2 = Rect1DX:new({
-  --   id = 'green',
-  --   x = 125,
-  --   y = 300,
-  --   w = 140,
-  --   h = 100,
-  --   speed = 50,
-  --   vector = moveVectors[MOVE.NONE]:copy(),
-  --   color = COLOR.GREEN
-  -- })
-
-  -- local rect3 = Rect1DY:new({
-  --   id = 'blue',
-  --   x = 265,
-  --   y = 300,
-  --   w = 110,
-  --   h = 25,
-  --   speed = 40,
-  --   vector = moveVectors[MOVE.NONE]:copy(),
-  --   color = COLOR.BLUE
-  -- })
-
-  -- local rect4 = RectPassive:new({
-  --   id = 'magenta',
-  --   x = 385,
-  --   y = 300,
-  --   w = 40,
-  --   h = 120,
-  --   speed = 90,
-  --   vector = moveVectors[MOVE.NONE]:copy(),
-  --   color = COLOR.MAGENTA
-  -- })
-
-  -- local rect5 = Rect2D:new({
-  --   id = 'yellow',
-  --   x = 505,
-  --   y = 300,
-  --   w = 60,
-  --   h = 90,
-  --   speed = 110,
-  --   vector = moveVectors[MOVE.NONE]:copy(),
-  --   color = COLOR.YELLOW
-  -- }, AutoMove)
-
-  -- local rect6 = RectStatic:new({
-  --   id = 'cyan',
-  --   x = 625,
-  --   y = 300,
-  --   w = 100,
-  --   h = 100,
-  --   speed = 110,
-  --   vector = moveVectors[MOVE.NONE]:copy(),
-  --   color = COLOR.CYAN
-  -- })
-
-  -- local rect7 = Rect2D:new({
-  --   id = 'bouncer',
-  --   x = 25,
-  --   y = 400,
-  --   w = 60,
-  --   h = 90,
-  --   speed = 240,
-  --   vector = moveVectors[MOVE.NONE]:copy(),
-  --   color = COLOR.ORANGE
-  -- }, AutoBounce)
-
   local objects = {
     group,
-    -- rect2,
-    -- rect3,
-    -- rect4,
-    -- rect5,
-    -- rect6,
-    -- rect7,
     RectStatic:new({
       id = "wall",
       x = 0,

@@ -2,7 +2,7 @@ local COLOR, _, _, MOVE = require("Const")()
 local AGameUIObject = require("Utils")()
 local _, _, _, Vector = require("Couple")()
 local _, IRectFill, IRectLine = require("Draw")()
-local moveVectors, _, _, IMoveNot, IMoveX, _ = require("Move")()
+local moveVectors, _, _, _, IMoveX, _ = require("Move")()
 local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
 local _, _, _, IControlMove = require("Control")()
 
@@ -36,9 +36,9 @@ local function bricks()
     end,
   }
 
-  local RectStatic = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollidePusher, IRectFill)
+  local RectStatic = AGameUIObject:new(ICollideBlocker, ICollidePusher, IRectFill)
   local Bat = AGameUIObject:new(IControlMove, IMoveX, ICollideBlocker, ICollidePusher)
-  local Brick = AGameUIObject:new(IMoveNot, ICollideBlocker, ICollapse, IRectFill)
+  local Brick = AGameUIObject:new(ICollideBlocker, ICollapse, IRectFill)
   local Ball = AGameUIObject:new(IControlMove, AutoBounce, ICollidePusher, ICollapse, IRectLine, {
     getHit = function(_, _)
       return 50
