@@ -4,18 +4,17 @@ local _, _, EVENT, _ = require("Const")()
 -- local debug = require("Debug")()
 
 local IACollide = {
-  IACollide = true,
   _isRight = function(self, o)
-    return self.d.x >= (o.d.x + o.w)
+    return self:d().x >= (o:d().x + o.w)
   end,
   _isLeft = function(self, o)
-    return (self.d.x + self.w) <= o.d.x
+    return (self:d().x + self.w) <= o:d().x
   end,
   _isUnder = function(self, o)
-    return self.d.y >= (o.d.y + o.h)
+    return self:d().y >= (o:d().y + o.h)
   end,
   _isTop = function(self, o)
-    return (self.d.y + self.h) <= o.d.y
+    return (self:d().y + self.h) <= o:d().y
   end,
 
   -- analyse how "o" will react on self on collision
@@ -29,7 +28,7 @@ local IACollide = {
         break
       end
     end
-    skip = skip or not o.IACollide
+    skip = skip or not o.resolve
     skip = skip or o:_isRight(self)
     skip = skip or o:_isLeft(self)
     skip = skip or o:_isUnder(self)
@@ -50,7 +49,6 @@ local IACollide = {
       x = self._c.x,
       y = self._d.y,
     })
-    self.d = self._d:round()
     if prevPusher then
       return prevPusher:blockX(self, ...)
     else
@@ -65,7 +63,6 @@ local IACollide = {
       x = self._d.x,
       y = self._c.y,
     })
-    self.d = self._d:round()
     if prevPusher then
       return prevPusher:blockY(self, ...)
     else
@@ -79,13 +76,12 @@ local IACollide = {
     -- penetration
     local _x
     if math.sign(by.vector.x) < 0 then -- moving left
-      _x = by.d.x - self.w
+      _x = by:d().x - self.w
     else
-      _x = by.d.x + by.w
+      _x = by:d().x + by.w
     end
     if _x ~= self._d.x then
       self._d.x = _x
-      self.d = self._d:round()
       if self.eventManager then
         return self.eventManager:fire(EVENT.MOVE, self, by, ...)
       else
@@ -102,13 +98,12 @@ local IACollide = {
     -- penetration
     local _y
     if math.sign(by.vector.y) < 0 then -- moving up
-      _y = by.d.y - self.h
+      _y = by:d().y - self.h
     else
-      _y = by.d.y + by.h
+      _y = by:d().y + by.h
     end
     if _y ~= self._d.y then
       self._d.y = _y
-      self.d = self._d:round()
       if self.eventManager then
         return self.eventManager:fire(EVENT.MOVE, self, by, ...)
       else
@@ -164,11 +159,11 @@ local ICollidePusher = {
       and (
         (
           self.vector.x > 0 -- moving right
-          and self.d.x + self.w / 2 <= o.d.x + o.w / 2 -- from the left
+          and self:d().x + self.w / 2 <= o:d().x + o.w / 2 -- from the left
         )
         or (
           self.vector.x < 0 -- moving left
-          and self.d.x + self.w / 2 > o.d.x + o.w / 2 -- from the right
+          and self:d().x + self.w / 2 > o:d().x + o.w / 2 -- from the right
         )
       )
     then
@@ -180,19 +175,19 @@ local ICollidePusher = {
       and (
         (
           self.vector.y > 0 -- moving down
-          and self.d.y + self.h / 2 <= o.d.y + o.h / 2 -- from top
+          and self:d().y + self.h / 2 <= o:d().y + o.h / 2 -- from top
         )
         or (
           self.vector.y < 0 -- moving up
-          and self.d.y + self.h > o.d.y + o.h / 2 -- from under
+          and self:d().y + self.h > o:d().y + o.h / 2 -- from under
         )
       )
     then
       effectY = true
     end
     if effectX and effectY then
-      local intX = math.min(self.d.x + self.w - o.d.x, self.w, o.w, o.d.x + o.w - self.d.x)
-      local intY = math.min(self.d.y + self.h - o.d.y, self.h, o.h, o.d.y + o.h - self.d.y)
+      local intX = math.min(self:d().x + self.w - o:d().x, self.w, o.w, o:d().x + o.w - self:d().x)
+      local intY = math.min(self:d().y + self.h - o:d().y, self.h, o.h, o:d().y + o.h - self:d().y)
       if intX > intY then
         effectX = false
       elseif intY > intX then

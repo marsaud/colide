@@ -10,6 +10,8 @@ local function debug(...)
       i = "function"
     elseif i.id then
       i = i.id
+    elseif i.c then
+      i = "(" .. i:c().x .. "," .. i:c().y .. ")"
     elseif i.x and i.y then
       i = "(" .. i.x .. "," .. i.y .. ")"
     end
@@ -17,8 +19,6 @@ local function debug(...)
   end
   print(table.unpack(r))
 end
-
-local function noop() end
 
 return function()
   return debug

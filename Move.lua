@@ -24,13 +24,6 @@ local moveVectors = {
 ]]
 
 local IAMove = {
-  _constructors = {
-    IAMove = function(self)
-      self._d = self._c:copy() -- internal destination
-      self.d = self._d:copy() -- visible destination
-    end,
-  },
-
   move = function(self, ctrl, dt, v)
     if self._move then
       self.vector = self:_move(ctrl, dt) * (self.speed or 0) * dt
@@ -40,7 +33,6 @@ local IAMove = {
       self.vector = self.vector + v
     end
     self._d = self._c + self.vector
-    self.d = self._d:round()
     if self.eventManager then
       if self._d ~= self._c then
         self.eventManager:fire(EVENT.MOVE, self)
@@ -56,12 +48,10 @@ local IAMove = {
   end,
 
   _commit = function(self)
-    if self.d ~= self._d:round() then
-      self._d = self.d:copy()
+    if self:c() ~= self:d() then
+      -- TODO depends on collision resolution
+      self._c = self:d()
     end
-    self._c = self._d:copy()
-    self.x = math.round(self._c.x)
-    self.y = math.round(self._c.y)
     self.vector = self:_initVector()
   end,
 

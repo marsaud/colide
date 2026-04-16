@@ -21,31 +21,31 @@ local function invaders()
     },
     _move = function(self, _, _)
       if not self.vesselOrigin then
-        self.vesselOrigin = Point:new({ x = self.x, y = self.y })
+        self.vesselOrigin = self:c()
       end
       if self.vesselStateIndex == 1 then
-        local delta = self.x - self.vesselOrigin.x
+        local delta = self:c().x - self.vesselOrigin.x
         if delta >= 100 then
           self.vesselStateIndex = 2
         end
       end
       if self.vesselStateIndex == 2 then
-        local delta = self.y - self.vesselOrigin.y
+        local delta = self:c().y - self.vesselOrigin.y
         if delta >= 50 then
           self.vesselStateIndex = 3
         end
       end
       if self.vesselStateIndex == 3 then
-        local delta = self.x - self.vesselOrigin.x
+        local delta = self:c().x - self.vesselOrigin.x
         if delta <= 0 then
           self.vesselStateIndex = 4
         end
       end
       if self.vesselStateIndex == 4 then
-        local delta = self.y - self.vesselOrigin.y
+        local delta = self:c().y - self.vesselOrigin.y
         if delta >= 100 then
           self.vesselStateIndex = 1
-          self.vesselOrigin = Point:new({ x = self.x, y = self.y })
+          self.vesselOrigin = self:c()
         end
       end
       return moveVectors[self.vesselStates[self.vesselStateIndex]]:copy()
@@ -92,8 +92,8 @@ local function invaders()
         else
           local missile = Missile:new({
             id = "missile",
-            x = self.x + 18,
-            y = self.y - 10,
+            x = self:c().x + 18,
+            y = self:c().y - 10,
             w = 4,
             h = 10,
             speed = 50,

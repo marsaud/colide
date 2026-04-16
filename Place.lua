@@ -12,8 +12,17 @@ local IAPlace = {
         self.y = 0
       end
       self._c = Coord:new({ x = self.x, y = self.y }) -- internal coord
+      self._d = self._c:copy() -- internal destination
     end,
   },
+
+  d = function(self)
+    return self._d:round()
+  end,
+
+  c = function(self)
+    return self._c:round()
+  end,
 }
 
 return function()
