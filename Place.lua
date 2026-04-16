@@ -17,12 +17,24 @@ local IAPlace = {
   },
 
   d = function(self)
-    return self._d:round()
+    local origin = self._origin and self._origin._d or Coord:new({x = 0, y = 0})
+    local d = self._d + origin
+    return d:round()
   end,
 
   c = function(self)
-    return self._c:round()
+    local origin = self._origin and self._origin._c or Coord:new({x = 0, y = 0})
+    local c = self._c + origin
+    return c:round()
   end,
+
+  setOrigin = function(self, origin)
+    self._origin = origin
+  end,
+
+  removeOrigin = function(self)
+    self._origin = nil
+  end
 }
 
 return function()

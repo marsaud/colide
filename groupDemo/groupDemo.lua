@@ -44,7 +44,7 @@ local function demo()
       local v = self:_move(ctrl, dt) * (self.speed or 0) * dt
       for _, o in ipairs(self._group) do
         if o.move then
-          o:move(ctrl, dt, v, self.speed)
+          o:move(ctrl, dt, v)
         end
       end
     end,
