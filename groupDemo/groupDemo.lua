@@ -67,33 +67,33 @@ local function demo()
     RectNoMove:new({
       id = "red",
       x = 25,
-      y = 300,
+      y = 200,
       w = 50,
       h = 50,
-      speed = 360,
+      speed = 20,
       vector = moveVectors[MOVE.NONE]:copy(),
       color = COLOR.RED,
-    }, autoMove(0.10)),
+    }, autoMove(1.80)),
     RectNoMove:new({
       id = "green",
       x = 25,
       y = 100,
       w = 50,
       h = 50,
-      speed = 90,
+      speed = 60,
       vector = moveVectors[MOVE.NONE]:copy(),
       color = COLOR.GREEN,
-    }, autoMove(1)),
+    }, autoMove(0.60)),
     RectNoMove:new({
       id = "blue",
       x = 125,
       y = 100,
       w = 50,
       h = 50,
-      speed = 150,
+      speed = 120,
       vector = moveVectors[MOVE.NONE]:copy(),
       color = COLOR.BLUE,
-    }, autoMove(0.20))
+    }, autoMove(0.30))
   )
 
   local objects = {

@@ -48,10 +48,7 @@ local IAMove = {
   end,
 
   _commit = function(self)
-    if self:c() ~= self:d() then
-      -- TODO depends on collision resolution
-      self._c = self:d()
-    end
+    self._c = self._d:copy()
     self.vector = self:_initVector()
   end,
 

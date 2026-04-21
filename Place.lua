@@ -16,15 +16,37 @@ local IAPlace = {
     end,
   },
 
-  d = function(self)
-    local origin = self._origin and self._origin._d or Coord:new({x = 0, y = 0})
-    local d = self._d + origin
+  d = function(self, value)
+    local origin = self._origin and self._origin._d
+    local d
+    if origin then
+      if value then
+        self._d = value - origin
+      end
+      d = self._d + origin
+    else
+      if value then
+        self._d = value:copy()
+      end
+      d = self._d:copy()
+    end
     return d:round()
   end,
 
-  c = function(self)
-    local origin = self._origin and self._origin._c or Coord:new({x = 0, y = 0})
-    local c = self._c + origin
+  c = function(self, value)
+    local origin = self._origin and self._origin._c
+    local c
+    if origin then
+      if value then
+        self._c = value - origin
+      end
+      c = self._c + origin
+    else
+      if value then
+        self._c = value:copy()
+      end
+      c = self._c:copy()
+    end
     return c:round()
   end,
 
