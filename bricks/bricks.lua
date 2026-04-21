@@ -36,7 +36,7 @@ local function bricks()
     end,
   }
 
-  local RectStatic = AGameUIObject:new(ICollideBlocker, ICollidePusher, IRectFill)
+  local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
   local Bat = AGameUIObject:new(IControlMove, IMoveX, ICollideBlocker, ICollidePusher)
   local Brick = AGameUIObject:new(ICollideBlocker, ICollapse, IRectFill)
   local Ball = AGameUIObject:new(IControlMove, AutoBounce, ICollidePusher, ICollapse, IRectLine, {

@@ -105,7 +105,7 @@ local function invaders()
     end
   end
 
-  local Ship = AGameUIObject:new(IControlMove, IMoveX, ICollideBlocker, ICollidePusher)
+  local Ship = AGameUIObject:new(IControlMove, IMoveX, ICollidePusher)
   Ship:addPlugin("_control", shipFire)
   local ship = Ship:new({
     id = "ship",
@@ -119,7 +119,7 @@ local function invaders()
 
   table.insert(objects, ship)
 
-  local RectStatic = AGameUIObject:new(ICollideBlocker, ICollidePusher, IRectFill)
+  local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
   table.insert(objects, RectStatic:new({
       id = "ceil",
       x = 0,

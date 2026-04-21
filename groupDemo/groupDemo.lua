@@ -11,8 +11,8 @@ local IACollide, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
 
 local function demo()
   local RectNoMove =
-    Class(IAPlace, IAMove, IADraw, IRectLine, IACollide, ICollidePusher, IEventCatcher)
-  local RectStatic = AGameUIObject:new(ICollideBlocker, ICollidePusher, IRectFill)
+    Class(IAPlace, IAControl, IControlMove, IAMove, IADraw, IRectLine, IACollide, ICollidePusher, IEventCatcher)
+  local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
 
   local autoMove = function(time)
     local AutoMove = {
@@ -39,7 +39,7 @@ local function demo()
     return AutoMove
   end
 
-  local ControlGroup = Group:new(IAControl, IAPlace, IControlMove, IAMove, IMove, {
+  local ControlGroup = Group:new(IAControl, IAPlace, IControlMove, IAMove, IMove, IACollide, {
     -- _control = function(self, ctrl, dt)
     --   local v = self:_move(ctrl, dt) * (self.speed or 0) * dt
     --   for _, o in ipairs(self._group) do

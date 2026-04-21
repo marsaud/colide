@@ -11,7 +11,7 @@ local function demo()
   local RectPassive = AGameUIObject:new(ICollidePusher, IRectLine)
   local Rect1DX = AGameUIObject:new(IControlMove, IMoveX, ICollidePusher, IRectLine)
   local Rect1DY = AGameUIObject:new(IControlMove, IMoveY, ICollidePusher, IRectLine)
-  local RectStatic = AGameUIObject:new(ICollideBlocker, ICollidePusher, IRectFill)
+  local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
 
   local AutoMove = {
     stateIndex = 1,
