@@ -24,6 +24,9 @@ local Group = Class({
         error("Group: don't add groups to groups")
       end
       o.group = self
+      if o.setOrigin then
+        o:setOrigin(self)
+      end
       table.insert(self._group, o)
     end
   end,
@@ -35,6 +38,7 @@ local Group = Class({
       if v == o then
         table.remove(self._group, v)
         v.group = nil
+        v:removeOrigin()
         break
       end
     end

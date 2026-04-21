@@ -2,7 +2,7 @@
 local Class = require("OOP")()
 local _, IEventCatcher = require("Event")()
 local COLOR, _, _, MOVE = require("Const")()
-local _, _, IAControl, _ = require("Control")()
+local _, _, IAControl, IControlMove = require("Control")()
 local AGameUIObject, Group = require("Utils")()
 local IADraw, IRectFill, IRectLine = require("Draw")()
 local IAPlace = require("Place")()
@@ -39,21 +39,22 @@ local function demo()
     return AutoMove
   end
 
-  local ControlGroup = Group:new(IAControl, IAPlace, IMove, {
-    _control = function(self, ctrl, dt)
-      local v = self:_move(ctrl, dt) * (self.speed or 0) * dt
-      for _, o in ipairs(self._group) do
-        if o.move then
-          o:move(ctrl, dt, v)
-        end
-      end
-    end,
-    commit = function(self)
-      self.vector = moveVectors[MOVE.NONE]:copy()
-    end,
+  local ControlGroup = Group:new(IAControl, IAPlace, IControlMove, IAMove, IMove, {
+    -- _control = function(self, ctrl, dt)
+    --   local v = self:_move(ctrl, dt) * (self.speed or 0) * dt
+    --   for _, o in ipairs(self._group) do
+    --     if o.move then
+    --       o:move(ctrl, dt)
+    --     end
+    --   end
+    -- end,
+    -- commit = function(self)
+    --   self.vector = moveVectors[MOVE.NONE]:copy()
+    -- end,
   })
 
   local group = ControlGroup:new({
+    id = 'group',
     x = 0,
     y = 0,
     w = 0,
