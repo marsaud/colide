@@ -76,15 +76,20 @@ local EventManager = Class({
     end
   end,
 
-  fire = function(self, e, ...)
+  fire = function(self, e, o, ...)
+    if e == EVENT.MOVE and o ~= nil and o._group then
+      for _, go in ipairs(o._group) do
+        self:fire(e, go)
+      end
+    end
     local objs = self._objects or {}
     local effect = false
     for _, l in ipairs(objs) do
       if l.fire then
-        effect = l:fire(e, ...) or effect
+        effect = l:fire(e, o, ...) or effect
       end
     end
-    if e == EVENT.MOVE and #{ ... } <= 1 then
+    if e == EVENT.MOVE and not o.group and #{ o, ... } <= 1 then
       self:fire(EVENT.COMMIT)
     end
     return effect

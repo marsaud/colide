@@ -27,6 +27,9 @@ local Group = Class({
       if o.setOrigin then
         o:setOrigin(self)
       end
+      if o.setMover then
+        o:setMover(self)
+      end
       table.insert(self._group, o)
     end
   end,
@@ -38,7 +41,12 @@ local Group = Class({
       if v == o then
         table.remove(self._group, v)
         v.group = nil
-        v:removeOrigin()
+        if v.removeOrigin then
+          v:removeOrigin()
+        end
+        if v.removeMover then
+          v:removeMover()
+        end
         break
       end
     end

@@ -53,10 +53,12 @@ local function demo()
     -- end,
   })
 
+  local PassiveGroup = Group:new(IAControl, IAPlace, IControlMove, IAMove, IACollide)
+
   local group = ControlGroup:new({
     id = 'group',
-    x = 0,
-    y = 0,
+    x = 25,
+    y = 100,
     w = 0,
     h = 0,
     speed = 240,
@@ -66,38 +68,94 @@ local function demo()
   group:add(
     RectNoMove:new({
       id = "red",
-      x = 25,
-      y = 200,
+      x = 0,
+      y = 100,
       w = 50,
       h = 50,
       speed = 20,
       vector = moveVectors[MOVE.NONE]:copy(),
       color = COLOR.RED,
-    }, autoMove(1.80)),
+    }
+    -- ,autoMove(1.80)
+  ),
     RectNoMove:new({
       id = "green",
       x = 25,
-      y = 100,
+      y = 0,
       w = 50,
       h = 50,
       speed = 60,
       vector = moveVectors[MOVE.NONE]:copy(),
       color = COLOR.GREEN,
-    }, autoMove(0.60)),
+    }
+    -- , autoMove(0.60)
+  ),
     RectNoMove:new({
       id = "blue",
-      x = 125,
-      y = 100,
+      x = 100,
+      y = 50,
       w = 50,
       h = 50,
       speed = 120,
       vector = moveVectors[MOVE.NONE]:copy(),
       color = COLOR.BLUE,
-    }, autoMove(0.30))
+    }
+    -- , autoMove(0.30)
+  )
+  )
+
+  local pGroup = PassiveGroup:new({
+    id = 'group',
+    x = 400,
+    y = 200,
+    w = 0,
+    h = 0,
+    speed = 240,
+    vector = moveVectors[MOVE.NONE]:copy(),
+  })
+
+  pGroup:add(
+    RectNoMove:new({
+      id = "magenta",
+      x = 0,
+      y = 100,
+      w = 50,
+      h = 50,
+      speed = 20,
+      vector = moveVectors[MOVE.NONE]:copy(),
+      color = COLOR.MAGENTA,
+    }
+    -- ,autoMove(1.80)
+  ),
+    RectNoMove:new({
+      id = "yellow",
+      x = 25,
+      y = 0,
+      w = 50,
+      h = 50,
+      speed = 60,
+      vector = moveVectors[MOVE.NONE]:copy(),
+      color = COLOR.YELLOW,
+    }
+    -- , autoMove(0.60)
+  ),
+    RectNoMove:new({
+      id = "cyan",
+      x = 100,
+      y = 50,
+      w = 50,
+      h = 50,
+      speed = 120,
+      vector = moveVectors[MOVE.NONE]:copy(),
+      color = COLOR.CYAN,
+    }
+    -- , autoMove(0.30)
+  )
   )
 
   local objects = {
     group,
+    pGroup,
     RectStatic:new({
       id = "wall",
       x = 0,

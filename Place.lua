@@ -45,7 +45,7 @@ local IAPlace = {
       if value then
         self._c = value:copy()
       end
-      c = self._c:copy()
+      c = self._c
     end
     return c:round()
   end,

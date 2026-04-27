@@ -79,10 +79,10 @@ local IACollide = {
         return self.group:pushX(by, ...)
       end
     end
-    self.vector.x = by.vector.x
+    self.vector.x = by:v().x
     -- penetration
     local _x
-    if math.sign(by.vector.x) < 0 then -- moving left
+    if math.sign(by:v().x) < 0 then -- moving left
       _x = by:d().x - self.w
     else
       _x = by:d().x + by.w
@@ -105,10 +105,10 @@ local IACollide = {
         return self.group:pushY(by, ...)
       end
     end
-    self.vector.y = by.vector.y
+    self.vector.y = by:v().y
     -- penetration
     local _y
-    if math.sign(by.vector.y) < 0 then -- moving up
+    if math.sign(by:v().y) < 0 then -- moving up
       _y = by:d().y - self.h
     else
       _y = by:d().y + by.h
@@ -169,11 +169,11 @@ local ICollidePusher = {
       (not o:_isTop(self) and not o:_isUnder(self))
       and (
         (
-          self.vector.x > 0 -- moving right
+          self:v().x > 0 -- moving right
           and self:d().x + self.w / 2 <= o:d().x + o.w / 2 -- from the left
         )
         or (
-          self.vector.x < 0 -- moving left
+          self:v().x < 0 -- moving left
           and self:d().x + self.w / 2 > o:d().x + o.w / 2 -- from the right
         )
       )
@@ -185,17 +185,18 @@ local ICollidePusher = {
       (not o:_isRight(self) and not o:_isLeft(self))
       and (
         (
-          self.vector.y > 0 -- moving down
+          self:v().y > 0 -- moving down
           and self:d().y + self.h / 2 <= o:d().y + o.h / 2 -- from top
         )
         or (
-          self.vector.y < 0 -- moving up
+          self:v().y < 0 -- moving up
           and self:d().y + self.h > o:d().y + o.h / 2 -- from under
         )
       )
     then
       effectY = true
     end
+
     if effectX and effectY then
       local intX = math.min(self:d().x + self.w - o:d().x, self.w, o.w, o:d().x + o.w - self:d().x)
       local intY = math.min(self:d().y + self.h - o:d().y, self.h, o.h, o:d().y + o.h - self:d().y)
@@ -213,7 +214,7 @@ local ICollidePusher = {
           self,
           o,
           Vector:new({
-            x = -math.sign(self.vector.x),
+            x = -math.sign(self:v().x),
             y = 0,
           })
         )
@@ -222,7 +223,7 @@ local ICollidePusher = {
           o,
           self,
           Vector:new({
-            x = math.sign(self.vector.x),
+            x = math.sign(self:v().x),
             y = 0,
           })
         )
@@ -237,7 +238,7 @@ local ICollidePusher = {
           o,
           Vector:new({
             x = 0,
-            y = -math.sign(self.vector.y),
+            y = -math.sign(self:v().y),
           })
         )
         self.eventManager:fire(
@@ -246,7 +247,7 @@ local ICollidePusher = {
           self,
           Vector:new({
             x = 0,
-            y = math.sign(self.vector.y),
+            y = math.sign(self:v().y),
           })
         )
       end

@@ -24,6 +24,14 @@ local moveVectors = {
 ]]
 
 local IAMove = {
+  _constructors = {
+    IAMove = function(self)
+      if not self.vector then
+        self.vector = self:_initVector()
+      end
+    end
+  },
+
   move = function(self, ctrl, dt, v)
     if self._move then
       self.vector = self:_move(ctrl, dt) * (self.speed or 0) * dt
@@ -52,9 +60,26 @@ local IAMove = {
     self.vector = self:_initVector()
   end,
 
+  v = function(self)
+    local _v = self._mover and self._mover.vector and self._mover.vector:copy()
+    if _v then
+      return self.vector + _v
+    else
+      return self.vector
+    end
+  end,
+
   _initVector = function(_)
     return moveVectors[MOVE.NONE]:copy()
   end,
+
+  setMover = function(self, value)
+    self._mover = value
+  end,
+
+  removeMover = function (self)
+    self._mover = nil
+  end
 }
 
 local IMove = {
