@@ -74,12 +74,7 @@ local IACollide = {
   end,
 
   pushX = function(self, by, ...)
-    if self.group and self.group ~= by.group then
-      if self.group.pushX then
-        return self.group:pushX(by, ...)
-      end
-    end
-    self.vector.x = by:v().x
+    self:v(Vector:new({x = by:v().x, y = self:v().y}), true)
     -- penetration
     local _x
     if math.sign(by:v().x) < 0 then -- moving left
@@ -88,7 +83,7 @@ local IACollide = {
       _x = by:d().x + by.w
     end
     if _x ~= self:d().x then
-      self:d(Coord:new({x = _x, y = self:d().y}))
+      self:d(Coord:new({x = _x, y = self:d().y}), true)
       if self.eventManager then
         return self.eventManager:fire(EVENT.MOVE, self, by, ...)
       else
@@ -100,12 +95,7 @@ local IACollide = {
   end,
 
   pushY = function(self, by, ...)
-    if self.group and self.group ~= by.group then
-      if self.group.pushY then
-        return self.group:pushY(by, ...)
-      end
-    end
-    self.vector.y = by:v().y
+    self:v(Vector:new({x = self:v().x, y = by:v().y}), true)
     -- penetration
     local _y
     if math.sign(by:v().y) < 0 then -- moving up
@@ -114,7 +104,7 @@ local IACollide = {
       _y = by:d().y + by.h
     end
     if _y ~= self:d().y then
-      self:d(Coord:new({x = self:d().x, y = _y}))
+      self:d(Coord:new({x = self:d().x, y = _y}), true)
       if self.eventManager then
         return self.eventManager:fire(EVENT.MOVE, self, by, ...)
       else
