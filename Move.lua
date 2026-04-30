@@ -60,11 +60,20 @@ local IAMove = {
     self.vector = self:_initVector()
   end,
 
-  v = function(self)
-    local _v = self._mover and self._mover.vector and self._mover.vector:copy()
-    if _v then
-      return self.vector + _v
+  v = function(self, value, forceMover)
+    if self._mover then
+      if value then
+        if forceMover then
+          self._mover.vector = value - self.vector
+        else
+          self.vector = value - self._mover.vector
+        end
+      end
+      return self.vector + self._mover.vector
     else
+      if value then
+        self.vector = value:copy()
+      end
       return self.vector
     end
   end,

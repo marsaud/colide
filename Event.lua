@@ -84,9 +84,9 @@ local EventManager = Class({
     end
     local objs = self._objects or {}
     local effect = false
-    for _, l in ipairs(objs) do
-      if l.fire then
-        effect = l:fire(e, o, ...) or effect
+    for _, c in ipairs(objs) do
+      if c.catch then
+        effect = c:catch(e, o, ...) or effect
       end
     end
     if e == EVENT.MOVE and not o.group and #{ o, ... } <= 1 then
@@ -113,7 +113,7 @@ local EventManager = Class({
 })
 
 local IEventCatcher = {
-  fire = function(self, e, ...)
+  catch = function(self, e, ...)
     if not self[e] then
       return false
     end

@@ -16,14 +16,17 @@ local IAPlace = {
     end,
   },
 
-  d = function(self, value)
-    local origin = self._origin and self._origin._d
+  d = function(self, value, forceOrigin)
     local d
-    if origin then
+    if self._origin then
       if value then
-        self._d = value - origin
+        if forceOrigin then
+          self._origin._d = value - self._d
+        else
+          self._d = value - self._origin._d
+        end
       end
-      d = self._d + origin
+      d = self._d + self._origin._d
     else
       if value then
         self._d = value:copy()
