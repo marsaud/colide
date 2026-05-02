@@ -29,7 +29,7 @@ local IAMove = {
       if not self.vector then
         self.vector = self:_initVector()
       end
-    end
+    end,
   },
 
   move = function(self, ctrl, dt, v)
@@ -95,9 +95,9 @@ local IAMove = {
     self._mover = value
   end,
 
-  removeMover = function (self)
+  removeMover = function(self)
     self._mover = nil
-  end
+  end,
 }
 
 local IMove = {

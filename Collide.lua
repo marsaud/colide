@@ -44,8 +44,8 @@ local IACollide = {
   end,
 
   blockX = function(self, _, prevPusher, ...)
-    self:v(Vector:new({x = 0, y = self:v().y}), true)
-    self:d(Coord:new({x = self:c().x, y = self:d().y}), true)
+    self:v(Vector:new({ x = 0, y = self:v().y }), true)
+    self:d(Coord:new({ x = self:c().x, y = self:d().y }), true)
     if prevPusher then
       return prevPusher:blockX(self, ...)
     else
@@ -54,8 +54,8 @@ local IACollide = {
   end,
 
   blockY = function(self, _, prevPusher, ...)
-    self:v(Vector:new({x = self:v().x, y = 0}), true)
-    self:d(Coord:new({x = self:d().x, y = self:c().y}), true)
+    self:v(Vector:new({ x = self:v().x, y = 0 }), true)
+    self:d(Coord:new({ x = self:d().x, y = self:c().y }), true)
     if prevPusher then
       return prevPusher:blockY(self, ...)
     else
@@ -64,7 +64,7 @@ local IACollide = {
   end,
 
   pushX = function(self, by, ...)
-    self:v(Vector:new({x = by:v().x, y = self:v().y}), true)
+    self:v(Vector:new({ x = by:v().x, y = self:v().y }), true)
     -- penetration
     local _x
     if math.sign(by:v().x) < 0 then -- moving left
@@ -73,7 +73,7 @@ local IACollide = {
       _x = by:d().x + by.w
     end
     if _x ~= self:d().x then
-      self:d(Coord:new({x = _x, y = self:d().y}), true)
+      self:d(Coord:new({ x = _x, y = self:d().y }), true)
       return self:fireMove(by, ...)
     else
       return false
@@ -81,7 +81,7 @@ local IACollide = {
   end,
 
   pushY = function(self, by, ...)
-    self:v(Vector:new({x = self:v().x, y = by:v().y}), true)
+    self:v(Vector:new({ x = self:v().x, y = by:v().y }), true)
     -- penetration
     local _y
     if math.sign(by:v().y) < 0 then -- moving up
@@ -90,7 +90,7 @@ local IACollide = {
       _y = by:d().y + by.h
     end
     if _y ~= self:d().y then
-      self:d(Coord:new({x = self:d().x, y = _y}), true)
+      self:d(Coord:new({ x = self:d().x, y = _y }), true)
       return self:fireMove(by, ...)
     else
       return false

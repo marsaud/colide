@@ -120,7 +120,9 @@ local function invaders()
   table.insert(objects, ship)
 
   local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
-  table.insert(objects, RectStatic:new({
+  table.insert(
+    objects,
+    RectStatic:new({
       id = "ceil",
       x = 0,
       y = 0,
@@ -132,7 +134,8 @@ local function invaders()
           return 100
         end
       end,
-    }))
+    })
+  )
 
   return objects
 end

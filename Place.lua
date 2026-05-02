@@ -59,7 +59,7 @@ local IAPlace = {
 
   removeOrigin = function(self)
     self._origin = nil
-  end
+  end,
 }
 
 return function()

@@ -11,7 +11,7 @@ local IADraw = {
   end,
 }
 
-local _rectDraw = function(o,style)
+local _rectDraw = function(o, style)
   local c
   if o.c then
     c = o:c()
