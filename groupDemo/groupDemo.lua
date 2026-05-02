@@ -14,6 +14,9 @@ local function demo()
     Class(IAPlace, IAControl, IControlMove, IAMove, IADraw, IRectLine, IACollide, ICollidePusher, IEventCatcher)
   local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
 
+  local Rect2D = AGameUIObject:new(IControlMove, IMove, ICollidePusher, IRectLine)
+  local RectPassive = AGameUIObject:new(ICollidePusher, IRectLine)
+
   local autoMove = function(time)
     local AutoMove = {
       stateIndex = 1,
@@ -39,19 +42,7 @@ local function demo()
     return AutoMove
   end
 
-  local ControlGroup = Group:new(IAControl, IAPlace, IControlMove, IAMove, IMove, IACollide, {
-    -- _control = function(self, ctrl, dt)
-    --   local v = self:_move(ctrl, dt) * (self.speed or 0) * dt
-    --   for _, o in ipairs(self._group) do
-    --     if o.move then
-    --       o:move(ctrl, dt)
-    --     end
-    --   end
-    -- end,
-    -- commit = function(self)
-    --   self.vector = moveVectors[MOVE.NONE]:copy()
-    -- end,
-  })
+  local ControlGroup = Group:new(IAControl, IAPlace, IControlMove, IAMove, IMove, IACollide)
 
   local PassiveGroup = Group:new(IAControl, IAPlace, IControlMove, IAMove, IACollide)
 
@@ -69,7 +60,7 @@ local function demo()
     RectNoMove:new({
       id = "red",
       x = 0,
-      y = 100,
+      y = 110,
       w = 50,
       h = 50,
       speed = 20,
@@ -92,8 +83,8 @@ local function demo()
   ),
     RectNoMove:new({
       id = "blue",
-      x = 100,
-      y = 50,
+      x = 110,
+      y = 55,
       w = 50,
       h = 50,
       speed = 120,
@@ -110,7 +101,7 @@ local function demo()
     y = 200,
     w = 0,
     h = 0,
-    speed = 240,
+    speed = 90,
     vector = moveVectors[MOVE.NONE]:copy(),
   })
 
@@ -118,7 +109,7 @@ local function demo()
     RectNoMove:new({
       id = "magenta",
       x = 0,
-      y = 100,
+      y = 110,
       w = 50,
       h = 50,
       speed = 20,
@@ -141,8 +132,8 @@ local function demo()
   ),
     RectNoMove:new({
       id = "cyan",
-      x = 100,
-      y = 50,
+      x = 110,
+      y = 55,
       w = 50,
       h = 50,
       speed = 120,
@@ -153,7 +144,31 @@ local function demo()
   )
   )
 
+  local rect1 = Rect2D:new({
+    id = "R1",
+    x = 400,
+    y = 50,
+    w = 50,
+    h = 50,
+    speed = 120,
+    vector = moveVectors[MOVE.NONE]:copy(),
+    color = COLOR.RED,
+  })
+
+    local rect4 = RectPassive:new({
+    id = "R2",
+    x = 500,
+    y = 50,
+    w = 50,
+    h = 50,
+    speed = 90,
+    vector = moveVectors[MOVE.NONE]:copy(),
+    color = COLOR.MAGENTA,
+  })
+
   local objects = {
+    -- rect1,
+    -- rect4,
     group,
     pGroup,
     RectStatic:new({

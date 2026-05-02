@@ -77,13 +77,13 @@ local EventManager = Class({
   end,
 
   fire = function(self, e, o, ...)
+    local effect = false
     if e == EVENT.MOVE and o ~= nil and o._group then
       for _, go in ipairs(o._group) do
-        self:fire(e, go)
+        effect = self:fire(e, go,...) or effect
       end
     end
     local objs = self._objects or {}
-    local effect = false
     for _, c in ipairs(objs) do
       if c.catch then
         effect = c:catch(e, o, ...) or effect

@@ -78,6 +78,15 @@ local IAMove = {
     end
   end,
 
+  fireMove = function(self, ...)
+    if self.eventManager then
+      local moving = self._mover or self
+      return self.eventManager:fire(EVENT.MOVE, moving, ...)
+    else
+      return true
+    end
+  end,
+
   _initVector = function(_)
     return moveVectors[MOVE.NONE]:copy()
   end,

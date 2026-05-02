@@ -44,13 +44,8 @@ local IACollide = {
   end,
 
   blockX = function(self, _, prevPusher, ...)
-    if self.group and (not prevPusher or self.group ~= prevPusher.group) then
-      if self.group.blockX then
-        return self.group:blockX(_, prevPusher, ...)
-      end
-    end
-    self.vector.x = 0
-    self:d(Coord:new({x = self:c().x, y = self:d().y}))
+    self:v(Vector:new({x = 0, y = self:v().y}), true)
+    self:d(Coord:new({x = self:c().x, y = self:d().y}), true)
     if prevPusher then
       return prevPusher:blockX(self, ...)
     else
@@ -59,13 +54,8 @@ local IACollide = {
   end,
 
   blockY = function(self, _, prevPusher, ...)
-    if self.group and (not prevPusher or self.group ~= prevPusher.group) then
-      if self.group.blockY then
-        return self.group:blockY(_, prevPusher, ...)
-      end
-    end
-    self.vector.y = 0
-    self:d(Coord:new({x = self:d().x, y = self:c().y}))
+    self:v(Vector:new({x = self:v().x, y = 0}), true)
+    self:d(Coord:new({x = self:d().x, y = self:c().y}), true)
     if prevPusher then
       return prevPusher:blockY(self, ...)
     else
@@ -84,11 +74,7 @@ local IACollide = {
     end
     if _x ~= self:d().x then
       self:d(Coord:new({x = _x, y = self:d().y}), true)
-      if self.eventManager then
-        return self.eventManager:fire(EVENT.MOVE, self, by, ...)
-      else
-        return true
-      end
+      return self:fireMove(by, ...)
     else
       return false
     end
@@ -105,11 +91,7 @@ local IACollide = {
     end
     if _y ~= self:d().y then
       self:d(Coord:new({x = self:d().x, y = _y}), true)
-      if self.eventManager then
-        return self.eventManager:fire(EVENT.MOVE, self, by, ...)
-      else
-        return true
-      end
+      return self:fireMove(by, ...)
     else
       return false
     end
@@ -153,6 +135,9 @@ local ICollideBlockerY = {
 
 local ICollidePusher = {
   _resolve = function(self, o, ...)
+    if o._group then
+      return false
+    end
     local effectX = false
     local effectY = false
     if
