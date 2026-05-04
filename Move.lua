@@ -41,10 +41,8 @@ local IAMove = {
       self.vector = self.vector + v
     end
     self._d = self._c + self.vector
-    if self.eventManager then
-      if self._d ~= self._c then
-        self.eventManager:fire(EVENT.MOVE, self)
-      end
+    if self._d ~= self._c then
+      self:fireMove()
     end
   end,
 

@@ -54,8 +54,7 @@ local function groupDemo()
     IACollide,
     IAControl,
     IAMove,
-    IAPlace,
-    IControlMove
+    IAPlace
   )
 
   local group = ControlGroup:new({
@@ -85,10 +84,10 @@ local function groupDemo()
       y = 0,
       w = 50,
       h = 50,
-      speed = 40,
+      speed = 30,
       vector = moveVectors[MOVE.NONE]:copy(),
       color = COLOR.GREEN,
-    } --, autoMove(0.60)
+    }, autoMove(1.20)
     ),
     RectNoMove:new({
       id = "blue",
@@ -96,10 +95,10 @@ local function groupDemo()
       y = 55,
       w = 50,
       h = 50,
-      speed = 80,
+      speed = 40,
       vector = moveVectors[MOVE.NONE]:copy(),
       color = COLOR.BLUE,
-    } --, autoMove(0.30)
+    }, autoMove(1)
     )
   )
 
@@ -125,7 +124,7 @@ local function groupDemo()
         vector = moveVectors[MOVE.NONE]:copy(),
         color = COLOR.MAGENTA,
       }
-    -- ,autoMove(1.80)
+      , autoMove(0.90)
     ),
     RectNoMove:new(
       {
@@ -134,11 +133,11 @@ local function groupDemo()
         y = 0,
         w = 50,
         h = 50,
-        speed = 60,
+        speed = 30,
         vector = moveVectors[MOVE.NONE]:copy(),
         color = COLOR.YELLOW,
       }
-    -- , autoMove(0.60)
+      , autoMove(0.7)
     ),
     RectNoMove:new(
       {
@@ -147,11 +146,11 @@ local function groupDemo()
         y = 55,
         w = 50,
         h = 50,
-        speed = 120,
+        speed = 40,
         vector = moveVectors[MOVE.NONE]:copy(),
         color = COLOR.CYAN,
       }
-    -- , autoMove(0.30)
+      , autoMove(0.5)
     )
   )
 
