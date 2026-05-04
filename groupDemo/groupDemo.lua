@@ -9,18 +9,8 @@ local IAPlace = require("Place")()
 local moveVectors, IAMove, IMove, _, _, _ = require("Move")()
 local IACollide, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
 
-local function demo()
-  local RectNoMove = Class(
-    IAPlace,
-    IAControl,
-    IControlMove,
-    IAMove,
-    IADraw,
-    IRectLine,
-    IACollide,
-    ICollidePusher,
-    IEventCatcher
-  )
+local function groupDemo()
+  local RectNoMove = AGameUIObject:new(IControlMove, ICollidePusher, IRectLine)
   local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
 
   local Rect2D = AGameUIObject:new(IControlMove, IMove, ICollidePusher, IRectLine)
@@ -51,9 +41,22 @@ local function demo()
     return AutoMove
   end
 
-  local ControlGroup = Group:new(IAControl, IAPlace, IControlMove, IAMove, IMove, IACollide)
+  local ControlGroup = Group:new(
+    IACollide,
+    IAControl,
+    IAMove,
+    IAPlace,
+    IControlMove,
+    IMove
+  )
 
-  local PassiveGroup = Group:new(IAControl, IAPlace, IControlMove, IAMove, IACollide)
+  local PassiveGroup = Group:new(
+    IACollide,
+    IAControl,
+    IAMove,
+    IAPlace,
+    IControlMove
+  )
 
   local group = ControlGroup:new({
     id = "group",
@@ -66,49 +69,42 @@ local function demo()
   })
 
   group:add(
-    RectNoMove:new(
-      {
-        id = "red",
-        x = 0,
-        y = 110,
-        w = 50,
-        h = 50,
-        speed = 20,
-        vector = moveVectors[MOVE.NONE]:copy(),
-        color = COLOR.RED,
-      }
-      -- ,autoMove(1.80)
+    RectNoMove:new({
+      id = "red",
+      x = 0,
+      y = 110,
+      w = 50,
+      h = 50,
+      speed = 20,
+      vector = moveVectors[MOVE.NONE]:copy(),
+      color = COLOR.RED,
+    }, autoMove(1.80)),
+    RectNoMove:new({
+      id = "green",
+      x = 25,
+      y = 0,
+      w = 50,
+      h = 50,
+      speed = 40,
+      vector = moveVectors[MOVE.NONE]:copy(),
+      color = COLOR.GREEN,
+    } --, autoMove(0.60)
     ),
-    RectNoMove:new(
-      {
-        id = "green",
-        x = 25,
-        y = 0,
-        w = 50,
-        h = 50,
-        speed = 60,
-        vector = moveVectors[MOVE.NONE]:copy(),
-        color = COLOR.GREEN,
-      }
-      -- , autoMove(0.60)
-    ),
-    RectNoMove:new(
-      {
-        id = "blue",
-        x = 110,
-        y = 55,
-        w = 50,
-        h = 50,
-        speed = 120,
-        vector = moveVectors[MOVE.NONE]:copy(),
-        color = COLOR.BLUE,
-      }
-      -- , autoMove(0.30)
+    RectNoMove:new({
+      id = "blue",
+      x = 110,
+      y = 55,
+      w = 50,
+      h = 50,
+      speed = 80,
+      vector = moveVectors[MOVE.NONE]:copy(),
+      color = COLOR.BLUE,
+    } --, autoMove(0.30)
     )
   )
 
   local pGroup = PassiveGroup:new({
-    id = "group",
+    id = "pGroup",
     x = 400,
     y = 200,
     w = 0,
@@ -129,7 +125,7 @@ local function demo()
         vector = moveVectors[MOVE.NONE]:copy(),
         color = COLOR.MAGENTA,
       }
-      -- ,autoMove(1.80)
+    -- ,autoMove(1.80)
     ),
     RectNoMove:new(
       {
@@ -142,7 +138,7 @@ local function demo()
         vector = moveVectors[MOVE.NONE]:copy(),
         color = COLOR.YELLOW,
       }
-      -- , autoMove(0.60)
+    -- , autoMove(0.60)
     ),
     RectNoMove:new(
       {
@@ -155,7 +151,7 @@ local function demo()
         vector = moveVectors[MOVE.NONE]:copy(),
         color = COLOR.CYAN,
       }
-      -- , autoMove(0.30)
+    -- , autoMove(0.30)
     )
   )
 
@@ -219,4 +215,4 @@ local function demo()
   return objects
 end
 
-return demo
+return groupDemo

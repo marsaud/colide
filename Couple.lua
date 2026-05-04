@@ -1,8 +1,9 @@
 require("math-ext")
-local Class = require("OOP")()
 
 local Couple
-Couple = Class({
+local coupleMetatable
+
+coupleMetatable = {
   __add = function(v1, v2)
     return Couple:new({
       x = v1.x + v2.x,
@@ -19,7 +20,7 @@ Couple = Class({
     if type(f) ~= "number" then
       v, f = f, v
     end
-    if getmetatable(v) ~= Couple then
+    if getmetatable(v) ~= coupleMetatable then
       error("Type violation: Couple.__mul takes (Couple, number) or (number, Couple)")
     else
       return Couple:new({
@@ -47,13 +48,22 @@ Couple = Class({
   __unm = function(v)
     return Couple:new({ x = -v.x, y = -v.y })
   end,
-  copy = function(self)
-    return Couple:new({ x = self.x, y = self.y })
+  __index = {
+    copy = function(self)
+      return Couple:new({ x = self.x, y = self.y })
+    end,
+    round = function(self)
+      return Couple:new({ x = math.round(self.x), y = math.round(self.y) })
+    end,
+  },
+}
+
+Couple = {
+  new = function(_, c)
+    setmetatable(c, coupleMetatable)
+    return c
   end,
-  round = function(self)
-    return Couple:new({ x = math.round(self.x), y = math.round(self.y) })
-  end,
-})
+}
 
 local Coord = Couple
 local Point = Couple

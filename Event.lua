@@ -100,7 +100,7 @@ local EventManager = Class({
   end,
 
   purge = function(self)
-    -- rewrite relying on private methods handling groups
+    -- TODO rewrite relying on private methods handling groups
     local objs = self._objects or {}
     for i, o in ipairs(objs) do
       if o._EV_DELETE then
