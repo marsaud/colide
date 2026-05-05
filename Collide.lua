@@ -64,7 +64,8 @@ local IACollide = {
   end,
 
   pushX = function(self, by, ...)
-    self:v(Vector:new({ x = by:v().x, y = self:v().y }), true)
+    local force = self.group and self.group ~= by.group
+    self:v(Vector:new({ x = by:v().x, y = self:v().y }), force)
     -- penetration
     local _x
     if math.sign(by:v().x) < 0 then -- moving left
@@ -73,7 +74,7 @@ local IACollide = {
       _x = by:d().x + by.w
     end
     if _x ~= self:d().x then
-      self:d(Coord:new({ x = _x, y = self:d().y }), true)
+      self:d(Coord:new({ x = _x, y = self:d().y }), force)
       return self:fireMove(by, ...)
     else
       return false
@@ -81,7 +82,8 @@ local IACollide = {
   end,
 
   pushY = function(self, by, ...)
-    self:v(Vector:new({ x = self:v().x, y = by:v().y }), true)
+    local force = self.group and self.group ~= by.group
+    self:v(Vector:new({ x = self:v().x, y = by:v().y }), force)
     -- penetration
     local _y
     if math.sign(by:v().y) < 0 then -- moving up
@@ -90,7 +92,7 @@ local IACollide = {
       _y = by:d().y + by.h
     end
     if _y ~= self:d().y then
-      self:d(Coord:new({ x = self:d().x, y = _y }), true)
+      self:d(Coord:new({ x = self:d().x, y = _y }), force)
       return self:fireMove(by, ...)
     else
       return false

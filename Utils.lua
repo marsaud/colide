@@ -8,15 +8,7 @@ local Class = require("OOP")()
 local PluginManager = require("Plugin")()
 
 local AGameUIObject =
-    Class(
-      IACollide,
-      IAControl,
-      IADraw,
-      IAMove,
-      IAPlace,
-      IEventCatcher,
-      PluginManager
-    )
+  Class(IACollide, IAControl, IADraw, IAMove, IAPlace, IEventCatcher, PluginManager)
 
 local Group = Class({
   add = function(self, ...)

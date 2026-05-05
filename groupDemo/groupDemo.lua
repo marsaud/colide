@@ -41,21 +41,9 @@ local function groupDemo()
     return AutoMove
   end
 
-  local ControlGroup = Group:new(
-    IACollide,
-    IAControl,
-    IAMove,
-    IAPlace,
-    IControlMove,
-    IMove
-  )
+  local ControlGroup = Group:new(IACollide, IAControl, IAMove, IAPlace, IControlMove, IMove)
 
-  local PassiveGroup = Group:new(
-    IACollide,
-    IAControl,
-    IAMove,
-    IAPlace
-  )
+  local PassiveGroup = Group:new(IACollide, IAControl, IAMove, IAPlace)
 
   local group = ControlGroup:new({
     id = "group",
@@ -77,7 +65,7 @@ local function groupDemo()
       speed = 20,
       vector = moveVectors[MOVE.NONE]:copy(),
       color = COLOR.RED,
-    }, autoMove(1.80)),
+    }, autoMove(1.50)),
     RectNoMove:new({
       id = "green",
       x = 25,
@@ -87,8 +75,7 @@ local function groupDemo()
       speed = 30,
       vector = moveVectors[MOVE.NONE]:copy(),
       color = COLOR.GREEN,
-    }, autoMove(1.20)
-    ),
+    }, autoMove(1)),
     RectNoMove:new({
       id = "blue",
       x = 110,
@@ -98,8 +85,7 @@ local function groupDemo()
       speed = 40,
       vector = moveVectors[MOVE.NONE]:copy(),
       color = COLOR.BLUE,
-    }, autoMove(1)
-    )
+    }, autoMove(0.80))
   )
 
   local pGroup = PassiveGroup:new({
@@ -113,45 +99,36 @@ local function groupDemo()
   })
 
   pGroup:add(
-    RectNoMove:new(
-      {
-        id = "magenta",
-        x = 0,
-        y = 110,
-        w = 50,
-        h = 50,
-        speed = 20,
-        vector = moveVectors[MOVE.NONE]:copy(),
-        color = COLOR.MAGENTA,
-      }
-      , autoMove(0.90)
-    ),
-    RectNoMove:new(
-      {
-        id = "yellow",
-        x = 25,
-        y = 0,
-        w = 50,
-        h = 50,
-        speed = 30,
-        vector = moveVectors[MOVE.NONE]:copy(),
-        color = COLOR.YELLOW,
-      }
-      , autoMove(0.7)
-    ),
-    RectNoMove:new(
-      {
-        id = "cyan",
-        x = 110,
-        y = 55,
-        w = 50,
-        h = 50,
-        speed = 40,
-        vector = moveVectors[MOVE.NONE]:copy(),
-        color = COLOR.CYAN,
-      }
-      , autoMove(0.5)
-    )
+    RectNoMove:new({
+      id = "magenta",
+      x = 0,
+      y = 110,
+      w = 50,
+      h = 50,
+      speed = 20,
+      vector = moveVectors[MOVE.NONE]:copy(),
+      color = COLOR.MAGENTA,
+    }, autoMove(0.90)),
+    RectNoMove:new({
+      id = "yellow",
+      x = 25,
+      y = 0,
+      w = 50,
+      h = 50,
+      speed = 30,
+      vector = moveVectors[MOVE.NONE]:copy(),
+      color = COLOR.YELLOW,
+    }, autoMove(0.7)),
+    RectNoMove:new({
+      id = "cyan",
+      x = 110,
+      y = 55,
+      w = 50,
+      h = 50,
+      speed = 40,
+      vector = moveVectors[MOVE.NONE]:copy(),
+      color = COLOR.CYAN,
+    }, autoMove(0.5))
   )
 
   local rect1 = Rect2D:new({
