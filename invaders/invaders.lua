@@ -18,7 +18,7 @@ local function invaders()
       MOVE.LEFT,
       MOVE.DOWN,
     },
-    _move = function(self, _, _)
+    _move = function(self, id, _, _)
       local c = self:c()
       if not self.vesselOrigin then
         self.vesselOrigin = c
@@ -76,12 +76,12 @@ local function invaders()
     getHit = function(_, _)
       return 100
     end,
-    _move = function(_, _, _)
+    _move = function(id, _, _, _)
       return moveVectors[MOVE.UP]
     end,
   }, IControlMove, ICollidePusher, ICollapse)
 
-  local shipFire = function(self, ctrl, dt)
+  local shipFire = function(self, id, ctrl, dt)
     if testControl(ctrl, CONTROL.ACT1) then
       if self.eventManager then
         if self._SHIP_FIRE_DELAY and self._SHIP_FIRE_DELAY >= 0 then

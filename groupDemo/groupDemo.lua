@@ -26,7 +26,7 @@ local function groupDemo()
         moveVectors[MOVE.DOWN],
         moveVectors[MOVE.LEFT],
       },
-      _move = function(self, _, dt)
+      _move = function(self, id, _, dt)
         self.stateTimer = self.stateTimer + dt
         if self.stateTimer > time then
           self.stateTimer = 0
@@ -41,9 +41,9 @@ local function groupDemo()
     return AutoMove
   end
 
-  local ControlGroup = Group:new(IACollide, IAControl, IAMove, IAPlace, IControlMove, IMove)
+  local ControlGroup = Group:new(IAControl, IAMove, IAPlace, IControlMove, IMove)
 
-  local PassiveGroup = Group:new(IACollide, IAControl, IAMove, IAPlace)
+  local PassiveGroup = Group:new(IAControl, IAMove, IAPlace)
 
   local group = ControlGroup:new({
     id = "group",

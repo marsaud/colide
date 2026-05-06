@@ -1,12 +1,19 @@
 local Class = require("OOP")()
 local pullControl = require("Control")()
 local _, _, EVENT, _ = require("Const")()
--- local debug = require("Debug")()
+local debug = require("Debug")()
+
+local eventCount = 0
+
+local getEventId = function()
+  eventCount = eventCount + 1
+  return 'e' .. eventCount
+end
 
 local EventManager = Class({
   tick = function(self, dt)
     local ctrl = pullControl()
-    return self:fire(EVENT.CONTROL, ctrl, dt)
+    return self:fire(EVENT.CONTROL, nil, ctrl, dt)
   end,
 
   draw = function(self)
@@ -76,22 +83,27 @@ local EventManager = Class({
     end
   end,
 
-  fire = function(self, e, o, ...)
+  fire = function(self, e, id, o, ...)
+    if id == nil then
+      id = getEventId()
+    end
+    debug('IN', id, e, o, ...)
     local effect = false
     if e == EVENT.MOVE and o ~= nil and o._group then
       for _, go in ipairs(o._group) do
-        effect = self:fire(e, go, ...) or effect
+        effect = self:fire(e, id, go, ...) or effect
       end
     end
     local objs = self._objects or {}
     for _, c in ipairs(objs) do
       if c.catch then
-        effect = c:catch(e, o, ...) or effect
+        effect = c:catch(e, id, o, ...) or effect
       end
     end
     if e == EVENT.MOVE and not o.group and #{ o, ... } <= 1 then
-      self:fire(EVENT.COMMIT)
+      self:fire(EVENT.COMMIT, id)
     end
+    debug('OUT', id, e, o, ...)
     return effect
   end,
 
@@ -113,11 +125,12 @@ local EventManager = Class({
 })
 
 local IEventCatcher = {
-  catch = function(self, e, ...)
+  catch = function(self, e, id, ...)
     if not self[e] then
       return false
     end
-    return self[e](self, ...)
+    debug('CATCH', id, self, e, ...)
+    return self[e](self, id, ...)
   end,
 }
 

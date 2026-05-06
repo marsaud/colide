@@ -12,7 +12,7 @@ local ICollapse = helpers.ICollapse
 local function bricks()
   local AutoBounce = {
     autoVector = moveVectors[MOVE.UP]:copy() + moveVectors[MOVE.RIGHT]:copy(),
-    _hit = function(self, _, _, vector)
+    _hit = function(self, id, _, _, vector)
       if vector then
         local x = self.autoVector.x
         if vector.x ~= 0 then
@@ -31,7 +31,7 @@ local function bricks()
         return false
       end
     end,
-    _move = function(self, _, _, _)
+    _move = function(self, id, _, _, _)
       return self.autoVector:copy()
     end,
   }

@@ -32,9 +32,9 @@ local IAMove = {
     end,
   },
 
-  move = function(self, ctrl, dt, v)
+  move = function(self, id, ctrl, dt, v)
     if self._move then
-      self.vector = self:_move(ctrl, dt) * (self.speed or 0) * dt
+      self.vector = self:_move(id, ctrl, dt) * (self.speed or 0) * dt
     end
     if v then
       v = v:copy()
@@ -42,18 +42,18 @@ local IAMove = {
     end
     self._d = self._c + self.vector
     if self._d ~= self._c then
-      self:fireMove()
+      self:fireMove(id)
     end
   end,
 
-  commit = function(self)
+  commit = function(self, id)
     if self._commit then
-      self:_commit()
+      self:_commit(id)
     end
     return true
   end,
 
-  _commit = function(self)
+  _commit = function(self, id)
     self._c = self._d:copy()
     self.vector = self:_initVector()
   end,
@@ -76,10 +76,10 @@ local IAMove = {
     end
   end,
 
-  fireMove = function(self, ...)
+  fireMove = function(self, id, ...)
     if self.eventManager then
       local moving = self._mover or self
-      return self.eventManager:fire(EVENT.MOVE, moving, ...)
+      return self.eventManager:fire(EVENT.MOVE, id, moving, ...)
     else
       return true
     end
@@ -99,7 +99,7 @@ local IAMove = {
 }
 
 local IMove = {
-  _move = function(self, ctrl, _)
+  _move = function(self, id, ctrl, _)
     if self.vector == nil then
       self.vector = moveVectors[MOVE.NONE]:copy()
     end
@@ -120,7 +120,7 @@ local IMove = {
 }
 
 local IMoveX = {
-  _move = function(self, ctrl, _)
+  _move = function(self, id, ctrl, _)
     if self.vector == nil then
       self.vector = moveVectors[MOVE.NONE]:copy()
     end
@@ -135,7 +135,7 @@ local IMoveX = {
 }
 
 local IMoveY = {
-  _move = function(self, ctrl, _)
+  _move = function(self, id, ctrl, _)
     if self.vector == nil then
       self.vector = moveVectors[MOVE.NONE]:copy()
     end
@@ -150,7 +150,7 @@ local IMoveY = {
 }
 
 local IMoveNot = {
-  _move = function(self, _, _)
+  _move = function(self, id, _, _)
     return moveVectors[MOVE.NONE]:copy()
   end,
 }

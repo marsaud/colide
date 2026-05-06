@@ -22,7 +22,7 @@ local function demo()
       moveVectors[MOVE.DOWN],
       moveVectors[MOVE.LEFT],
     },
-    _move = function(self, _, dt)
+    _move = function(self, id, _, dt)
       self.stateTimer = self.stateTimer + dt
       if self.stateTimer > 2 then
         self.stateTimer = 0
@@ -37,7 +37,7 @@ local function demo()
 
   local AutoBounce = {
     autoVector = moveVectors[MOVE.UP]:copy() + moveVectors[MOVE.RIGHT]:copy(),
-    _hit = function(self, _, _, vector)
+    _hit = function(self, id, _, _, vector)
       if vector then
         local x = self.autoVector.x
         if vector.x ~= 0 then
@@ -56,7 +56,7 @@ local function demo()
         return false
       end
     end,
-    _move = function(self, _, _)
+    _move = function(self, id, _, _)
       return self.autoVector:copy()
     end,
   }

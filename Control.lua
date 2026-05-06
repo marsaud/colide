@@ -7,10 +7,10 @@ local _, CONTROL, _, _ = require("Const")()
 
 local function pullControl()
   return (love.keyboard.isDown("space") and CONTROL.ACT1 or 0)
-    + (love.keyboard.isDown("up") and CONTROL.UP or 0)
-    + (love.keyboard.isDown("down") and CONTROL.DOWN or 0)
-    + (love.keyboard.isDown("left") and CONTROL.LEFT or 0)
-    + (love.keyboard.isDown("right") and CONTROL.RIGHT or 0)
+      + (love.keyboard.isDown("up") and CONTROL.UP or 0)
+      + (love.keyboard.isDown("down") and CONTROL.DOWN or 0)
+      + (love.keyboard.isDown("left") and CONTROL.LEFT or 0)
+      + (love.keyboard.isDown("right") and CONTROL.RIGHT or 0)
 end
 
 local function testControl(state, value)
@@ -18,20 +18,20 @@ local function testControl(state, value)
 end
 
 local IAControl = {
-  control = function(self, ctrl, dt)
+  control = function(self, id, ctrl, dt)
     if self.runPlugins then
-      self:runPlugins("_control", self, ctrl, dt)
+      self:runPlugins("_control", self, id, ctrl, dt)
     end
     if self._control then
-      return self:_control(ctrl, dt)
+      return self:_control(id, ctrl, dt)
     end
   end,
 }
 
 local IControlMove = {
-  _control = function(self, ctrl, dt)
+  _control = function(self, id, ctrl, dt)
     if self.move then
-      return self:move(ctrl, dt)
+      return self:move(id, ctrl, dt)
     end
   end,
 }

@@ -18,7 +18,7 @@ local IACollide = {
   end,
 
   -- analyse how "o" will react on self on collision
-  resolve = function(self, o, ...)
+  resolve = function(self, id, o, ...)
     local effect = false
     local skip = o == self
     local previous = { ... }
@@ -34,36 +34,36 @@ local IACollide = {
     skip = skip or o:_isUnder(self)
     skip = skip or o:_isTop(self)
     if not skip then
-      effect = o:_resolve(self, ...)
+      effect = o:_resolve(id, self, ...)
     end
     return effect
   end,
 
-  _resolve = function(_, _)
+  _resolve = function(_, _, _)
     return false
   end,
 
-  blockX = function(self, _, prevPusher, ...)
+  blockX = function(self, id, _, prevPusher, ...)
     self:v(Vector:new({ x = 0, y = self:v().y }), true)
     self:d(Coord:new({ x = self:c().x, y = self:d().y }), true)
     if prevPusher then
-      return prevPusher:blockX(self, ...)
+      return prevPusher:blockX(id, self, ...)
     else
       return true
     end
   end,
 
-  blockY = function(self, _, prevPusher, ...)
+  blockY = function(self, id, _, prevPusher, ...)
     self:v(Vector:new({ x = self:v().x, y = 0 }), true)
     self:d(Coord:new({ x = self:d().x, y = self:c().y }), true)
     if prevPusher then
-      return prevPusher:blockY(self, ...)
+      return prevPusher:blockY(id, self, ...)
     else
       return true
     end
   end,
 
-  pushX = function(self, by, ...)
+  pushX = function(self, id, by, ...)
     local force = self.group and self.group ~= by.group
     self:v(Vector:new({ x = by:v().x, y = self:v().y }), force)
     -- penetration
@@ -75,13 +75,13 @@ local IACollide = {
     end
     if _x ~= self:d().x then
       self:d(Coord:new({ x = _x, y = self:d().y }), force)
-      return self:fireMove(by, ...)
+      return self:fireMove(id, by, ...)
     else
       return false
     end
   end,
 
-  pushY = function(self, by, ...)
+  pushY = function(self, id, by, ...)
     local force = self.group and self.group ~= by.group
     self:v(Vector:new({ x = self:v().x, y = by:v().y }), force)
     -- penetration
@@ -93,33 +93,33 @@ local IACollide = {
     end
     if _y ~= self:d().y then
       self:d(Coord:new({ x = self:d().x, y = _y }), force)
-      return self:fireMove(by, ...)
+      return self:fireMove(id, by, ...)
     else
       return false
     end
   end,
 
-  hit = function(self, who, by, vector)
+  hit = function(self, id, who, by, vector)
     if who ~= self then
       return false
     end
     if self.runPlugins then
-      self:runPlugins("_hit", self, who, by, vector)
+      self:runPlugins("_hit", self, id, who, by, vector)
     end
     if self._hit then
-      return self:_hit(who, by, vector)
+      return self:_hit(id, who, by, vector)
     else
       return false
     end
   end,
 }
 
-local _blockPushX = function(self, by, ...)
-  return by:blockX(self, ...)
+local _blockPushX = function(self, id, by, ...)
+  return by:blockX(id, self, ...)
 end
 
-local _blockPushY = function(self, by, ...)
-  return by:blockY(self, ...)
+local _blockPushY = function(self, id, by, ...)
+  return by:blockY(id, self, ...)
 end
 
 local ICollideBlocker = {
@@ -136,40 +136,40 @@ local ICollideBlockerY = {
 }
 
 local ICollidePusher = {
-  _resolve = function(self, o, ...)
+  _resolve = function(self, id, o, ...)
     if o._group then
       return false
     end
     local effectX = false
     local effectY = false
     if
-      (not o:_isTop(self) and not o:_isUnder(self))
-      and (
-        (
-          self:v().x > 0 -- moving right
-          and self:d().x + self.w / 2 <= o:d().x + o.w / 2 -- from the left
+        (not o:_isTop(self) and not o:_isUnder(self))
+        and (
+          (
+            self:v().x > 0                                   -- moving right
+            and self:d().x + self.w / 2 <= o:d().x + o.w / 2 -- from the left
+          )
+          or (
+            self:v().x < 0                                  -- moving left
+            and self:d().x + self.w / 2 > o:d().x + o.w / 2 -- from the right
+          )
         )
-        or (
-          self:v().x < 0 -- moving left
-          and self:d().x + self.w / 2 > o:d().x + o.w / 2 -- from the right
-        )
-      )
     then
       effectX = true
     end
 
     if
-      (not o:_isRight(self) and not o:_isLeft(self))
-      and (
-        (
-          self:v().y > 0 -- moving down
-          and self:d().y + self.h / 2 <= o:d().y + o.h / 2 -- from top
+        (not o:_isRight(self) and not o:_isLeft(self))
+        and (
+          (
+            self:v().y > 0                                   -- moving down
+            and self:d().y + self.h / 2 <= o:d().y + o.h / 2 -- from top
+          )
+          or (
+            self:v().y < 0                              -- moving up
+            and self:d().y + self.h > o:d().y + o.h / 2 -- from under
+          )
         )
-        or (
-          self:v().y < 0 -- moving up
-          and self:d().y + self.h > o:d().y + o.h / 2 -- from under
-        )
-      )
     then
       effectY = true
     end
@@ -188,6 +188,7 @@ local ICollidePusher = {
       if self.eventManager then
         self.eventManager:fire(
           EVENT.HIT,
+          id,
           self,
           o,
           Vector:new({
@@ -197,6 +198,7 @@ local ICollidePusher = {
         )
         self.eventManager:fire(
           EVENT.HIT,
+          id,
           o,
           self,
           Vector:new({
@@ -205,12 +207,13 @@ local ICollidePusher = {
           })
         )
       end
-      effect = o:pushX(self, ...) or effect
+      effect = o:pushX(id, self, ...) or effect
     end
     if effectY then
       if self.eventManager then
         self.eventManager:fire(
           EVENT.HIT,
+          id,
           self,
           o,
           Vector:new({
@@ -220,6 +223,7 @@ local ICollidePusher = {
         )
         self.eventManager:fire(
           EVENT.HIT,
+          id,
           o,
           self,
           Vector:new({
@@ -228,7 +232,7 @@ local ICollidePusher = {
           })
         )
       end
-      effect = o:pushY(self, ...) or effect
+      effect = o:pushY(id, self, ...) or effect
     end
     return effect
   end,
