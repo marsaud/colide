@@ -3,11 +3,17 @@ local pullControl = require("Control")()
 local _, _, EVENT, _ = require("Const")()
 -- local debug = require("Debug")()
 
+local eventId = 0
 local eventCount = 0
 
-local getEventId = function()
-  eventCount = eventCount + 1
-  return "e" .. eventCount
+local getEventId = function(id)
+  if id == nil then
+    eventId = eventId + 1
+    eventCount = 0
+  else
+    eventCount = eventCount + 1
+  end
+  return "e" .. eventId .. "." .. eventCount
 end
 
 local EventManager = Class({
@@ -119,9 +125,7 @@ local EventManager = Class({
   end,
 
   fire = function(self, e, id, o, ...)
-    if id == nil then
-      id = getEventId()
-    end
+    id = getEventId(id)
     -- debug('IN', id, e, o, ...)
     local effect = false
     if e == EVENT.MOVE and o ~= nil and o._group then
