@@ -5,9 +5,7 @@ local _, IRectFill, IRectLine = require("Draw")()
 local moveVectors, _, _, _, IMoveX, _ = require("Move")()
 local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
 local _, _, _, IControlMove = require("Control")()
-
-local helpers = require("helpers")
-local ICollapse = helpers.ICollapse
+local IAHit = require("Hit")()
 
 local function bricks()
   local AutoBounce = {
@@ -38,13 +36,12 @@ local function bricks()
 
   local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
   local Bat = AGameUIObject:new(IControlMove, IMoveX, ICollideBlocker, ICollidePusher)
-  local Brick = AGameUIObject:new(ICollideBlocker, ICollapse, IRectFill)
-  local Ball = AGameUIObject:new(IControlMove, AutoBounce, ICollidePusher, ICollapse, IRectLine, {
-    getHit = function(_, _)
+  local Brick = AGameUIObject:new(ICollideBlocker, IAHit, IRectFill)
+  local Ball = AGameUIObject:new(IControlMove, IAHit, AutoBounce, ICollidePusher, IRectLine, {
+    _getDamage = function(_, _)
       return 50
     end,
   })
-  Ball:addPlugin("_hit", ICollapse._hit)
 
   local bat = Bat:new({
     id = "bat",
@@ -100,12 +97,12 @@ local function bricks()
       w = 794,
       h = 3,
       color = COLOR.RED,
-      getHit = function(_, who)
-        if who and who.id == "ball" then
+      _getDamage = function(_, target)
+        if target and target.id == "ball" then
           return 100
         end
       end,
-    }),
+    }, IAHit),
   }
   for x = 50, 700, 50 do
     for y = 10, 210, 40 do

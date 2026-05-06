@@ -5,6 +5,7 @@ local _, IRectFill, IRectLine = require("Draw")()
 local moveVectors, _, IMove, _, IMoveX, IMoveY = require("Move")()
 local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
 local _, _, _, IControlMove = require("Control")()
+local IAHit = require("Hit")()
 
 local function demo()
   local Rect2D = AGameUIObject:new(IControlMove, IMove, ICollidePusher, IRectLine)
@@ -136,7 +137,7 @@ local function demo()
     speed = 240,
     vector = moveVectors[MOVE.NONE]:copy(),
     color = COLOR.ORANGE,
-  }, AutoBounce)
+  }, IAHit, AutoBounce)
 
   local objects = {
     rect1,

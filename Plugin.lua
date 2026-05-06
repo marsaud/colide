@@ -18,13 +18,23 @@ local PluginManager = {
   end,
   runPlugins = function(self, id, ...)
     self:_initPluginManager()
+    local result = false
+    local sum = 0
     for _, funcOrObj in ipairs(self._plugins[id] or {}) do
+      local response
       if type(funcOrObj) == "table" and funcOrObj[id] then
-        funcOrObj[id](funcOrObj, ...)
+        response = funcOrObj[id](funcOrObj, ...)
       elseif type(funcOrObj) == "function" then
-        funcOrObj(...)
+        response = funcOrObj(...)
+      end
+      if type(response) == 'boolean' then
+        result = response or result
+      end
+      if type(response) == 'number' then
+        sum = sum + response
       end
     end
+    return result, sum
   end,
 }
 

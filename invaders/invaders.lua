@@ -5,9 +5,7 @@ local _, IRectFill, IRectLine = require("Draw")()
 local moveVectors, _, _, _, IMoveX, _ = require("Move")()
 local AGameUIObject = require("Utils")()
 local _, _, _, IControlMove = require("Control")()
-
-local helpers = require("helpers")
-local ICollapse = helpers.ICollapse
+local IAHit = require("Hit")()
 
 local function invaders()
   local Vessel = {
@@ -64,22 +62,22 @@ local function invaders()
           health = 100,
           speed = 10,
           vector = moveVectors[MOVE.NONE]:copy(),
-          getHit = function(_, _)
+          _getDamage = function(_, _)
             return 100
           end,
-        }, IControlMove, ICollidePusher, IRectLine, ICollapse, Vessel)
+        }, IAHit, IControlMove, ICollidePusher, IRectLine, Vessel)
       )
     end
   end
 
   local Missile = AGameUIObject:new({
-    getHit = function(_, _)
+    _getDamage = function(_, _)
       return 100
     end,
     _move = function(id, _, _, _)
       return moveVectors[MOVE.UP]
     end,
-  }, IControlMove, ICollidePusher, ICollapse)
+  }, IControlMove, ICollidePusher, IAHit)
 
   local shipFire = function(self, id, ctrl, dt)
     if testControl(ctrl, CONTROL.ACT1) then
@@ -129,12 +127,12 @@ local function invaders()
       w = 800,
       h = 3,
       color = COLOR.RED,
-      getHit = function(_, who)
-        if who and who.id == "missile" then
+      _getDamage = function(_, target)
+        if target and target.id == "missile" then
           return 100
         end
       end,
-    })
+    }, IAHit)
   )
 
   return objects

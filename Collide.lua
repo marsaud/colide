@@ -98,20 +98,6 @@ local IACollide = {
       return false
     end
   end,
-
-  hit = function(self, id, who, by, vector)
-    if who ~= self then
-      return false
-    end
-    if self.runPlugins then
-      self:runPlugins("_hit", self, id, who, by, vector)
-    end
-    if self._hit then
-      return self:_hit(id, who, by, vector)
-    else
-      return false
-    end
-  end,
 }
 
 local _blockPushX = function(self, id, by, ...)
