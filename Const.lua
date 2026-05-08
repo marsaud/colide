@@ -23,11 +23,9 @@ local COLOR = {
 COLOR.DEFAULT = COLOR.WHITE
 
 local EVENT = {
-  CONTROL = "control",
   MOVE = "resolve",
   COMMIT = "commit",
   HIT = "hit",
-  DRAW = "draw",
 }
 
 local MOVE = {

@@ -18,20 +18,23 @@ local function testControl(state, value)
 end
 
 local IAControl = {
-  control = function(self, id, ctrl, dt)
+  control = function(self, ctrl, dt)
+    local result = false
     if self.runPlugins then
-      self:runPlugins("_control", self, id, ctrl, dt)
+      result = self:runPlugins("_control", self, ctrl, dt)
     end
     if self._control then
-      return self:_control(id, ctrl, dt)
+      result = self:_control(ctrl, dt) or result
     end
   end,
 }
 
 local IControlMove = {
-  _control = function(self, id, ctrl, dt)
+  _control = function(self, ctrl, dt)
     if self.move then
-      return self:move(id, ctrl, dt)
+      return self:move(_, ctrl, dt)
+    else
+      return false
     end
   end,
 }

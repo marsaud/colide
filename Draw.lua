@@ -3,10 +3,10 @@ local love = love
 local COLOR, _, _, _ = require("Const")()
 
 local IADraw = {
-  draw = function(self, id)
-    love.graphics.setColor(self.color or COLOR.DEFAULT)
+  draw = function(self)
     if self._draw then
-      self:_draw(id)
+      love.graphics.setColor(self.color or COLOR.DEFAULT)
+      self:_draw()
     end
   end,
 }
@@ -22,13 +22,13 @@ local _rectDraw = function(o, style)
 end
 
 local IRectLine = {
-  _draw = function(self, id)
+  _draw = function(self)
     _rectDraw(self, "line")
   end,
 }
 
 local IRectFill = {
-  _draw = function(self, id)
+  _draw = function(self)
     _rectDraw(self, "fill")
   end,
 }

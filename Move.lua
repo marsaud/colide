@@ -1,6 +1,4 @@
 -- local debug = require("Debug")()
----@diagnostic disable-next-line: undefined-global
-local bit = bit
 
 require("math-ext")
 local _, _, _, Vector = require("Couple")()

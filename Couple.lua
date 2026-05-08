@@ -60,6 +60,9 @@ coupleMetatable = {
 
 Couple = {
   new = function(_, c)
+    if not c.x or not c.y then
+      error("Couple objects require x and y properties")
+    end
     setmetatable(c, coupleMetatable)
     return c
   end,

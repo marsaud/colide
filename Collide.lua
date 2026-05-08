@@ -21,6 +21,7 @@ local IACollide = {
   resolve = function(self, id, o, ...)
     local effect = false
     local skip = o == self
+    skip = skip or not o.resolve
     local previous = { ... }
     for _, _o in ipairs(previous) do
       if self == _o then
@@ -28,7 +29,6 @@ local IACollide = {
         break
       end
     end
-    skip = skip or not o.resolve
     skip = skip or o:_isRight(self)
     skip = skip or o:_isLeft(self)
     skip = skip or o:_isUnder(self)
@@ -68,7 +68,7 @@ local IACollide = {
     self:v(Vector:new({ x = by:v().x, y = self:v().y }), force)
     -- penetration
     local _x
-    if math.sign(by:v().x) < 0 then -- moving left
+    if by:v().x < 0 then -- moving left
       _x = by:d().x - self.w
     else
       _x = by:d().x + by.w
@@ -86,7 +86,7 @@ local IACollide = {
     self:v(Vector:new({ x = self:v().x, y = by:v().y }), force)
     -- penetration
     local _y
-    if math.sign(by:v().y) < 0 then -- moving up
+    if by:v().y < 0 then -- moving up
       _y = by:d().y - self.h
     else
       _y = by:d().y + by.h

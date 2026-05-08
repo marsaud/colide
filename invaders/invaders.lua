@@ -79,7 +79,7 @@ local function invaders()
     end,
   }, IControlMove, ICollidePusher, IAHit)
 
-  local shipFire = function(self, id, ctrl, dt)
+  local shipFire = function(self, ctrl, dt)
     if testControl(ctrl, CONTROL.ACT1) then
       if self.eventManager then
         if self._SHIP_FIRE_DELAY and self._SHIP_FIRE_DELAY >= 0 then

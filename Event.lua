@@ -19,11 +19,20 @@ local EventManager = Class({
         u:update(ctrl, dt)
       end
     end
-    return self:fire(EVENT.CONTROL, nil, ctrl, dt)
+    for _, c in ipairs(objs) do
+      if c.control then
+        c:control(ctrl, dt)
+      end
+    end
   end,
 
   draw = function(self)
-    return self:fire(EVENT.DRAW)
+    local objs = self._objects or {}
+    for _, d in ipairs(objs) do
+      if d.draw then
+        d:draw()
+      end
+    end
   end,
 
   getObjects = function(self)
