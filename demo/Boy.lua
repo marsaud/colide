@@ -30,21 +30,30 @@ local Boy = {
     Animator = function(self)
       self[RIGHT] = {}
       for i = 1, 6 do
-        table.insert(self[RIGHT], love.graphics.newImage("demo/walkingBoy/img/move" .. STATE[RIGHT].n .. i .. ".png"))
+        table.insert(
+          self[RIGHT],
+          love.graphics.newImage("demo/walkingBoy/img/move" .. STATE[RIGHT].n .. i .. ".png")
+        )
       end
       self[LEFT] = self[RIGHT]
       self[FACE] = {}
       for i = 1, 6 do
-        table.insert(self[FACE], love.graphics.newImage("demo/walkingBoy/img/move" .. STATE[FACE].n .. i .. ".png"))
+        table.insert(
+          self[FACE],
+          love.graphics.newImage("demo/walkingBoy/img/move" .. STATE[FACE].n .. i .. ".png")
+        )
       end
       self[BACK] = {}
       for i = 1, 6 do
-        table.insert(self[BACK], love.graphics.newImage("demo/walkingBoy/img/move" .. STATE[BACK].n .. i .. ".png"))
+        table.insert(
+          self[BACK],
+          love.graphics.newImage("demo/walkingBoy/img/move" .. STATE[BACK].n .. i .. ".png")
+        )
       end
       self._state = RIGHT
       self._step = 1
       self._time = 0
-    end
+    end,
   },
 
   update = function(self, ctrl, dt)
@@ -81,9 +90,15 @@ local Boy = {
     else
       c = self
     end
-    love.graphics.draw(self[self._state][self._step], c.x + ((1 - STATE[self._state].f) * self.w) / 2, c.y, 0,
-      4 * STATE[self._state].f, 4)
-  end
+    love.graphics.draw(
+      self[self._state][self._step],
+      c.x + ((1 - STATE[self._state].f) * self.w) / 2,
+      c.y,
+      0,
+      4 * STATE[self._state].f,
+      4
+    )
+  end,
 }
 
 return function()

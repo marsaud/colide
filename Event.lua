@@ -7,7 +7,7 @@ local eventCount = 0
 
 local getEventId = function()
   eventCount = eventCount + 1
-  return 'e' .. eventCount
+  return "e" .. eventCount
 end
 
 local EventManager = Class({

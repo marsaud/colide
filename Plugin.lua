@@ -27,10 +27,10 @@ local PluginManager = {
       elseif type(funcOrObj) == "function" then
         response = funcOrObj(...)
       end
-      if type(response) == 'boolean' then
+      if type(response) == "boolean" then
         result = response or result
       end
-      if type(response) == 'number' then
+      if type(response) == "number" then
         sum = sum + response
       end
     end
