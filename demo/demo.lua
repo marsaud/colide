@@ -6,6 +6,8 @@ local moveVectors, _, IMove, _, IMoveX, IMoveY = require("Move")()
 local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
 local _, _, _, IControlMove = require("Control")()
 local IAHit = require("Hit")()
+local IAState = require("State")()
+local Boy = require("demo/Boy")()
 
 local function demo()
   local Rect2D = AGameUIObject:new(IControlMove, IMove, ICollidePusher, IRectLine)
@@ -13,6 +15,7 @@ local function demo()
   local Rect1DX = AGameUIObject:new(IControlMove, IMoveX, ICollidePusher, IRectLine)
   local Rect1DY = AGameUIObject:new(IControlMove, IMoveY, ICollidePusher, IRectLine)
   local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
+  local BlockerBoy = AGameUIObject:new(IControlMove, IMove, ICollidePusher, IAState, Boy)
 
   local AutoMove = {
     stateIndex = 1,
@@ -139,14 +142,25 @@ local function demo()
     color = COLOR.ORANGE,
   }, IAHit, AutoBounce)
 
+  local boy = BlockerBoy:new({
+    id = "boy",
+    x = 200,
+    y = 50,
+    w = 60,
+    h = 92,
+    speed = 120,
+    vector = moveVectors[MOVE.NONE]:copy(),
+  })
+
   local objects = {
-    rect1,
+    -- rect1,
     rect2,
     rect3,
     rect4,
     rect5,
     rect6,
     rect7,
+    boy,
     RectStatic:new({
       id = "wall",
       x = 0,

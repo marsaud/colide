@@ -13,6 +13,12 @@ end
 local EventManager = Class({
   tick = function(self, dt)
     local ctrl = pullControl()
+    local objs = self._objects or {}
+    for _, u in ipairs(objs) do
+      if u.update then
+        u:update(ctrl, dt)
+      end
+    end
     return self:fire(EVENT.CONTROL, nil, ctrl, dt)
   end,
 
@@ -87,7 +93,7 @@ local EventManager = Class({
     if id == nil then
       id = getEventId()
     end
-    debug('IN', id, e, o, ...)
+    -- debug('IN', id, e, o, ...)
     local effect = false
     if e == EVENT.MOVE and o ~= nil and o._group then
       for _, go in ipairs(o._group) do
@@ -103,7 +109,7 @@ local EventManager = Class({
     if e == EVENT.MOVE and not o.group and #{ o, ... } <= 1 then
       self:fire(EVENT.COMMIT, id)
     end
-    debug('OUT', id, e, o, ...)
+    -- debug('OUT', id, e, o, ...)
     return effect
   end,
 
@@ -129,7 +135,7 @@ local IEventCatcher = {
     if not self[e] then
       return false
     end
-    debug('CATCH', id, self, e, ...)
+    -- debug('CATCH', id, self, e, ...)
     return self[e](self, id, ...)
   end,
 }
