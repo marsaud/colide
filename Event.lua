@@ -49,7 +49,7 @@ local EventManager = Class({
   _insert = function(self, o)
     o.__EV_INDEX = {}
     local inserted = false
-    for _, e in ipairs(EVENT) do
+    for _, e in pairs(EVENT) do
       if o[e] then
         table.insert(self._objects[e], o)
         o.__EV_INDEX[e] = #self._objects[e]
