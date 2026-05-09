@@ -194,7 +194,7 @@ local function invaders()
     end
   end
 
-  local Ship = AGameUIObject:new(IMoveX, ICollidePusher, IRectLine)
+  local Ship = AGameUIObject:new(IControlMove, IMoveX, ICollidePusher, IRectLine)
   Ship:addPlugin("_control", shipFire)
   local ship = Ship:new({
     id = "ship",
