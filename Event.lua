@@ -1,7 +1,7 @@
 local Class = require("OOP")()
 local pullControl = require("Control")()
 local _, _, EVENT, _ = require("Const")()
-local debug = require("Debug")()
+-- local debug = require("Debug")()
 
 local eventCount = 0
 
@@ -14,34 +14,63 @@ local EventManager = Class({
   _constructors = {
     EventManager = function(self)
       if not self._objects then
-        self._objects = {}
+        self._objects = {
+          [EVENT.COMMIT] = {},
+          [EVENT.CONTROL] = {},
+          [EVENT.DRAW] = {},
+          [EVENT.HIT] = {},
+          [EVENT.MOVE] = {},
+          [EVENT.UPDATE] = {},
+        }
       end
     end,
   },
+
   tick = function(self, dt)
     local ctrl = pullControl()
-    for _, u in ipairs(self._objects) do
-      if u.update then
-        u:update(ctrl, dt)
-      end
+    for _, u in ipairs(self._objects[EVENT.UPDATE]) do
+      u:update(ctrl, dt)
     end
-    for _, c in ipairs(self._objects) do
-      if c.control then
-        c:control(ctrl, dt)
-      end
+    for _, c in ipairs(self._objects[EVENT.CONTROL]) do
+      c:control(ctrl, dt)
     end
   end,
 
   draw = function(self)
-    for _, d in ipairs(self._objects) do
-      if d.draw then
-        d:draw()
-      end
+    for _, d in ipairs(self._objects[EVENT.DRAW]) do
+      d:draw()
     end
   end,
 
   getObjects = function(self)
     return self._objects
+  end,
+
+  _insert = function(self, o)
+    o.__EV_INDEX = {}
+    local inserted = false
+    for _, e in ipairs(EVENT) do
+      if o[e] then
+        table.insert(self._objects[e], o)
+        o.__EV_INDEX[e] = #self._objects[e]
+        inserted = true
+      end
+    end
+    if inserted then
+      o.eventManager = self
+      return true
+    else
+      o.__EV_INDEX = nil
+      return false
+    end
+  end,
+
+  _remove = function(self, o)
+    for e, pos in pairs(o.__EV_INDEX) do
+      table.remove(self._objects[e], pos)
+    end
+    o.eventManager = nil
+    o.__EV_INDEX = nil
   end,
 
   addObjects = function(self, ...)
@@ -50,19 +79,17 @@ local EventManager = Class({
       if o.group then
         error("EventManager: do not add objects belonging to groups")
       end
-      table.insert(self._objects, o)
+      self:_insert(o)
       if o._group then
         self:_addObjects(table.unpack(o._group))
       end
-      o.eventManager = self
     end
   end,
 
   _addObjects = function(self, ...)
     local arg = { ... }
     for _, o in ipairs(arg) do
-      table.insert(self._objects, o)
-      o.eventManager = self
+      self:_insert(o)
     end
   end,
 
@@ -70,15 +97,10 @@ local EventManager = Class({
     local args = { ... }
     for _, v in ipairs(args) do
       if not v.group then
-        for i, o in ipairs(self._objects) do
-          if v == o then
-            if o._group then
-              self:_removeObjects(table.unpack(o._group))
-            end
-            table.remove(self._objects, i) -- TODO check if table modification may break the for loop
-            o.eventManager = nil
-          end
+        if v._group then
+          self:_removeObjects(table.unpack(v._group))
         end
+        self:_remove(v)
       end
     end
   end,
@@ -86,12 +108,7 @@ local EventManager = Class({
   _removeObjects = function(self, ...)
     local args = { ... }
     for _, v in ipairs(args) do
-      for i, o in ipairs(self._objects) do
-        if v == o then
-          table.remove(self._objects, i) -- TODO check if table modification may break the for loop
-          o.eventManager = nil
-        end
-      end
+      self:_remove(v)
     end
   end,
 
@@ -106,7 +123,7 @@ local EventManager = Class({
         effect = self:fire(e, id, go, ...) or effect
       end
     end
-    for _, c in ipairs(self._objects) do
+    for _, c in ipairs(self._objects[e]) do
       if c.catch then
         effect = c:catch(e, id, o, ...) or effect
       end
@@ -118,19 +135,23 @@ local EventManager = Class({
     return effect
   end,
 
-  delete = function(_, o)
-    o._EV_DELETE = true
+  delete = function(self, o)
+    if not self._deleted then
+      self._deleted = {}
+    end
+    table.insert(self._deleted, o)
   end,
 
   purge = function(self)
-    -- TODO rewrite relying on private methods handling groups
-    for i, o in ipairs(self._objects) do
-      if o._EV_DELETE then
-        table.remove(self._objects, i)
-        o._EV_DELETE = nil
-        o.eventManager = nil
+    if self._deleted then
+      for _, o in ipairs(self._deleted) do
+        if o.group then
+          o.group:remove(o)
+        end
+        self:removeObjects(o)
       end
     end
+    self._deleted = nil
   end,
 })
 
