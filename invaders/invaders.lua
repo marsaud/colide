@@ -5,7 +5,6 @@ local _, IRectFill, IRectLine = require("Draw")()
 local moveVectors, _, _, _, IMoveX, _ = require("Move")()
 local AGameUIObject = require("Utils")()
 local _, _, _, IControlMove = require("Control")()
-local IAHit = require("Hit")()
 
 local function invaders()
   local Vessel = {
@@ -65,7 +64,7 @@ local function invaders()
           _getDamage = function(_, _)
             return 100
           end,
-        }, IAHit, IControlMove, ICollidePusher, IRectLine, Vessel)
+        }, IControlMove, ICollidePusher, IRectLine, Vessel)
       )
     end
   end
@@ -77,7 +76,7 @@ local function invaders()
     _move = function(id, _, _, _)
       return moveVectors[MOVE.UP]
     end,
-  }, IControlMove, ICollidePusher, IAHit)
+  }, IControlMove, ICollidePusher)
 
   local shipFire = function(self, ctrl, dt)
     if testControl(ctrl, CONTROL.ACT1) then
@@ -132,7 +131,7 @@ local function invaders()
           return 100
         end
       end,
-    }, IAHit)
+    })
   )
 
   return objects

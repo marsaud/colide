@@ -5,8 +5,6 @@ local _, IRectFill, IRectLine = require("Draw")()
 local moveVectors, _, IMove, _, IMoveX, IMoveY = require("Move")()
 local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
 local _, _, _, IControlMove = require("Control")()
-local IAHit = require("Hit")()
-local IAState = require("State")()
 local Boy = require("demo/Boy")()
 
 local function demo()
@@ -15,7 +13,7 @@ local function demo()
   local Rect1DX = AGameUIObject:new(IControlMove, IMoveX, ICollidePusher, IRectLine)
   local Rect1DY = AGameUIObject:new(IControlMove, IMoveY, ICollidePusher, IRectLine)
   local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
-  local BlockerBoy = AGameUIObject:new(IControlMove, IMove, ICollidePusher, IAState, Boy)
+  local BlockerBoy = AGameUIObject:new(IControlMove, IMove, ICollidePusher, Boy)
 
   local AutoMove = {
     stateIndex = 1,
@@ -140,7 +138,7 @@ local function demo()
     speed = 240,
     vector = moveVectors[MOVE.NONE]:copy(),
     color = COLOR.ORANGE,
-  }, IAHit, AutoBounce)
+  }, AutoBounce)
 
   local boy = BlockerBoy:new({
     id = "boy",

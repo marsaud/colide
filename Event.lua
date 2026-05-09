@@ -11,15 +11,21 @@ local getEventId = function()
 end
 
 local EventManager = Class({
+  _constructors = {
+    EventManager = function(self)
+      if not self._objects then
+        self._objects = {}
+      end
+    end,
+  },
   tick = function(self, dt)
     local ctrl = pullControl()
-    local objs = self._objects or {}
-    for _, u in ipairs(objs) do
+    for _, u in ipairs(self._objects) do
       if u.update then
         u:update(ctrl, dt)
       end
     end
-    for _, c in ipairs(objs) do
+    for _, c in ipairs(self._objects) do
       if c.control then
         c:control(ctrl, dt)
       end
@@ -27,8 +33,7 @@ local EventManager = Class({
   end,
 
   draw = function(self)
-    local objs = self._objects or {}
-    for _, d in ipairs(objs) do
+    for _, d in ipairs(self._objects) do
       if d.draw then
         d:draw()
       end
@@ -40,9 +45,6 @@ local EventManager = Class({
   end,
 
   addObjects = function(self, ...)
-    if not self._objects then
-      self._objects = {}
-    end
     local arg = { ... }
     for _, o in ipairs(arg) do
       if o.group then
@@ -57,9 +59,6 @@ local EventManager = Class({
   end,
 
   _addObjects = function(self, ...)
-    if not self._objects then
-      self._objects = {}
-    end
     local arg = { ... }
     for _, o in ipairs(arg) do
       table.insert(self._objects, o)
@@ -69,15 +68,14 @@ local EventManager = Class({
 
   removeObjects = function(self, ...)
     local args = { ... }
-    local objs = self._objects or {}
     for _, v in ipairs(args) do
       if not v.group then
-        for i, o in ipairs(objs) do
+        for i, o in ipairs(self._objects) do
           if v == o then
             if o._group then
               self:_removeObjects(table.unpack(o._group))
             end
-            table.remove(objs, i)
+            table.remove(self._objects, i) -- TODO check if table modification may break the for loop
             o.eventManager = nil
           end
         end
@@ -87,11 +85,10 @@ local EventManager = Class({
 
   _removeObjects = function(self, ...)
     local args = { ... }
-    local objs = self._objects or {}
     for _, v in ipairs(args) do
-      for i, o in ipairs(objs) do
+      for i, o in ipairs(self._objects) do
         if v == o then
-          table.remove(objs, i)
+          table.remove(self._objects, i) -- TODO check if table modification may break the for loop
           o.eventManager = nil
         end
       end
@@ -109,8 +106,7 @@ local EventManager = Class({
         effect = self:fire(e, id, go, ...) or effect
       end
     end
-    local objs = self._objects or {}
-    for _, c in ipairs(objs) do
+    for _, c in ipairs(self._objects) do
       if c.catch then
         effect = c:catch(e, id, o, ...) or effect
       end
@@ -128,10 +124,9 @@ local EventManager = Class({
 
   purge = function(self)
     -- TODO rewrite relying on private methods handling groups
-    local objs = self._objects or {}
-    for i, o in ipairs(objs) do
+    for i, o in ipairs(self._objects) do
       if o._EV_DELETE then
-        table.remove(objs, i)
+        table.remove(self._objects, i)
         o._EV_DELETE = nil
         o.eventManager = nil
       end

@@ -1,13 +1,13 @@
 local PluginManager = {
-  _initPluginManager = function(self)
-    if self._pluginManagerInit then
-      return
-    end
-    self._plugins = {}
-    self._pluginManagerInit = true
-  end,
+  _constructors = {
+    PluginManager = function(self)
+      if not self._plugins then
+        self._plugins = {}
+      end
+    end,
+  },
+
   addPlugin = function(self, id, funcOrObj)
-    self:_initPluginManager()
     if not self._plugins[id] then
       self._plugins[id] = {}
     end
@@ -16,8 +16,8 @@ local PluginManager = {
     end
     table.insert(self._plugins[id], funcOrObj)
   end,
+
   runPlugins = function(self, id, ...)
-    self:_initPluginManager()
     local result = false
     local sum = 0
     for _, funcOrObj in ipairs(self._plugins[id] or {}) do

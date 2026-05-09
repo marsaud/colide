@@ -5,7 +5,6 @@ local _, IRectFill, IRectLine = require("Draw")()
 local moveVectors, _, _, _, IMoveX, _ = require("Move")()
 local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
 local _, _, _, IControlMove = require("Control")()
-local IAHit = require("Hit")()
 
 local function bricks()
   local AutoBounce = {
@@ -36,8 +35,8 @@ local function bricks()
 
   local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
   local Bat = AGameUIObject:new(IControlMove, IMoveX, ICollideBlocker, ICollidePusher)
-  local Brick = AGameUIObject:new(ICollideBlocker, IAHit, IRectFill)
-  local Ball = AGameUIObject:new(IControlMove, IAHit, AutoBounce, ICollidePusher, IRectLine, {
+  local Brick = AGameUIObject:new(ICollideBlocker, IRectFill)
+  local Ball = AGameUIObject:new(IControlMove, AutoBounce, ICollidePusher, IRectLine, {
     _getDamage = function(_, _)
       return 50
     end,
@@ -102,7 +101,7 @@ local function bricks()
           return 100
         end
       end,
-    }, IAHit),
+    }),
   }
   for x = 50, 700, 50 do
     for y = 10, 210, 40 do

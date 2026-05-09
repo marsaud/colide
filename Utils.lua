@@ -1,14 +1,16 @@
+local Class = require("OOP")()
 local IACollide, _, _, _, _, _ = require("Collide")()
 local _, _, IAControl = require("Control")()
 local IADraw, _, _ = require("Draw")()
-local _, IEventCatcher = require("Event")()
-local IAPlace = require("Place")()
+local IAHit = require("Hit")()
 local _, IAMove, _, _, _, _ = require("Move")()
-local Class = require("OOP")()
+local IAPlace = require("Place")()
+local IAState = require("State")()
+local _, IEventCatcher = require("Event")()
 local PluginManager = require("Plugin")()
 
 local AGameUIObject =
-  Class(IACollide, IAControl, IADraw, IAMove, IAPlace, IEventCatcher, PluginManager)
+  Class(IACollide, IAControl, IADraw, IAHit, IAMove, IAPlace, IAState, IEventCatcher, PluginManager)
 
 local Group = Class({
   add = function(self, ...)
