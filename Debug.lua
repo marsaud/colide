@@ -22,7 +22,7 @@ local function _debug(...)
     elseif i.x and i.y then
       i = "(" .. i.x .. "," .. i.y .. ")"
     end
-    r = r .. " " .. tostring(i)
+    r = r .. tostring(i) .. " "
   end
   return r
 end

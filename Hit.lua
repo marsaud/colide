@@ -10,7 +10,7 @@ local IAHit = {
     if self._hit then
       result = self:_hit(id, who, by, vector) or result
     end
-    if self.health then
+    if self.health and self.health > 0 then
       local damage = by.getDamage and by:getDamage(who) or 0
       self.health = self.health - damage
       if self.health <= 0 and self.eventManager then

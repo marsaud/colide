@@ -23,21 +23,27 @@ local EventManager = Class({
           [EVENT.UPDATE] = {},
         }
       end
+      self._ID = 0
     end,
   },
 
+  _id = function(self)
+    self._ID = self._ID + 1
+    return self._ID
+  end,
+
   tick = function(self, dt)
     local ctrl = pullControl()
-    for _, u in ipairs(self._objects[EVENT.UPDATE]) do
+    for _, u in pairs(self._objects[EVENT.UPDATE]) do
       u:update(ctrl, dt)
     end
-    for _, c in ipairs(self._objects[EVENT.CONTROL]) do
+    for _, c in pairs(self._objects[EVENT.CONTROL]) do
       c:control(ctrl, dt)
     end
   end,
 
   draw = function(self)
-    for _, d in ipairs(self._objects[EVENT.DRAW]) do
+    for _, d in pairs(self._objects[EVENT.DRAW]) do
       d:draw()
     end
   end,
@@ -51,8 +57,8 @@ local EventManager = Class({
     local inserted = false
     for _, e in pairs(EVENT) do
       if o[e] then
-        table.insert(self._objects[e], o)
-        o.__EV_INDEX[e] = #self._objects[e]
+        o.__EV_INDEX[e] = self:_id()
+        self._objects[e][o.__EV_INDEX[e]] = o
         inserted = true
       end
     end
@@ -67,7 +73,7 @@ local EventManager = Class({
 
   _remove = function(self, o)
     for e, pos in pairs(o.__EV_INDEX) do
-      table.remove(self._objects[e], pos)
+      self._objects[e][pos] = nil
     end
     o.eventManager = nil
     o.__EV_INDEX = nil
@@ -123,7 +129,7 @@ local EventManager = Class({
         effect = self:fire(e, id, go, ...) or effect
       end
     end
-    for _, c in ipairs(self._objects[e]) do
+    for _, c in pairs(self._objects[e]) do
       if c.catch then
         effect = c:catch(e, id, o, ...) or effect
       end
