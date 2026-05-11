@@ -33,12 +33,31 @@ local function bricks()
     end,
   }
 
+  local Fall = {
+    _time = 0,
+    _update = function(self, _, dt)
+      if self.health and self.health < 50 then
+        if not self.speed then
+          self.speed = 0
+        end
+        self._time = self._time + dt
+        if self._time > 0.2 then
+          self.speed = self.speed + 9
+          self._time = self._time - 0.2
+        end
+      end
+    end,
+    _move = function(self, id, _, _)
+      return moveVectors[MOVE.DOWN]:copy()
+    end
+  }
+
   local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
-  local Bat = AGameUIObject:new(IControlMove, IMoveX, ICollideBlocker, ICollidePusher)
-  local Brick = AGameUIObject:new(ICollideBlocker, IRectFill)
+  local Bat = AGameUIObject:new(IControlMove, IMoveX, ICollideBlocker, ICollidePusher, IRectLine)
+  local Brick = AGameUIObject:new(IControlMove, ICollideBlocker, IRectFill, Fall)
   local Ball = AGameUIObject:new(IControlMove, AutoBounce, ICollidePusher, IRectLine, {
     _getDamage = function(_, _)
-      return 50
+      return 51
     end,
   })
 
@@ -51,7 +70,7 @@ local function bricks()
     speed = 400,
     vector = moveVectors[MOVE.NONE]:copy(),
     color = COLOR.CYAN,
-  }, IRectLine)
+  })
 
   local ball = Ball:new({
     id = "ball",
@@ -109,7 +128,7 @@ local function bricks()
         objects,
         Brick:new({
           id = "brick",
-          health = 50,
+          health = 100,
           x = x,
           y = y,
           w = 45,
