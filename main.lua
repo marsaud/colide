@@ -37,8 +37,19 @@ local EventManager, _ = require("Event")()
 --]]
 
 local contexts = {}
-local pause
 local contextIndex
+local currentContextIndex
+
+local fullScreen
+local currentFullScreen = fullScreen
+local gameWidth = 800
+local gameHeight = 600
+local scale = 1
+local offsetX = 0
+local offsetY = 0
+
+local pause
+
 
 function love.load()
   local boots = {}
@@ -63,9 +74,8 @@ function love.load()
 
   contextIndex = 1
   pause = false
+  fullScreen = false
 end
-
-local currentContextIndex
 
 function love.update(dt)
   currentContextIndex = contextIndex
@@ -77,10 +87,40 @@ function love.update(dt)
 end
 
 function love.draw()
+  if currentFullScreen ~= fullScreen then
+    currentFullScreen = fullScreen
+      if currentFullScreen then
+        local _, _, flags = love.window.getMode()
+        local display = flags.display
+        local screenW, screenH = love.window.getDesktopDimensions(display)
+        scale = math.floor(math.min(screenW / gameWidth, screenH / gameHeight))
+        offsetX = (screenW - gameWidth * scale) / 2
+        offsetY = (screenH - gameHeight * scale) / 2
+      else
+        scale = 1
+        offsetX = 0
+        offsetY = 0
+      end
+      love.window.setFullscreen(fullScreen)
+  end
+
+  if currentFullScreen then
+    love.graphics.push()
+    love.graphics.translate(offsetX, offsetY)
+    love.graphics.scale(scale, scale)
+  end
+
   contexts[currentContextIndex]:draw()
+
+  if currentFullScreen then
+    love.graphics.pop()
+  end
 end
 
 function love.keypressed(key)
+  if key == "f" then
+    fullScreen = not fullScreen
+  end
   if key == "p" then
     pause = not pause
   end
