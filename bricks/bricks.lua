@@ -1,12 +1,15 @@
-local COLOR, _, _, MOVE = require("Const")()
+local COLOR, _, _, MOVE, STYLE = require("Const")()
 local AGameUIObject = require("Utils")()
 local _, _, _, Vector = require("Couple")()
-local _, IRectFill, IRectLine = require("Draw")()
+local _, IRectFill, IRectLine, rectangle = require("Draw")()
 local moveVectors, _, _, _, IMoveX, _ = require("Move")()
 local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
 local _, _, _, IControlMove = require("Control")()
 
+local debug = require("Debug")()
+
 local function bricks()
+  -- The ball move
   local AutoBounce = {
     autoVector = moveVectors[MOVE.UP]:copy() + moveVectors[MOVE.RIGHT]:copy(),
     _hit = function(self, id, _, _, vector)
@@ -33,18 +36,14 @@ local function bricks()
     end,
   }
 
+  -- the falling bonus move
   local Fall = {
     _time = 0,
     _update = function(self, _, dt)
-      if self.health and self.health < 50 then
-        if not self.speed then
-          self.speed = 0
-        end
-        self._time = self._time + dt
-        if self._time > 0.2 then
-          self.speed = self.speed + 9
-          self._time = self._time - 0.2
-        end
+      self._time = self._time + dt
+      if self._time > 0.2 then
+        self.speed = self.speed + 9
+        self._time = self._time - 0.2
       end
     end,
     _move = function(self, id, _, _)
@@ -52,14 +51,50 @@ local function bricks()
     end
   }
 
-  local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
+  local BRICK_HEALTH = 100
+  local BONUS_HEALTH = 100
+
+  -- health driven brick drawing
+  local Wear = {
+    _draw = function(self)
+      love.graphics.setColor({ self.health / BRICK_HEALTH, self.health / BRICK_HEALTH, self.health / BRICK_HEALTH })
+      rectangle(self, STYLE.FILL)
+    end
+  }
+
+  local Boundary = AGameUIObject:new(ICollideBlocker, IRectFill)
+  local Bonus = AGameUIObject:new(IControlMove, IRectFill, Fall, {
+    color = COLOR.BLUE
+  })
+  local BonusGenerator = {
+    _destroy = function(self, id, who, by, vector)
+      local c = self:c()
+      local bonus = Bonus:new({
+        id = "bonus",
+        x = c.x,
+        y = c.y,
+        w = 45,
+        h = 35,
+        health = BONUS_HEALTH,
+        speed = 0,
+        vector = moveVectors[MOVE.DOWN]:copy()
+      })
+      self.eventManager:addObjects(bonus)
+    end
+  }
   local Bat = AGameUIObject:new(IControlMove, IMoveX, ICollideBlocker, ICollidePusher, IRectLine)
-  local Brick = AGameUIObject:new(IControlMove, ICollideBlocker, IRectFill, Fall)
+  local Brick = AGameUIObject:new(IControlMove, ICollideBlocker, IRectFill, Wear, BonusGenerator)
   local Ball = AGameUIObject:new(IControlMove, AutoBounce, ICollidePusher, IRectLine, {
-    _getDamage = function(_, _)
-      return 51
+    _getDamage = function(_, target)
+      local damage = {
+        brick = 51,
+      }
+      if target.id then
+        return damage[target.id] or 0
+      end
     end,
   })
+
 
   local bat = Bat:new({
     id = "bat",
@@ -87,28 +122,28 @@ local function bricks()
   local objects = {
     bat,
     ball,
-    RectStatic:new({
+    Boundary:new({
       id = "ceil",
       x = 0,
       y = 0,
       w = 800,
       h = 3,
     }),
-    RectStatic:new({
+    Boundary:new({
       id = "left",
       x = 0,
       y = 3,
       w = 3,
       h = 597,
     }),
-    RectStatic:new({
+    Boundary:new({
       id = "right",
       x = 797,
       y = 3,
       w = 3,
       h = 597,
     }),
-    RectStatic:new({
+    Boundary:new({
       id = "floor",
       x = 3,
       y = 597,
@@ -116,8 +151,12 @@ local function bricks()
       h = 3,
       color = COLOR.RED,
       _getDamage = function(_, target)
-        if target and target.id == "ball" then
-          return 100
+        local damage = {
+          ball = BRICK_HEALTH + 1,
+          bonus = BONUS_HEALTH + 1
+        }
+        if target.id then
+          return damage[target.id] or 0
         end
       end,
     }),
@@ -128,7 +167,7 @@ local function bricks()
         objects,
         Brick:new({
           id = "brick",
-          health = 100,
+          health = BRICK_HEALTH,
           x = x,
           y = y,
           w = 45,
