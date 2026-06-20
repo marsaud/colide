@@ -1,4 +1,4 @@
-local COLOR, _, _, MOVE, STYLE = require("Const")()
+local COLOR, _CONTROL, _EVENT, MOVE, _PLUGIN, STYLE = require("Const")()
 local AGameUIObject = require("Utils")()
 local _, _, _, Vector = require("Couple")()
 local _, IRectFill, IRectLine, rectangle = require("Draw")()

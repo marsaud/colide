@@ -1,4 +1,4 @@
-local _, CONTROL, _, _ = require("Const")()
+local _COLOR, CONTROL, _EVENT, _MOVE, _PLUGIN, _STYLE = require("Const")()
 local _, testControl = require("Control")()
 
 local FACE = "face"

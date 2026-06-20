@@ -1,5 +1,5 @@
 local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
-local COLOR, CONTROL, _, MOVE = require("Const")()
+local COLOR, CONTROL, _EVENT, MOVE, _PLUGIN, _STYLE = require("Const")()
 local _, testControl = require("Control")()
 local _, IRectFill, IRectLine = require("Draw")()
 local moveVectors, _, _, _, IMoveX, _ = require("Move")()

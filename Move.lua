@@ -2,7 +2,7 @@
 
 require("math-ext")
 local _, _, _, Vector = require("Couple")()
-local _, CONTROL, EVENT, MOVE = require("Const")()
+local _COLOR, CONTROL, EVENT, MOVE, _PLUGIN, _STYLE = require("Const")()
 local _, testControl = require("Control")()
 
 local moveVectors = {

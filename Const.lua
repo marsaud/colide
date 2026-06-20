@@ -39,11 +39,16 @@ local MOVE = {
   NONE = "none",
 }
 
+local PLUGIN = {
+  PRE = "pre",
+  POST = "post",
+}
+
 local STYLE = {
   FILL = "fill",
   LINE = "line",
 }
 
 return function()
-  return COLOR, CONTROL, EVENT, MOVE, STYLE
+  return COLOR, CONTROL, EVENT, MOVE, PLUGIN, STYLE
 end

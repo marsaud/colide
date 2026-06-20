@@ -1,3 +1,5 @@
+local _COLOR, _CONTROL, _EVENT, _MOVE, PLUGIN, _STYLE = require("Const")()
+
 local PluginManager = {
   _constructors = {
     PluginManager = function(self)

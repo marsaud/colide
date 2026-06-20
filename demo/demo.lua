@@ -1,4 +1,4 @@
-local COLOR, _, _, MOVE = require("Const")()
+local COLOR, _CONTROL, _EVENT, MOVE, _PLUGIN, _STYLE = require("Const")()
 local AGameUIObject = require("Utils")()
 local _, _, _, Vector = require("Couple")()
 local _, IRectFill, IRectLine = require("Draw")()
@@ -6,6 +6,8 @@ local moveVectors, _, IMove, _, IMoveX, IMoveY = require("Move")()
 local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
 local _, _, _, IControlMove = require("Control")()
 local Boy = require("demo/Boy")()
+local SmallTextBlock = require("Components/SmallTextBlock")()
+local DataManager = require("Data")()
 
 local function demo()
   local Rect2D = AGameUIObject:new(IControlMove, IMove, ICollidePusher, IRectLine)
@@ -14,6 +16,8 @@ local function demo()
   local Rect1DY = AGameUIObject:new(IControlMove, IMoveY, ICollidePusher, IRectLine)
   local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
   local BlockerBoy = AGameUIObject:new(IControlMove, IMove, ICollidePusher, Boy)
+
+  local dataManager = DataManager:new()
 
   local AutoMove = {
     stateIndex = 1,
@@ -150,6 +154,12 @@ local function demo()
     vector = moveVectors[MOVE.NONE]:copy(),
   })
 
+  local EXAMPLE_KEY = "abcdef"
+  local textBlock = SmallTextBlock:new({
+    dataKey = EXAMPLE_KEY,
+  })
+  dataManager:subscribe(textBlock, EXAMPLE_KEY)
+
   local objects = {
     -- rect1,
     rect2,
@@ -159,6 +169,7 @@ local function demo()
     rect6,
     rect7,
     boy,
+    textBlock,
     RectStatic:new({
       id = "wall",
       x = 0,

@@ -1,6 +1,6 @@
 local love = love
 
-local COLOR, _, _, _, STYLE = require("Const")()
+local COLOR, _CONTROL, _EVENT, _MOVE, _PLUGIN, STYLE = require("Const")()
 
 local IADraw = {
   draw = function(self)

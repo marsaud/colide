@@ -1,6 +1,6 @@
 local Class = require("OOP")()
 local pullControl = require("Control")()
-local _, _, EVENT, _ = require("Const")()
+local _COLOR, _CONTROL, EVENT, _MOVE, _PLUGIN, _STYLE = require("Const")()
 -- local debug = require("Debug")()
 
 local eventId = 0

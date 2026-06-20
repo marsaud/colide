@@ -61,7 +61,7 @@ function love.load()
     table.insert(contexts, c)
   end
 
-  contextIndex = 2
+  contextIndex = 1
   pause = false
 end
 

@@ -1,7 +1,7 @@
 -- local debug = require("Debug")()
 local Class = require("OOP")()
 local _, IEventCatcher = require("Event")()
-local COLOR, _, _, MOVE = require("Const")()
+local COLOR, _CONTROL, _EVENT, MOVE, _PLUGIN, _STYLE = require("Const")()
 local _, _, IAControl, IControlMove = require("Control")()
 local AGameUIObject, Group = require("Utils")()
 local IADraw, IRectFill, IRectLine = require("Draw")()

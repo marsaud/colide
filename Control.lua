@@ -3,7 +3,7 @@ local love = love
 ---@diagnostic disable-next-line: undefined-global
 local bit = bit
 
-local _, CONTROL, _, _ = require("Const")()
+local _COLOR, CONTROL, _EVENT, _MOVE, _PLUGIN, _STYLE = require("Const")()
 
 local function pullControl()
   return (love.keyboard.isDown("space") and CONTROL.ACT1 or 0)
@@ -32,7 +32,7 @@ local IAControl = {
 local IControlMove = {
   _control = function(self, ctrl, dt)
     if self.move then
-      return self:move(_, ctrl, dt)
+      return self:move(0, ctrl, dt)
     else
       return false
     end
