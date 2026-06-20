@@ -53,7 +53,9 @@ local IAMove = {
 
   _commit = function(self, id)
     self._c = self._d:copy()
-    self.vector = self:_initVector()
+    if self._initVector then
+      self.vector = self:_initVector()
+    end
   end,
 
   v = function(self, value, forceMover)

@@ -1,6 +1,6 @@
 local love = love
 
-local COLOR, _, _, _ = require("Const")()
+local COLOR, _, _, _, STYLE = require("Const")()
 
 local IADraw = {
   draw = function(self)
@@ -11,7 +11,7 @@ local IADraw = {
   end,
 }
 
-local _rectDraw = function(o, style)
+local rectangle = function(o, style)
   local c
   if o.c then
     c = o:c()
@@ -23,16 +23,16 @@ end
 
 local IRectLine = {
   _draw = function(self)
-    _rectDraw(self, "line")
+    rectangle(self, STYLE.LINE)
   end,
 }
 
 local IRectFill = {
   _draw = function(self)
-    _rectDraw(self, "fill")
+    rectangle(self, STYLE.FILL)
   end,
 }
 
 return function()
-  return IADraw, IRectFill, IRectLine
+  return IADraw, IRectFill, IRectLine, rectangle
 end

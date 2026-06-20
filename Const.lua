@@ -39,6 +39,11 @@ local MOVE = {
   NONE = "none",
 }
 
+local STYLE = {
+  FILL = "fill",
+  LINE = "line",
+}
+
 return function()
-  return COLOR, CONTROL, EVENT, MOVE
+  return COLOR, CONTROL, EVENT, MOVE, STYLE
 end

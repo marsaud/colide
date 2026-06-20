@@ -12,9 +12,14 @@ local IAHit = {
     end
     if self.health and self.health > 0 then
       local damage = by.getDamage and by:getDamage(who) or 0
-      self.health = self.health - damage
-      if self.health <= 0 and self.eventManager then
-        self.eventManager:delete(self)
+      if damage ~= 0 then
+        self.health = self.health - damage
+        if self.health <= 0 and self.eventManager then
+          self.eventManager:delete(self)
+          if self._destroy then
+            self:_destroy(id, who, by, vector)
+          end
+        end
       end
     end
     return result
