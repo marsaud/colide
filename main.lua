@@ -43,17 +43,17 @@ local contextIndex
 function love.load()
   local boots = {}
 
-  -- local demo = require("demo/demo")
-  -- table.insert(boots, demo)
+  local demo = require("demo/demo")
+  table.insert(boots, demo)
 
   local bricks = require("bricks/bricks")
   table.insert(boots, bricks)
 
-  -- local invaders = require("invaders/invaders")
-  -- table.insert(boots, invaders)
+  local invaders = require("invaders/invaders")
+  table.insert(boots, invaders)
 
-  -- local groupDemo = require("groupDemo/groupDemo")
-  -- table.insert(boots, groupDemo)
+  local groupDemo = require("groupDemo/groupDemo")
+  table.insert(boots, groupDemo)
 
   for _, b in ipairs(boots) do
     local c = EventManager:new()
@@ -61,7 +61,7 @@ function love.load()
     table.insert(contexts, c)
   end
 
-  contextIndex = #contexts
+  contextIndex = 2
   pause = false
 end
 
