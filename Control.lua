@@ -21,12 +21,16 @@ end
 local IAControl = {
   control = function(self, ctrl, dt)
     local result = false
-    if self.runPlugins then
-      result = self:runPlugins("_control", self, ctrl, dt)
+    if self.runPrePlugins then
+      result = self:runPrePlugins("_control", self, ctrl, dt)
     end
     if self._control then
       result = self:_control(ctrl, dt) or result
     end
+    if self.runPostPlugins then
+      result = self:runPostPlugins("_control", self, ctrl, dt) or result
+    end
+    return result
   end,
 }
 

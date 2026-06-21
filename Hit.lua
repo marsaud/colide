@@ -4,11 +4,14 @@ local IAHit = {
       return false
     end
     local result = false
-    if self.runPlugins then
-      result = self:runPlugins("_hit", self, id, who, by, vector)
+    if self.runPrePlugins then
+      result = self:runPrePlugins("_hit", self, id, who, by, vector)
     end
     if self._hit then
       result = self:_hit(id, who, by, vector) or result
+    end
+    if self.runPostPlugins then
+      result = self:runPostPlugins("_hit", self, id, who, by, vector) or result
     end
     if self.health and self.health > 0 then
       local damage = by.getDamage and by:getDamage(who) or 0
@@ -30,12 +33,16 @@ local IAHit = {
     if target == self then
       return damage
     end
-    if self.runPlugins then
-      local _, _damage = self:runPlugins("_getDamage", self, target)
+    if self.runPrePlugins then
+      local _, _damage = self:runPrePlugins("_getDamage", self, target)
       damage = damage + _damage
     end
     if self._getDamage then
       local _damage = self:_getDamage(target)
+      damage = damage + _damage
+    end
+    if self.runPostPlugins then
+      local _, _damage = self:runPostPlugins("_getDamage", self, target)
       damage = damage + _damage
     end
     return damage
