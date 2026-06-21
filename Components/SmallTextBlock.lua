@@ -39,7 +39,7 @@ local SmallTextBlock = Class({
     love.graphics.print(self.text, self.x + 5, self.y + 5)
   end,
 
-  dataPush = function(self, key, value)
+  pushData = function(self, key, value)
     if self.dataKey == key then
       self:print(value)
     end

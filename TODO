@@ -1,5 +1,5 @@
 [x] Change import/export to a map solution
 [x] Generalize plugin system with pre/post choice
-[ ] Data catcher class
-[ ] Improve Event Manager (multi manager add, refined removing, avoid dupplicate)
-[ ] Improve Data Manager (multi manager add, refined removing, avoid dupplicate)
+[x] Data catcher class
+[ ] Improve Event Manager (multi manager add, refined removing, avoid duplicates)
+[ ] Improve Data Manager (multi manager add, refined removing, avoid duplicates)

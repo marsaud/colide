@@ -15,7 +15,8 @@ local IControlMove = Control.IControlMove
 local Boy = require("demo/Boy").Boy
 local SmallTextBlock = require("Components/SmallTextBlock").SmallTextBlock
 local Data = require("Data")
-local DataManager = Data.DataManager
+local DataManager, IADataBroadcaster, IADataListener =
+  Data.DataManager, Data.IADataBroadcaster, Data.IADataListener
 
 local function demo()
   local Rect2D = AGameUIObject:new(IControlMove, IMove, ICollidePusher, IRectLine)
@@ -152,6 +153,8 @@ local function demo()
     color = COLOR.ORANGE,
   }, AutoBounce)
 
+  local EXAMPLE_KEY = "abcdef"
+
   local boy = BlockerBoy:new({
     id = "boy",
     x = 200,
@@ -160,17 +163,25 @@ local function demo()
     h = 92,
     speed = 120,
     vector = moveVectors[MOVE.NONE]:copy(),
-    getData = function(self)
+    _getData = function(self)
       return self:c().x .. "," .. self:c().y
     end,
-  })
+    _getKey = function(self)
+      return EXAMPLE_KEY
+    end,
+  }, IADataBroadcaster)
 
-  local EXAMPLE_KEY = "abcdef"
   local textBlock = SmallTextBlock:new({
-    dataKey = EXAMPLE_KEY,
-  })
-  dataManager:register(boy, EXAMPLE_KEY)
-  dataManager:subscribe(textBlock, EXAMPLE_KEY)
+    _getKey = function(self)
+      return EXAMPLE_KEY
+    end,
+    _pushData = function(self, value)
+      self:print(value)
+    end,
+  }, IADataListener)
+
+  dataManager:register(boy)
+  dataManager:subscribe(textBlock)
 
   local objects = {
     dataManager,
