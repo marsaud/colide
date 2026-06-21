@@ -1,12 +1,19 @@
-local COLOR, _CONTROL, _EVENT, MOVE, _PLUGIN, STYLE = require("Const")()
-local AGameUIObject = require("Utils")()
-local _, _, _, Vector = require("Couple")()
-local _, IRectFill, IRectLine, rectangle = require("Draw")()
-local moveVectors, _, _, _, IMoveX, _ = require("Move")()
-local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
-local _, _, _, IControlMove = require("Control")()
+local C = require("Const")
+local COLOR, MOVE, STYLE = C.COLOR, C.MOVE, C.STYLE
+local Utils = require("Utils")
+local AGameUIObject = Utils.AGameUIObject
+local Couple = require("Couple")
+local Vector = Couple.Vector
+local Draw = require("Draw")
+local IRectFill, IRectLine, rectangle = Draw.IRectFill, Draw.IRectLine, Draw.rectangle
+local Move = require("Move")
+local moveVectors, IMoveX = Move.moveVectors, Move.IMoveX
+local Collide = require("Collide")
+local ICollideBlocker, ICollidePusher = Collide.ICollideBlocker, Collide.ICollidePusher
+local Control = require("Control")
+local IControlMove = Control.IControlMove
 
-local debug = require("Debug")()
+-- local debug = require("Debug").debug
 
 local BRICK_HEALTH = 100
 local BONUS_HEALTH = 100

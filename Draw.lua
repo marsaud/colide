@@ -1,6 +1,7 @@
 local love = love
 
-local COLOR, _CONTROL, _EVENT, _MOVE, _PLUGIN, STYLE = require("Const")()
+local C = require("Const")
+local COLOR, STYLE = C.COLOR, C.STYLE
 
 local IADraw = {
   draw = function(self)
@@ -33,6 +34,9 @@ local IRectFill = {
   end,
 }
 
-return function()
-  return IADraw, IRectFill, IRectLine, rectangle
-end
+return {
+  IADraw = IADraw,
+  IRectFill = IRectFill,
+  IRectLine = IRectLine,
+  rectangle = rectangle,
+}

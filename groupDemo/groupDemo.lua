@@ -1,13 +1,18 @@
--- local debug = require("Debug")()
-local Class = require("OOP")()
-local _, IEventCatcher = require("Event")()
-local COLOR, _CONTROL, _EVENT, MOVE, _PLUGIN, _STYLE = require("Const")()
-local _, _, IAControl, IControlMove = require("Control")()
-local AGameUIObject, Group = require("Utils")()
-local IADraw, IRectFill, IRectLine = require("Draw")()
-local IAPlace = require("Place")()
-local moveVectors, IAMove, IMove, _, _, _ = require("Move")()
-local IACollide, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
+-- local debug = require("Debug").debug
+local C = require("Const")
+local COLOR, MOVE = C.COLOR, C.MOVE
+local Control = require("Control")
+local IAControl, IControlMove = Control.IAControl, Control.IControlMove
+local Utils = require("Utils")
+local AGameUIObject, Group = Utils.AGameUIObject, Utils.Group
+local Draw = require("Draw")
+local IRectFill, IRectLine = Draw.IRectFill, Draw.IRectLine
+local Place = require("Place")
+local IAPlace = Place.IAPlace
+local Move = require("Move")
+local moveVectors, IAMove, IMove = Move.moveVectors, Move.IAMove, Move.IMove
+local Collide = require("Collide")
+local ICollideBlocker, ICollidePusher = Collide.ICollideBlocker, Collide.ICollidePusher
 
 local function groupDemo()
   local RectNoMove = AGameUIObject:new(IControlMove, ICollidePusher, IRectLine)

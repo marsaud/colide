@@ -1,5 +1,7 @@
-local _COLOR, CONTROL, _EVENT, _MOVE, _PLUGIN, _STYLE = require("Const")()
-local _, testControl = require("Control")()
+local C = require("Const")
+local CONTROL = C.CONTROL
+local Control = require("Control")
+local testControl = Control.testControl
 
 local FACE = "face"
 local BACK = "back"
@@ -101,6 +103,6 @@ local Boy = {
   end,
 }
 
-return function()
-  return Boy
-end
+return {
+  Boy = Boy,
+}

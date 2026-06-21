@@ -73,6 +73,9 @@ local Point = Couple
 local Size = Couple
 local Vector = Couple
 
-return function()
-  return Coord, Point, Size, Vector
-end
+return {
+  Coord = Coord,
+  Point = Coord,
+  Size = Size,
+  Vector = Vector,
+}

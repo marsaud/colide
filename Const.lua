@@ -50,6 +50,11 @@ local STYLE = {
   LINE = "line",
 }
 
-return function()
-  return COLOR, CONTROL, EVENT, MOVE, PLUGIN, STYLE
-end
+return {
+  COLOR = COLOR,
+  CONTROL = CONTROL,
+  EVENT = EVENT,
+  MOVE = MOVE,
+  PLUGIN = PLUGIN,
+  STYLE = STYLE,
+}

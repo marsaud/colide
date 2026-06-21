@@ -1,9 +1,12 @@
--- local debug = require("Debug")()
+-- local debug = require("Debug").debug
 
 require("math-ext")
-local _, _, _, Vector = require("Couple")()
-local _COLOR, CONTROL, EVENT, MOVE, _PLUGIN, _STYLE = require("Const")()
-local _, testControl = require("Control")()
+local Couple = require("Couple")
+local Vector = Couple.Vector
+local C = require("Const")
+local CONTROL, EVENT, MOVE = C.CONTROL, C.EVENT, C.MOVE
+local Control = require("Control")
+local testControl = Control.testControl
 
 local moveVectors = {
   [MOVE.UP] = Vector:new({ x = 0, y = -1 }),
@@ -155,6 +158,11 @@ local IMoveNot = {
   end,
 }
 
-return function()
-  return moveVectors, IAMove, IMove, IMoveNot, IMoveX, IMoveY
-end
+return {
+  moveVectors = moveVectors,
+  IAMove = IAMove,
+  IMove = IMove,
+  IMoveNot = IMoveNot,
+  IMoveX = IMoveX,
+  IMoveY = IMoveY,
+}

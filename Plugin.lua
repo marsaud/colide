@@ -1,4 +1,5 @@
-local _COLOR, _CONTROL, _EVENT, _MOVE, PLUGIN, _STYLE = require("Const")()
+local C = require("Const")
+local PLUGIN = C.PLUGIN
 
 local PluginManager = {
   _constructors = {
@@ -40,6 +41,6 @@ local PluginManager = {
   end,
 }
 
-return function()
-  return PluginManager
-end
+return {
+  PluginManager = PluginManager,
+}

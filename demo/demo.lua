@@ -1,13 +1,21 @@
-local COLOR, _CONTROL, _EVENT, MOVE, _PLUGIN, _STYLE = require("Const")()
-local AGameUIObject = require("Utils")()
-local _, _, _, Vector = require("Couple")()
-local _, IRectFill, IRectLine = require("Draw")()
-local moveVectors, _, IMove, _, IMoveX, IMoveY = require("Move")()
-local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
-local _, _, _, IControlMove = require("Control")()
-local Boy = require("demo/Boy")()
-local SmallTextBlock = require("Components/SmallTextBlock")()
-local DataManager = require("Data")()
+local C = require("Const")
+local COLOR, MOVE = C.COLOR, C.MOVE
+local Utils = require("Utils")
+local AGameUIObject = Utils.AGameUIObject
+local Couple = require("Couple")
+local Vector = Couple.Vector
+local Draw = require("Draw")
+local IRectFill, IRectLine = Draw.IRectFill, Draw.IRectLine
+local Move = require("Move")
+local moveVectors, IMove, IMoveX, IMoveY = Move.moveVectors, Move.IMove, Move.IMoveX, Move.IMoveY
+local Collide = require("Collide")
+local ICollideBlocker, ICollidePusher = Collide.ICollideBlocker, Collide.ICollidePusher
+local Control = require("Control")
+local IControlMove = Control.IControlMove
+local Boy = require("demo/Boy").Boy
+local SmallTextBlock = require("Components/SmallTextBlock").SmallTextBlock
+local Data = require("Data")
+local DataManager = Data.DataManager
 
 local function demo()
   local Rect2D = AGameUIObject:new(IControlMove, IMove, ICollidePusher, IRectLine)

@@ -32,6 +32,6 @@ local function debug(...)
   print(r)
 end
 
-return function()
-  return debug
-end
+return {
+  debug = debug,
+}

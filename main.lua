@@ -4,8 +4,9 @@ local love = love
 -- END CONFORT TWEAKS
 
 -- IMPORTS
--- local debug = require("Debug")()
-local EventManager, _ = require("Event")()
+-- local debug = require("Debug").debug
+local Event = require("Event")
+local EventManager = Event.EventManager
 -- END IMPORTS
 
 --[[ GAME CLASSES
@@ -50,7 +51,6 @@ local offsetY = 0
 
 local pause
 
-
 function love.load()
   local boots = {}
 
@@ -89,19 +89,19 @@ end
 function love.draw()
   if currentFullScreen ~= fullScreen then
     currentFullScreen = fullScreen
-      if currentFullScreen then
-        local _, _, flags = love.window.getMode()
-        local display = flags.display
-        local screenW, screenH = love.window.getDesktopDimensions(display)
-        scale = math.floor(math.min(screenW / gameWidth, screenH / gameHeight))
-        offsetX = (screenW - gameWidth * scale) / 2
-        offsetY = (screenH - gameHeight * scale) / 2
-      else
-        scale = 1
-        offsetX = 0
-        offsetY = 0
-      end
-      love.window.setFullscreen(fullScreen)
+    if currentFullScreen then
+      local _, _, flags = love.window.getMode()
+      local display = flags.display
+      local screenW, screenH = love.window.getDesktopDimensions(display)
+      scale = math.floor(math.min(screenW / gameWidth, screenH / gameHeight))
+      offsetX = (screenW - gameWidth * scale) / 2
+      offsetY = (screenH - gameHeight * scale) / 2
+    else
+      scale = 1
+      offsetX = 0
+      offsetY = 0
+    end
+    love.window.setFullscreen(fullScreen)
   end
 
   if currentFullScreen then

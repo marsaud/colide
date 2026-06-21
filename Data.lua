@@ -1,5 +1,7 @@
-local Class = require("OOP")()
-local IAState = require("State")()
+local OOP = require("OOP")
+local Class = OOP.Class
+local State = require("State")
+local IAState = State.IAState
 
 local DataManager = Class({
   _constructors = {
@@ -99,9 +101,9 @@ local DataManager = Class({
 
   _flush = function(self, _id)
     self:broadCast()
-  end
+  end,
 }, IAState)
 
-return function()
-  return DataManager
-end
+return {
+  DataManager = DataManager,
+}

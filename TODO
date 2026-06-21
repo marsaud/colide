@@ -1,4 +1,4 @@
-[ ] Change import/export to a map solution
+[x] Change import/export to a map solution
 [ ] Generalize plugin system with pre/post choice
 [ ] Data catcher class
 [ ] Improve Event Manager (multi manager add, refined removing, avoid dupplicate)

@@ -1,6 +1,9 @@
-local Class = require("OOP")()
-local IADraw, _IRectFill, _IRectLine, _rectangle = require("Draw")()
-local _COLOR, _CONTROL, _EVENT, _MOVE, _PLUGIN, STYLE = require("Const")()
+local OOP = require("OOP")
+local Class = OOP.Class
+local Draw = require("Draw")
+local IADraw = Draw.IADraw
+local C = require("Const")
+local STYLE = C.STYLE
 
 local SmallTextBlock = Class({
   _constructors = {
@@ -43,6 +46,6 @@ local SmallTextBlock = Class({
   end,
 }, IADraw)
 
-return function()
-  return SmallTextBlock
-end
+return {
+  SmallTextBlock = SmallTextBlock,
+}

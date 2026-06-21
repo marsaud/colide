@@ -42,6 +42,6 @@ local IAHit = {
   end,
 }
 
-return function()
-  return IAHit
-end
+return {
+  IAHit = IAHit,
+}

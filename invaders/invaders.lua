@@ -1,10 +1,15 @@
-local _, ICollideBlocker, _, _, _, ICollidePusher = require("Collide")()
-local COLOR, CONTROL, _EVENT, MOVE, _PLUGIN, _STYLE = require("Const")()
-local _, testControl = require("Control")()
-local _, IRectFill, IRectLine = require("Draw")()
-local moveVectors, _, _, _, IMoveX, _ = require("Move")()
-local AGameUIObject = require("Utils")()
-local _, _, _, IControlMove = require("Control")()
+local Collide = require("Collide")
+local ICollideBlocker, ICollidePusher = Collide.ICollideBlocker, Collide.ICollidePusher
+local C = require("Const")
+local COLOR, CONTROL, MOVE = C.COLOR, C.CONTROL, C.MOVE
+local Control = require("Control")
+local testControl, IControlMove = Control.testControl, Control.IControlMove
+local Draw = require("Draw")
+local IRectFill, IRectLine = Draw.IRectFill, Draw.IRectLine
+local Move = require("Move")
+local moveVectors, IMoveX = Move.moveVectors, Move.IMoveX
+local Utils = require("Utils")
+local AGameUIObject = Utils.AGameUIObject
 
 local function invaders()
   local Vessel = {

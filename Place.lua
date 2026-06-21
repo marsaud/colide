@@ -1,6 +1,7 @@
--- local debug = require("Debug")()
+-- local debug = require("Debug").debug
 
-local Coord, _, _, _ = require("Couple")()
+local Couple = require("Couple")
+local Coord = Couple.Coord
 
 local IAPlace = {
   _constructors = {
@@ -62,6 +63,6 @@ local IAPlace = {
   end,
 }
 
-return function()
-  return IAPlace
-end
+return {
+  IAPlace = IAPlace,
+}

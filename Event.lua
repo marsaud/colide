@@ -1,7 +1,10 @@
-local Class = require("OOP")()
-local pullControl = require("Control")()
-local _COLOR, _CONTROL, EVENT, _MOVE, _PLUGIN, _STYLE = require("Const")()
--- local debug = require("Debug")()
+local OOP = require("OOP")
+local Class = OOP.Class
+local Control = require("Control")
+local pullControl = Control.pullControl
+local C = require("Const")
+local EVENT = C.EVENT
+-- local debug = require("Debug").debug
 
 local eventId = 0
 local eventCount = 0
@@ -178,6 +181,7 @@ local IEventCatcher = {
   end,
 }
 
-return function()
-  return EventManager, IEventCatcher
-end
+return {
+  EventManager = EventManager,
+  IEventCatcher = IEventCatcher,
+}

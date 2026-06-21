@@ -15,9 +15,9 @@ local IAState = {
     if self._flush then
       return self:_flush(id)
     end
-  end
+  end,
 }
 
-return function()
-  return IAState
-end
+return {
+  IAState = IAState,
+}

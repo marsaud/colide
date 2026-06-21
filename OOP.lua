@@ -1,4 +1,5 @@
-local OrderedTable = require("OrderedTable")()
+local OT = require("OrderedTable")
+local OrderedTable = OT.OrderedTable
 
 local function _aggregateTables(...)
   local arg = { ... }
@@ -47,6 +48,6 @@ local function Class(...)
   return _aggregateTables({ new = new }, ...)
 end
 
-return function()
-  return Class
-end
+return {
+  Class = Class,
+}

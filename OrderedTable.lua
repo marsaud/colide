@@ -23,6 +23,6 @@ function OrderedTable:iterate()
   end
 end
 
-return function()
-  return OrderedTable
-end
+return {
+  OrderedTable = OrderedTable,
+}

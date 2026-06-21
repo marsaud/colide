@@ -1,7 +1,9 @@
 require("math-ext")
-local Coord, _, _, Vector = require("Couple")()
-local _COLOR, _CONTROL, EVENT, _MOVE, _PLUGIN, _STYLE = require("Const")()
--- local debug = require("Debug")()
+local Couple = require("Couple")
+local Coord, Vector = Couple.Coord, Couple.Vector
+local C = require("Const")
+local EVENT = C.EVENT
+-- local debug = require("Debug").debug
 
 local IACollide = {
   _isRight = function(self, o)
@@ -226,6 +228,11 @@ local ICollidePusher = {
 
 local ICollideNot = {}
 
-return function()
-  return IACollide, ICollideBlocker, ICollideBlockerX, ICollideBlockerY, ICollideNot, ICollidePusher
-end
+return {
+  IACollide = IACollide,
+  ICollideBlocker = ICollideBlocker,
+  ICollideBlockerX = ICollideBlockerX,
+  ICollideBlockerY = ICollideBlockerY,
+  ICollideNot = ICollideNot,
+  ICollidePusher = ICollidePusher,
+}
