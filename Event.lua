@@ -20,14 +20,10 @@ local EventManager = Class({
   _constructors = {
     EventManager = function(self)
       if not self._objects then
-        self._objects = {
-          [EVENT.COMMIT] = {},
-          [EVENT.CONTROL] = {},
-          [EVENT.DRAW] = {},
-          [EVENT.HIT] = {},
-          [EVENT.MOVE] = {},
-          [EVENT.UPDATE] = {},
-        }
+        self._objects = {}
+        for _, e in pairs(EVENT) do
+          self._objects[e] = {}
+        end
       end
       self._ID = 0
     end,
@@ -45,6 +41,13 @@ local EventManager = Class({
     end
     for _, c in pairs(self._objects[EVENT.CONTROL]) do
       c:control(ctrl, dt)
+    end
+  end,
+
+  flush = function(self)
+    self:purge()
+    for _, f in pairs(self._objects[EVENT.FLUSH]) do
+      f:flush()
     end
   end,
 
@@ -78,8 +81,8 @@ local EventManager = Class({
   end,
 
   _remove = function(self, o)
-    for e, pos in pairs(o.__EV_INDEX) do
-      self._objects[e][pos] = nil
+    for e, id in pairs(o.__EV_INDEX) do
+      self._objects[e][id] = nil
     end
     o.eventManager = nil
     o.__EV_INDEX = nil

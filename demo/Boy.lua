@@ -56,7 +56,7 @@ local Boy = {
     end,
   },
 
-  update = function(self, ctrl, dt)
+  _update = function(self, ctrl, dt)
     local animate = false
     if testControl(ctrl, CONTROL.RIGHT) then
       self._state = RIGHT

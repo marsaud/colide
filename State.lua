@@ -7,6 +7,15 @@ local IAState = {
       return self:_update(id, ctrl, dt)
     end
   end,
+
+  flush = function(self, id)
+    if self.runPlugins then
+      self:runPlugins("flush", self, id)
+    end
+    if self._flush then
+      return self:_flush(id)
+    end
+  end
 }
 
 return function()

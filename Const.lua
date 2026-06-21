@@ -26,6 +26,7 @@ local EVENT = {
   COMMIT = "commit",
   CONTROL = "control",
   DRAW = "draw",
+  FLUSH = "flush",
   HIT = "hit",
   MOVE = "resolve",
   UPDATE = "update",

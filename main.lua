@@ -73,7 +73,7 @@ function love.update(dt)
     return
   end
   contexts[currentContextIndex]:tick(dt)
-  contexts[currentContextIndex]:purge()
+  contexts[currentContextIndex]:flush()
 end
 
 function love.draw()

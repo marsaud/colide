@@ -152,15 +152,20 @@ local function demo()
     h = 92,
     speed = 120,
     vector = moveVectors[MOVE.NONE]:copy(),
+    getData = function(self)
+      return self:c().x .. "," .. self:c().y
+    end,
   })
 
   local EXAMPLE_KEY = "abcdef"
   local textBlock = SmallTextBlock:new({
     dataKey = EXAMPLE_KEY,
   })
+  dataManager:register(boy, EXAMPLE_KEY)
   dataManager:subscribe(textBlock, EXAMPLE_KEY)
 
   local objects = {
+    dataManager,
     -- rect1,
     rect2,
     rect3,
