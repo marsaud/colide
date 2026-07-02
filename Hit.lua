@@ -17,15 +17,21 @@ local IAHit = {
       local damage = by.getDamage and by:getDamage(who) or 0
       if damage ~= 0 then
         self.health = self.health - damage
-        if self.health <= 0 and self.eventManager then
-          self.eventManager:delete(self)
-          if self._destroy then
-            self:_destroy(id, who, by, vector)
+        if self.health <= 0 then
+          if self.eventManager then
+            self.eventManager:delete(self)
           end
+          self:destroy(id, who, by, vector)
         end
       end
     end
     return result
+  end,
+
+  destroy = function(self, id, who, by, vector)
+    if self._destroy then
+      return self:_destroy(id, who, by, vector)
+    end
   end,
 
   getDamage = function(self, target)

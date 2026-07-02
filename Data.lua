@@ -2,14 +2,15 @@ local OOP = require("OOP")
 local Class = OOP.Class
 local State = require("State")
 local IAState = State.IAState
+local L = require("lib")
 
 local DataManager = Class({
   _constructors = {
     DataManager = function(self)
-      if not self._listeners then
+      if not L.x(self._listeners) then
         self._listeners = {}
       end
-      if not self._broadcasters then
+      if not L.x(self._broadcasters) then
         self._broadcasters = {}
       end
       self._ID = 0
@@ -22,25 +23,30 @@ local DataManager = Class({
   end,
 
   subscribe = function(self, o)
-    if not o.pushData then
+    if not L.f(o.pushData) then
       return false
     end
-    if not o.__DATA_LIST_INDEX then
+    if not L.x(o.__DATA_LIST_INDEX) then
       o.__DATA_LIST_INDEX = {}
     end
-    local key = o:getKey()
-    o.__DATA_LIST_INDEX[key] = self:_id()
-    if not self._listeners[key] then
-      self._listeners[key] = {}
+    local keys = o:getKeys()
+    for _, key in pairs(keys) do
+      o.__DATA_LIST_INDEX[key] = self:_id()
+      if not L.x(self._listeners[key]) then
+        self._listeners[key] = {}
+      end
+      if self._listeners[key][o.__DATA_LIST_INDEX[key]] then
+        error("Data suscribe slot not free")
+      end
+      self._listeners[key][o.__DATA_LIST_INDEX[key]] = o
     end
-    self._listeners[key][o.__DATA_LIST_INDEX[key]] = o
     o.DataManager = self
     return true
   end,
 
   unsubscribe = function(self, o, key)
     for _key, id in pairs(o.__DATA_LIST_INDEX) do
-      if not key or key == _key then
+      if not L.x(key) or key == _key then
         self._listeners[_key][id] = nil
         o.__DATA_LIST_INDEX[_key] = nil
       end
@@ -51,25 +57,24 @@ local DataManager = Class({
     end
   end,
 
-  register = function(self, o, ...)
-    if not o.getData then
+  register = function(self, o)
+    if not L.f(o.getData) then
       return false
     end
-    if not o.__DATA_BROAD_INDEX then
+    if not L.x(o.__DATA_BROAD_INDEX) then
       o.__DATA_BROAD_INDEX = {}
     end
-    local keys = { ... }
-    local key = o:getKey()
-    if key then
-      table.insert(keys, key)
-    end
+    local keys = o:getKeys()
     if #keys == 0 then
       return false
     end
-    for _, k in pairs(keys) do
+    for _, key in pairs(keys) do
       o.__DATA_BROAD_INDEX[key] = self:_id()
-      if not self._broadcasters[key] then
+      if not L.x(self._broadcasters[key]) then
         self._broadcasters[key] = {}
+      end
+      if self._broadcasters[key][o.__DATA_BROAD_INDEX[key]] then
+        error("Data register slot not free")
       end
       self._broadcasters[key][o.__DATA_BROAD_INDEX[key]] = o
     end
@@ -79,7 +84,7 @@ local DataManager = Class({
 
   unregister = function(self, o, key)
     for _key, id in pairs(o.__DATA_BROAD_INDEX) do
-      if not key or key == _key then
+      if L.x(key) or key == _key then
         self._broadcasters[_key][id] = nil
         o.__DATA_BROAD_INDEX[_key] = nil
       end
@@ -94,7 +99,7 @@ local DataManager = Class({
     for key, broadcasters in pairs(self._broadcasters) do
       for _, br in pairs(broadcasters) do
         if br.getData then
-          local value = br:getData()
+          local value = br:getData(key)
           self:push(value, key)
         end
       end
@@ -116,29 +121,82 @@ local DataManager = Class({
 }, IAState)
 
 local IADataBroadcaster = {
-  getKey = function(self)
-    return self:_getKey()
+  getKeys = function(self)
+    return self:_getKeys()
   end,
 
-  getData = function(self)
-    return self:_getData()
+  getData = function(self, key)
+    return self:_getData(key)
   end,
 }
 
 local IADataListener = {
-  getKey = function(self)
-    return self:_getKey()
+  getKeys = function(self)
+    if self._getKeys then
+      return self:_getKeys()
+    else
+      return {}
+    end
   end,
 
   pushData = function(self, value, key)
-    if not key or key == self:getKey() then
-      self:_pushData(value)
+    if self._pushData then
+      self:_pushData(value, key)
     end
   end,
 }
 
+local DataStore = Class({
+  _constructors = {
+    DataStore = function(self)
+      self._init = false
+      self._store = {}
+      if L.x(self.initial) then
+        self:initialize(self.initial)
+        self.initial = nil
+      end
+    end,
+  },
+
+  initialize = function(self, values)
+    if self._init then
+      error("Datastore already initialized.")
+    end
+    self._keySet = {}
+    for key, value in pairs(values) do
+      self._keySet[key] = true
+      self:_write(key, value)
+    end
+    self._init = true
+  end,
+
+  write = function(self, key, value)
+    if not self._init then
+      error("Datastore not initialized")
+    end
+    if not self._keySet[key] then
+      error("Unknown datastore key")
+    end
+    return self:_write(key, value)
+  end,
+
+  _write = function(self, key, value)
+    self._store[key] = value
+    if not self._diff then
+      self._diff = {}
+    end
+    table.insert(self._diff, key)
+    return self
+  end,
+
+  read = function(self, key)
+    return self._store[key]
+  end,
+}, IADataBroadcaster, IAState)
+
 return {
   DataManager = DataManager,
+  DataStore = DataStore,
   IADataBroadcaster = IADataBroadcaster,
   IADataListener = IADataListener,
 }

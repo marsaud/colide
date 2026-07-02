@@ -163,19 +163,25 @@ local function demo()
     h = 92,
     speed = 120,
     vector = moveVectors[MOVE.NONE]:copy(),
-    _getData = function(self)
+    _getData = function(self, key)
+      if key ~= EXAMPLE_KEY then
+        error("UNKNOWN DATA KEY")
+      end
       return self:c().x .. "," .. self:c().y
     end,
-    _getKey = function(self)
-      return EXAMPLE_KEY
+    _getKeys = function(self)
+      return { EXAMPLE_KEY }
     end,
   }, IADataBroadcaster)
 
   local textBlock = SmallTextBlock:new({
-    _getKey = function(self)
-      return EXAMPLE_KEY
+    _getKeys = function(self)
+      return { EXAMPLE_KEY }
     end,
-    _pushData = function(self, value)
+    _pushData = function(self, value, key)
+      if key ~= EXAMPLE_KEY then
+        error("UNKNOWN DATA KEY")
+      end
       self:print(value)
     end,
   }, IADataListener)

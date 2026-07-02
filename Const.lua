@@ -41,8 +41,8 @@ local MOVE = {
 }
 
 local PLUGIN = {
-  PRE = "pre",
-  POST = "post",
+  PRE = "_pre",
+  POST = "_post",
 }
 
 local STYLE = {

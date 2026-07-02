@@ -1,3 +1,4 @@
+local L = require("lib")
 local OOP = require("OOP")
 local Class = OOP.Class
 local Draw = require("Draw")
@@ -8,19 +9,19 @@ local STYLE = C.STYLE
 local SmallTextBlock = Class({
   _constructors = {
     SmallTextBlock = function(self)
-      if not self.x then
+      if not L.x(self.x) then
         self.x = 0
       end
-      if not self.y then
+      if not L.x(self.y) then
         self.y = 0
       end
-      if not self.w then
+      if not L.x(self.w) then
         self.w = 200
       end
-      if not self.h then
+      if not L.x(self.h) then
         self.h = 50
       end
-      if not self.text then
+      if not L.x(self.text) then
         self.text = ""
       end
     end,

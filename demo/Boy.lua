@@ -1,3 +1,4 @@
+local L = require("lib")
 local C = require("Const")
 local CONTROL = C.CONTROL
 local Control = require("Control")

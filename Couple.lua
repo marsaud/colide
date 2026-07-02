@@ -1,4 +1,5 @@
 require("math-ext")
+local L = require("lib")
 
 local Couple
 local coupleMetatable
@@ -60,7 +61,7 @@ coupleMetatable = {
 
 Couple = {
   new = function(_, c)
-    if not c.x or not c.y then
+    if not L.n(c.x) or not L.n(c.y) then
       error("Couple objects require x and y properties")
     end
     setmetatable(c, coupleMetatable)
@@ -75,7 +76,7 @@ local Vector = Couple
 
 return {
   Coord = Coord,
-  Point = Coord,
+  Point = Point,
   Size = Size,
   Vector = Vector,
 }

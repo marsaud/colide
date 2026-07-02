@@ -1,5 +1,8 @@
 [x] Change import/export to a map solution
 [x] Generalize plugin system with pre/post choice
 [x] Data catcher class
-[ ] Improve Event Manager (multi manager add, refined removing, avoid duplicates)
-[ ] Improve Data Manager (multi manager add, refined removing, avoid duplicates)
+[x] Improve Event Manager
+[x] Improve Data Manager (avoid duplicates)
+[x] Data Listeners and Broadcaster multikey and full autokey
+[x] Official destroy method in Hit API.
+[x] Rethink Move::initVector

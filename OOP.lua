@@ -9,7 +9,7 @@ local function _aggregateTables(...)
   for _, t in ipairs(arg) do
     for key, val in pairs(t) do
       if key == "_constructors" then
-        if val.iterate then
+        if val and type(val.iterate) == "function" then
           for name, constructor in val:iterate() do
             agg._constructors:set(name, constructor)
           end
@@ -36,7 +36,7 @@ local function new(self, ...)
   o._constructors = nil
   setmetatable(o, self)
   self.__index = self
-  if self._constructors then
+  if self._constructors and type(self._constructors.iterate) == "function" then
     for _, c in self._constructors:iterate() do
       c(o)
     end

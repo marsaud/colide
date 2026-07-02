@@ -1,15 +1,15 @@
 -- local debug = require("Debug").debug
-
+local L = require("lib")
 local Couple = require("Couple")
 local Coord = Couple.Coord
 
 local IAPlace = {
   _constructors = {
     IAPlace = function(self)
-      if not self.x then
+      if not L.x(self.x) then
         self.x = 0
       end
-      if not self.y then
+      if not L.x(self.y) then
         self.y = 0
       end
       self._c = Coord:new({ x = self.x, y = self.y }) -- internal coord

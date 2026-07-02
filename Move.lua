@@ -1,6 +1,7 @@
 -- local debug = require("Debug").debug
 
 require("math-ext")
+local L = require("lib")
 local Couple = require("Couple")
 local Vector = Couple.Vector
 local C = require("Const")
@@ -27,8 +28,8 @@ local moveVectors = {
 local IAMove = {
   _constructors = {
     IAMove = function(self)
-      if not self.vector then
-        self.vector = self:_initVector()
+      if not L.x(self.vector) then
+        self.vector = self:initVector()
       end
     end,
   },
@@ -56,9 +57,7 @@ local IAMove = {
 
   _commit = function(self, id)
     self._c = self._d:copy()
-    if self._initVector then
-      self.vector = self:_initVector()
-    end
+    self.vector = self:initVector()
   end,
 
   v = function(self, value, forceMover)
@@ -88,8 +87,12 @@ local IAMove = {
     end
   end,
 
-  _initVector = function(_)
-    return moveVectors[MOVE.NONE]:copy()
+  initVector = function(self, ...)
+    if self._initVector then
+      return self:_initVector(...)
+    else
+      return moveVectors[MOVE.NONE]:copy()
+    end
   end,
 
   setMover = function(self, value)
@@ -123,7 +126,7 @@ local IMove = {
 }
 
 local IMoveX = {
-  _move = function(self, id, ctrl, _)
+  _move = function(self, id, ctrl, _dt)
     if self.vector == nil then
       self.vector = moveVectors[MOVE.NONE]:copy()
     end
@@ -138,7 +141,7 @@ local IMoveX = {
 }
 
 local IMoveY = {
-  _move = function(self, id, ctrl, _)
+  _move = function(self, id, ctrl, _dt)
     if self.vector == nil then
       self.vector = moveVectors[MOVE.NONE]:copy()
     end
@@ -153,7 +156,7 @@ local IMoveY = {
 }
 
 local IMoveNot = {
-  _move = function(self, id, _, _)
+  _move = function(self, id, _ctrl, _dt)
     return moveVectors[MOVE.NONE]:copy()
   end,
 }

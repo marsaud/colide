@@ -1,11 +1,12 @@
 local love = love
 
+local L = require("lib")
 local C = require("Const")
 local COLOR, STYLE = C.COLOR, C.STYLE
 
 local IADraw = {
   draw = function(self)
-    if self._draw then
+    if L.f(self._draw) then
       love.graphics.setColor(self.color or COLOR.DEFAULT)
       self:_draw()
     end

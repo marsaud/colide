@@ -1,3 +1,4 @@
+local L = require("lib")
 local OOP = require("OOP")
 local Class = OOP.Class
 local Control = require("Control")
@@ -22,7 +23,7 @@ end
 local EventManager = Class({
   _constructors = {
     EventManager = function(self)
-      if not self._objects then
+      if not L.x(self._objects) then
         self._objects = {}
         for _, e in pairs(EVENT) do
           self._objects[e] = {}
@@ -65,6 +66,9 @@ local EventManager = Class({
   end,
 
   _insert = function(self, o)
+    if L.x(o.eventManager) then
+      error("Object " .. o.id .. " already managed")
+    end
     o.__EV_INDEX = {}
     local inserted = false
     for _, e in pairs(EVENT) do
@@ -94,11 +98,11 @@ local EventManager = Class({
   addObjects = function(self, ...)
     local arg = { ... }
     for _, o in ipairs(arg) do
-      if o.group then
+      if L.x(o.group) then
         error("EventManager: do not add objects belonging to groups")
       end
       self:_insert(o)
-      if o._group then
+      if L.x(o._group) then
         self:_addObjects(table.unpack(o._group))
       end
     end
@@ -114,8 +118,8 @@ local EventManager = Class({
   removeObjects = function(self, ...)
     local args = { ... }
     for _, v in ipairs(args) do
-      if not v.group then
-        if v._group then
+      if not L.x(v.group) then
+        if L.x(v._group) then
           self:_removeObjects(table.unpack(v._group))
         end
         self:_remove(v)
@@ -134,7 +138,7 @@ local EventManager = Class({
     id = getEventId(id)
     -- debug('IN', id, e, o, ...)
     local effect = false
-    if e == EVENT.MOVE and o ~= nil and o._group then
+    if e == EVENT.MOVE and o and o._group then
       for _, go in ipairs(o._group) do
         effect = self:fire(e, id, go, ...) or effect
       end

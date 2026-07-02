@@ -17,7 +17,7 @@ function OrderedTable:iterate()
   return function()
     i = i + 1
     local key = self.keys[i]
-    if key then
+    if key ~= nil then
       return key, self.values[key]
     end
   end
