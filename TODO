@@ -6,3 +6,10 @@
 [x] Data Listeners and Broadcaster multikey and full autokey
 [x] Official destroy method in Hit API.
 [x] Rethink Move::initVector
+
+[ ] Abstract Hit health with a function
+[ ] Add Collide resolve filtered on object ids (whitelist/blacklist)
+[ ] "z-index" for control of drawing order
+
+[x] black/white list ids in object interractions (resolve)
+[ ] black/white list ids in object interractions (hit)

@@ -16,7 +16,7 @@ local Boy = require("demo/Boy").Boy
 local SmallTextBlock = require("Components/SmallTextBlock").SmallTextBlock
 local Data = require("Data")
 local DataManager, IADataBroadcaster, IADataListener =
-  Data.DataManager, Data.IADataBroadcaster, Data.IADataListener
+    Data.DataManager, Data.IADataBroadcaster, Data.IADataListener
 
 local function demo()
   local Rect2D = AGameUIObject:new(IControlMove, IMove, ICollidePusher, IRectLine)
@@ -108,6 +108,7 @@ local function demo()
     vector = moveVectors[MOVE.NONE]:copy(),
     color = COLOR.BLUE,
   })
+  -- rect3:whiteList({ "boy" })
 
   local rect4 = RectPassive:new({
     id = "magenta",
@@ -173,6 +174,8 @@ local function demo()
       return { EXAMPLE_KEY }
     end,
   }, IADataBroadcaster)
+
+  boy:whiteList({ "blue" })
 
   local textBlock = SmallTextBlock:new({
     _getKeys = function(self)

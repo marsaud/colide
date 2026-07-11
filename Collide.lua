@@ -6,6 +6,14 @@ local EVENT = C.EVENT
 -- local debug = require("Debug").debug
 
 local IACollide = {
+  _constructors = {
+    IACollide = function(self)
+      self._whiteList = {}
+      self._whiteListN = 0
+      self._blackList = {}
+      self._blackListN = 0
+    end
+  },
   _isRight = function(self, o)
     return self:d().x >= (o:d().x + o.w)
   end,
@@ -19,11 +27,41 @@ local IACollide = {
     return (self:d().y + self.h) <= o:d().y
   end,
 
+  whiteList = function(self, list)
+    if list ~= nil then
+      self._whiteList = {}
+      self._whiteListN = 0
+      for _, id in pairs(list) do
+        self._whiteList[id] = true
+        self._whiteListN = self._whiteListN + 1
+      end
+    end
+    return self._whiteList
+  end,
+
+  blackList = function(self, list)
+    if list ~= nil then
+      self._blackList = {}
+      for _, id in pairs(list) do
+        self._blackList[id] = true
+      end
+    end
+    return self._blackList
+  end,
+
+  welcome = function(self, o)
+    if self._blackList[o.id] == true then
+      return false
+    end
+    return self._whiteListN == 0 or self._whiteList[o.id] == true
+  end,
+
   -- analyse how "o" will react on self on collision
   resolve = function(self, id, o, ...)
     local effect = false
     local skip = o == self
-    skip = skip or not o.resolve
+    skip = skip or not o._resolve
+    skip = skip or not o:welcome(self) or not self:welcome(o)
     local previous = { ... }
     for _, _o in ipairs(previous) do
       if self == _o then
@@ -131,33 +169,33 @@ local ICollidePusher = {
     local effectX = false
     local effectY = false
     if
-      (not o:_isTop(self) and not o:_isUnder(self))
-      and (
-        (
-          self:v().x > 0 -- moving right
-          and self:d().x + self.w / 2 <= o:d().x + o.w / 2 -- from the left
+        (not o:_isTop(self) and not o:_isUnder(self))
+        and (
+          (
+            self:v().x > 0                                   -- moving right
+            and self:d().x + self.w / 2 <= o:d().x + o.w / 2 -- from the left
+          )
+          or (
+            self:v().x < 0                                  -- moving left
+            and self:d().x + self.w / 2 > o:d().x + o.w / 2 -- from the right
+          )
         )
-        or (
-          self:v().x < 0 -- moving left
-          and self:d().x + self.w / 2 > o:d().x + o.w / 2 -- from the right
-        )
-      )
     then
       effectX = true
     end
 
     if
-      (not o:_isRight(self) and not o:_isLeft(self))
-      and (
-        (
-          self:v().y > 0 -- moving down
-          and self:d().y + self.h / 2 <= o:d().y + o.h / 2 -- from top
+        (not o:_isRight(self) and not o:_isLeft(self))
+        and (
+          (
+            self:v().y > 0                                   -- moving down
+            and self:d().y + self.h / 2 <= o:d().y + o.h / 2 -- from top
+          )
+          or (
+            self:v().y < 0                              -- moving up
+            and self:d().y + self.h > o:d().y + o.h / 2 -- from under
+          )
         )
-        or (
-          self:v().y < 0 -- moving up
-          and self:d().y + self.h > o:d().y + o.h / 2 -- from under
-        )
-      )
     then
       effectY = true
     end

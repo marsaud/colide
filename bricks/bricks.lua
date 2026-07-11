@@ -1,114 +1,26 @@
 local C = require("Const")
-local COLOR, MOVE, STYLE = C.COLOR, C.MOVE, C.STYLE
-local Utils = require("Utils")
-local AGameUIObject = Utils.AGameUIObject
-local Couple = require("Couple")
-local Vector = Couple.Vector
-local Draw = require("Draw")
-local IRectFill, IRectLine, rectangle = Draw.IRectFill, Draw.IRectLine, Draw.rectangle
-local Move = require("Move")
-local moveVectors, IMoveX = Move.moveVectors, Move.IMoveX
-local Collide = require("Collide")
-local ICollideBlocker, ICollidePusher = Collide.ICollideBlocker, Collide.ICollidePusher
-local Control = require("Control")
-local IControlMove = Control.IControlMove
+local COLOR, MOVE = C.COLOR, C.MOVE
+local ICollideBlocker = require("Collide").ICollideBlocker
+local IRectFill = require("Draw").IRectFill
+local moveVectors = require("Move").moveVectors
+local AGameUIObject = require("Utils").AGameUIObject
 
 -- local debug = require("Debug").debug
 
-local BRICK_HEALTH = 100
-local BONUS_HEALTH = 100
+local GAME = require("bricks.GAME")
 
--- The ball move
-local BallAutoBounce = {
-  autoVector = moveVectors[MOVE.UP]:copy() + moveVectors[MOVE.RIGHT]:copy(),
-  _hit = function(self, id, _, _, vector)
-    if vector then
-      local x = self.autoVector.x
-      if vector.x ~= 0 then
-        x = x * math.sign(x) * math.sign(vector.x)
-      end
-      local y = self.autoVector.y
-      if vector.y ~= 0 then
-        y = y * math.sign(y) * math.sign(vector.y)
-      end
-      self.autoVector = Vector:new({
-        x = x,
-        y = y,
-      })
-      return true
-    else
-      return false
-    end
-  end,
-  _move = function(self, id, _, _, _)
-    return self.autoVector:copy()
-  end,
-}
-
--- the falling bonus move
-local BonusFall = {
-  _time = 0,
-  _update = function(self, _, dt)
-    self._time = self._time + dt
-    if self._time > 0.2 then
-      self.speed = self.speed + 9
-      self._time = self._time - 0.2
-    end
-  end,
-  _move = function(self, id, _, _)
-    return moveVectors[MOVE.DOWN]:copy()
-  end,
-}
-
--- health driven brick drawing
-local BrickWear = {
-  _draw = function(self)
-    love.graphics.setColor({
-      self.health / BRICK_HEALTH,
-      self.health / BRICK_HEALTH,
-      self.health / BRICK_HEALTH,
-    })
-    rectangle(self, STYLE.FILL)
-  end,
-}
+local BL = require("bricks.Ball")
+local Ball, BALL_HEALTH = BL.Ball, BL.HEALTH
+local Bat = require("bricks.Bat").Bat
+local BR = require("bricks.Brick")
+local Brick, BRICK_HEALTH = BR.Brick, BR.HEALTH
+local BrickFallGenerator = require("bricks.BrickFall").BrickFallGenerator
 
 local Boundary = AGameUIObject:new(ICollideBlocker, IRectFill)
-local Bonus = AGameUIObject:new(IControlMove, IRectFill, BonusFall, {
-  color = COLOR.BLUE,
-})
-local BrickBonusGenerator = {
-  _destroy = function(self, _id, _who, _by, _vector)
-    local c = self:c()
-    local bonus = Bonus:new({
-      id = "bonus",
-      x = c.x,
-      y = c.y,
-      w = 45,
-      h = 35,
-      health = BONUS_HEALTH,
-      speed = 0,
-      vector = moveVectors[MOVE.DOWN]:copy(),
-    })
-    self.eventManager:addObjects(bonus)
-  end,
-}
-local Bat = AGameUIObject:new(IControlMove, IMoveX, ICollideBlocker, ICollidePusher, IRectLine)
-local Brick =
-  AGameUIObject:new(IControlMove, ICollideBlocker, IRectFill, BrickWear, BrickBonusGenerator)
-local Ball = AGameUIObject:new(IControlMove, BallAutoBounce, ICollidePusher, IRectLine, {
-  _getDamage = function(_, target)
-    local damage = {
-      brick = 51,
-    }
-    if target.id then
-      return damage[target.id] or 0
-    end
-  end,
-})
 
 local function bricks()
   local bat = Bat:new({
-    id = "bat",
+    id = GAME.ID.BAT,
     x = 200,
     y = 580,
     w = 150,
@@ -119,12 +31,12 @@ local function bricks()
   })
 
   local ball = Ball:new({
-    id = "ball",
+    id = GAME.ID.BALL,
     x = 400,
     y = 300,
     w = 10,
     h = 10,
-    health = 100,
+    health = BALL_HEALTH,
     speed = 240,
     vector = moveVectors[MOVE.NONE]:copy(),
     color = COLOR.YELLOW,
@@ -134,41 +46,39 @@ local function bricks()
     bat,
     ball,
     Boundary:new({
-      id = "ceil",
+      id = GAME.ID.BOUND_CLOSE,
       x = 0,
       y = 0,
       w = 800,
       h = 3,
     }),
     Boundary:new({
-      id = "left",
+      id = GAME.ID.BOUND_CLOSE,
       x = 0,
       y = 3,
       w = 3,
       h = 597,
     }),
     Boundary:new({
-      id = "right",
+      id = GAME.ID.BOUND_CLOSE,
       x = 797,
       y = 3,
       w = 3,
       h = 597,
     }),
     Boundary:new({
-      id = "floor",
+      id = GAME.ID.BOUND_OUT,
       x = 3,
       y = 597,
       w = 794,
       h = 3,
       color = COLOR.RED,
-      _getDamage = function(_, target)
+      _getDamage = function(_self, target)
         local damage = {
-          ball = BRICK_HEALTH + 1,
-          bonus = BONUS_HEALTH + 1,
+          [GAME.ID.BALL] = GAME.DAMAGE.LETHAL,
+          -- [GAME.ID.BRICKFALL] = GAME.DAMAGE.LETHAL,
         }
-        if target.id then
-          return damage[target.id] or 0
-        end
+        return damage[target.id] or 0
       end,
     }),
   }
@@ -177,13 +87,13 @@ local function bricks()
       table.insert(
         objects,
         Brick:new({
-          id = "brick",
+          id = GAME.ID.BRICK,
           health = BRICK_HEALTH,
           x = x,
           y = y,
           w = 45,
           h = 35,
-        })
+        }, BrickFallGenerator)
       )
     end
   end
