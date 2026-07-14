@@ -79,13 +79,15 @@ local IACollide = {
     return effect
   end,
 
-  _resolve = function(_, _, _)
-    return false
-  end,
-
-  blockX = function(self, id, _, prevPusher, ...)
+  blockX = function(self, id, by, prevPusher, ...)
+    local x
+    if self:v().x > 0 then
+      x = by:d().x - self.w
+    else
+      x = by:d().x + by.w
+    end
     self:v(Vector:new({ x = 0, y = self:v().y }), true)
-    self:d(Coord:new({ x = self:c().x, y = self:d().y }), true)
+    self:d(Coord:new({ x = x, y = self:d().y }), true)
     if prevPusher then
       return prevPusher:blockX(id, self, ...)
     else
@@ -93,9 +95,15 @@ local IACollide = {
     end
   end,
 
-  blockY = function(self, id, _, prevPusher, ...)
+  blockY = function(self, id, by, prevPusher, ...)
+    local y
+    if self:v().y > 0 then
+      y = by:d().y - self.h
+    else
+      y = by:d().y + by.h
+    end
     self:v(Vector:new({ x = self:v().x, y = 0 }), true)
-    self:d(Coord:new({ x = self:d().x, y = self:c().y }), true)
+    self:d(Coord:new({ x = self:d().x, y = y }), true)
     if prevPusher then
       return prevPusher:blockY(id, self, ...)
     else
