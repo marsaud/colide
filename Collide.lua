@@ -12,7 +12,7 @@ local IACollide = {
       self._whiteListN = 0
       self._blackList = {}
       self._blackListN = 0
-    end
+    end,
   },
   _isRight = function(self, o)
     return self:d().x >= (o:d().x + o.w)
@@ -169,33 +169,33 @@ local ICollidePusher = {
     local effectX = false
     local effectY = false
     if
-        (not o:_isTop(self) and not o:_isUnder(self))
-        and (
-          (
-            self:v().x > 0                                   -- moving right
-            and self:d().x + self.w / 2 <= o:d().x + o.w / 2 -- from the left
-          )
-          or (
-            self:v().x < 0                                  -- moving left
-            and self:d().x + self.w / 2 > o:d().x + o.w / 2 -- from the right
-          )
+      (not o:_isTop(self) and not o:_isUnder(self))
+      and (
+        (
+          self:v().x > 0 -- moving right
+          and self:d().x + self.w / 2 <= o:d().x + o.w / 2 -- from the left
         )
+        or (
+          self:v().x < 0 -- moving left
+          and self:d().x + self.w / 2 > o:d().x + o.w / 2 -- from the right
+        )
+      )
     then
       effectX = true
     end
 
     if
-        (not o:_isRight(self) and not o:_isLeft(self))
-        and (
-          (
-            self:v().y > 0                                   -- moving down
-            and self:d().y + self.h / 2 <= o:d().y + o.h / 2 -- from top
-          )
-          or (
-            self:v().y < 0                              -- moving up
-            and self:d().y + self.h > o:d().y + o.h / 2 -- from under
-          )
+      (not o:_isRight(self) and not o:_isLeft(self))
+      and (
+        (
+          self:v().y > 0 -- moving down
+          and self:d().y + self.h / 2 <= o:d().y + o.h / 2 -- from top
         )
+        or (
+          self:v().y < 0 -- moving up
+          and self:d().y + self.h > o:d().y + o.h / 2 -- from under
+        )
+      )
     then
       effectY = true
     end

@@ -26,10 +26,15 @@ local BrickFallMove = {
     return moveVectors[MOVE.DOWN]:copy()
   end,
   _hit = function(self, _id, who, by, _vector)
-    if who.id == GAME.ID.BAT or who.id == GAME.ID.BOUND_CLOSE or by.id == GAME.ID.BAT or by.id == GAME.ID.BOUND_CLOSE then
+    if
+      who.id == GAME.ID.BAT
+      or who.id == GAME.ID.BOUND_CLOSE
+      or by.id == GAME.ID.BAT
+      or by.id == GAME.ID.BOUND_CLOSE
+    then
       self.speed = 0
     end
-  end
+  end,
 }
 
 local BrickFall = AGameUIObject:new(IControlMove, BrickFallMove, ICollidePusher, IRectFill, {

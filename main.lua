@@ -5,8 +5,8 @@ local love = love
 
 -- IMPORTS
 -- local debug = require("Debug").debug
-local Event = require("Event")
-local EventManager = Event.EventManager
+local EventManager = require("Event").EventManager
+local speedFactor = require("Move").speedFactor
 -- END IMPORTS
 
 --[[ GAME CLASSES
@@ -66,6 +66,9 @@ function love.load()
   local groupDemo = require("groupDemo/groupDemo")
   table.insert(boots, groupDemo)
 
+  local test = require("collideDebug/test")
+  table.insert(boots, test)
+
   for _, b in ipairs(boots) do
     local c = EventManager:new()
     c:addObjects(table.unpack(b()))
@@ -118,6 +121,9 @@ function love.draw()
 end
 
 function love.keypressed(key)
+  if key == "s" then
+    speedFactor(true)
+  end
   if key == "f" then
     fullScreen = not fullScreen
   end

@@ -9,6 +9,18 @@ local CONTROL, EVENT, MOVE = C.CONTROL, C.EVENT, C.MOVE
 local Control = require("Control")
 local testControl = Control.testControl
 
+local _SPEEDMAP_ = { 1, 5, 10 }
+local _SPEEDFACTOR_ = 1
+local speedFactor = function(rotate)
+  if rotate then
+    _SPEEDFACTOR_ = _SPEEDFACTOR_ + 1
+    if _SPEEDFACTOR_ > #_SPEEDMAP_ then
+      _SPEEDFACTOR_ = 1
+    end
+  end
+  return _SPEEDMAP_[_SPEEDFACTOR_]
+end
+
 local moveVectors = {
   [MOVE.UP] = Vector:new({ x = 0, y = -1 }),
   [MOVE.DOWN] = Vector:new({ x = 0, y = 1 }),
@@ -36,7 +48,7 @@ local IAMove = {
 
   move = function(self, id, ctrl, dt, v)
     if self._move then
-      self.vector = self:_move(id, ctrl, dt) * (self.speed or 0) * dt
+      self.vector = self:_move(id, ctrl, dt) * (self.speed or 0) * speedFactor() * dt
     end
     if v then
       v = v:copy()
@@ -168,4 +180,5 @@ return {
   IMoveNot = IMoveNot,
   IMoveX = IMoveX,
   IMoveY = IMoveY,
+  speedFactor = speedFactor,
 }

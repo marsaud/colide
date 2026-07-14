@@ -16,7 +16,7 @@ local Boy = require("demo/Boy").Boy
 local SmallTextBlock = require("Components/SmallTextBlock").SmallTextBlock
 local Data = require("Data")
 local DataManager, IADataBroadcaster, IADataListener =
-    Data.DataManager, Data.IADataBroadcaster, Data.IADataListener
+  Data.DataManager, Data.IADataBroadcaster, Data.IADataListener
 
 local function demo()
   local Rect2D = AGameUIObject:new(IControlMove, IMove, ICollidePusher, IRectLine)

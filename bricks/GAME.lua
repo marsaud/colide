@@ -6,7 +6,7 @@ local ID = {
   BRICK = "brick",
   BRICKFALL = "brickfall",
   BOUND_CLOSE = "boundclose",
-  BOUND_OUT = "boundout"
+  BOUND_OUT = "boundout",
 }
 
 return {
