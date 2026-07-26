@@ -20,10 +20,10 @@ local rectangle = function(o, style)
   else
     c = o
   end
-  if style == STYLE.FILL then
-    love.graphics.rectangle(style, c.x, c.y, o.w, o.h)
-  else
+  if style == STYLE.LINE then
     love.graphics.rectangle(style, c.x + 0.5, c.y + 0.5, o.w - 1, o.h - 1)
+  else
+    love.graphics.rectangle(style, c.x, c.y, o.w, o.h)
   end
 end
 
