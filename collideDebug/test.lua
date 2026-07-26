@@ -20,7 +20,6 @@ local DataManager, IADataBroadcaster, IADataListener =
 
 local function test()
   love.graphics.setLineWidth(1)
-  print(love.graphics.getLineStyle())
   love.graphics.setLineStyle("rough")
 
   local Rect2D = AGameUIObject:new(IControlMove, IMove, ICollidePusher, IRectLine)

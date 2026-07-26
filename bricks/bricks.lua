@@ -36,11 +36,11 @@ local function bricks()
     y = 300,
     w = 10,
     h = 10,
-    health = BALL_HEALTH,
     speed = 240,
     vector = moveVectors[MOVE.NONE]:copy(),
     color = COLOR.YELLOW,
   })
+  ball:valHealth(BALL_HEALTH)
 
   local objects = {
     bat,

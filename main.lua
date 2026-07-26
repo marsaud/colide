@@ -78,6 +78,9 @@ function love.load()
   contextIndex = 1
   pause = false
   fullScreen = false
+
+  love.graphics.setLineWidth(1)
+  love.graphics.setLineStyle("rough")
 end
 
 function love.update(dt)

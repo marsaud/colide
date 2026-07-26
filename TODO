@@ -8,7 +8,6 @@
 [x] Rethink Move::initVector
 
 [ ] Abstract Hit health with a function
-[ ] Add Collide resolve filtered on object ids (whitelist/blacklist)
 [ ] "z-index" for control of drawing order
 
 [x] black/white list ids in object interractions (resolve)

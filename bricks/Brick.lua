@@ -11,11 +11,8 @@ local BRICK_HEALTH = GAME.HEALTH.BASE * 2
 -- health driven brick drawing
 local IDRawBrick = {
   _draw = function(self)
-    love.graphics.setColor({
-      self.health / BRICK_HEALTH,
-      self.health / BRICK_HEALTH,
-      self.health / BRICK_HEALTH,
-    })
+    local cLevel = self:valHealth() / BRICK_HEALTH
+    love.graphics.setColor({ cLevel, cLevel, cLevel })
     rectangle(self, STYLE.FILL)
   end,
 }

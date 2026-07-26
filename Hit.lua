@@ -1,4 +1,16 @@
+local L = require("lib")
+
 local IAHit = {
+  _constructors = {
+    IAHit = function(self)
+      self._health = 0
+      if L.x(self.health) then
+        self:valHealth(self.health)
+        self.health = nil
+      end
+    end,
+  },
+
   hit = function(self, id, who, by, vector)
     if who ~= self then
       return false
@@ -13,11 +25,12 @@ local IAHit = {
     if self.runPostPlugins then
       result = self:runPostPlugins("_hit", self, id, who, by, vector) or result
     end
-    if self.health and self.health > 0 then
+    local health = self:valHealth()
+    if health and health > 0 then
       local damage = by.getDamage and by:getDamage(who) or 0
       if damage ~= 0 then
-        self.health = self.health - damage
-        if self.health <= 0 then
+        health = self:valHealth(-damage)
+        if health ~= nil and health <= 0 then
           if self.eventManager then
             self.eventManager:delete(self)
           end
@@ -52,6 +65,21 @@ local IAHit = {
       damage = damage + _damage
     end
     return damage
+  end,
+
+  valHealth = function(self, value)
+    if self._valHealth then
+      return self:_valHealth(value)
+    else
+      if value then
+        self._health = self._health + value
+        return self._health
+      elseif self._health <= 0 then
+        return nil
+      else
+        return self._health
+      end
+    end
   end,
 }
 
