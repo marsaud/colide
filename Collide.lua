@@ -63,10 +63,12 @@ local IACollide = {
     skip = skip or not o._resolve
     skip = skip or not o:welcome(self) or not self:welcome(o)
     local previous = { ... }
-    for _, _o in ipairs(previous) do
-      if self == _o then
-        skip = true
-        break
+    if not skip then
+      for _, _o in ipairs(previous) do
+        skip = skip or _o == self
+        if skip then
+          break
+        end
       end
     end
     skip = skip or o:_isRight(self)
