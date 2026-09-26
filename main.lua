@@ -7,35 +7,8 @@ local love = love
 -- local debug = require("Debug").debug
 local EventManager = require("Event").EventManager
 local speedFactor = require("Move").speedFactor
+local KeyboardController = require("Control").KeyboardController
 -- END IMPORTS
-
---[[ GAME CLASSES
-
-	An object may have interfaces:
-	- Draw(able)
-		- Anim(able)
-	- Move(able)
-		- Control(able)
-		- Auto(matable)
-	- Collide
-		- Harm(able)
-
-	An object may have properties:
-	- box (Coord, Size)
-	- move (Vector)
-	- auto (callback)
-	- anim (callback)
-	- collide (callback), life, strength
-
-	IAMove:control
-	IAMove:move
-		_move
-		IMoveAuto:getMove
-	resolve _resolve
-	commit _commit
-	hit _hit getHit
-
---]]
 
 local contexts = {}
 local contextIndex
@@ -69,8 +42,10 @@ function love.load()
   local test = require("collideDebug/test")
   table.insert(boots, test)
 
+  local controller = KeyboardController:new()
+
   for _, b in ipairs(boots) do
-    local c = EventManager:new()
+    local c = EventManager:new({ controller = controller })
     c:addObjects(table.unpack(b()))
     table.insert(contexts, c)
   end

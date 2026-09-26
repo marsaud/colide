@@ -3,8 +3,23 @@ local love = love
 ---@diagnostic disable-next-line: undefined-global
 local bit = bit
 
+local OOP = require("OOP")
+local Class = OOP.Class
 local C = require("Const")
 local CONTROL = C.CONTROL
+-- local debug = require("Debug").debug
+
+local AController = Class({
+  _constructors = {
+    Controller = function(self)
+      self._pile = {}
+    end,
+  },
+
+  poll = function(self)
+    return table.remove(self._pile, 1)
+  end,
+})
 
 local function pullControl()
   return (love.keyboard.isDown("space") and CONTROL.ACT1 or 0)
@@ -14,7 +29,16 @@ local function pullControl()
     + (love.keyboard.isDown("right") and CONTROL.RIGHT or 0)
 end
 
+local KeyboardController = AController:new({
+  fetch = function(self)
+    table.insert(self._pile, pullControl())
+  end,
+})
+
 local function testControl(state, value)
+  if state == nil then
+    return false
+  end
   return bit.band(state, value) ~= 0
 end
 
@@ -49,4 +73,5 @@ return {
   testControl = testControl,
   IAControl = IAControl,
   IControlMove = IControlMove,
+  KeyboardController = KeyboardController,
 }

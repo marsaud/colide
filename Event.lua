@@ -1,8 +1,6 @@
 local L = require("lib")
 local OOP = require("OOP")
 local Class = OOP.Class
-local Control = require("Control")
-local pullControl = Control.pullControl
 local C = require("Const")
 local EVENT = C.EVENT
 -- local debug = require("Debug").debug
@@ -23,6 +21,11 @@ end
 local EventManager = Class({
   _constructors = {
     EventManager = function(self)
+      if not L.x(self.controller) then
+        error("AController instance required")
+      end
+      self._controller = self.controller
+      self.controller = nil
       if not L.x(self._objects) then
         self._objects = {}
         for _, e in pairs(EVENT) do
@@ -39,12 +42,18 @@ local EventManager = Class({
   end,
 
   tick = function(self, dt)
-    local ctrl = pullControl()
-    for _, u in pairs(self._objects[EVENT.UPDATE]) do
-      u:update(ctrl, dt)
+    self._controller:fetch()
+    local lastControl
+    local ctrl = self._controller:poll()
+    while ctrl ~= nil do
+      for _, c in pairs(self._objects[EVENT.CONTROL]) do
+        c:control(ctrl, dt)
+      end
+      lastControl = ctrl
+      ctrl = self._controller:poll()
     end
-    for _, c in pairs(self._objects[EVENT.CONTROL]) do
-      c:control(ctrl, dt)
+    for _, u in pairs(self._objects[EVENT.UPDATE]) do
+      u:update(lastControl, dt)
     end
   end,
 
