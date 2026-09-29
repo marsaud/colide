@@ -3,6 +3,7 @@ local love = love
 ---@diagnostic disable-next-line: undefined-global
 local bit = bit
 
+local L = require("lib")
 local OOP = require("OOP")
 local Class = OOP.Class
 local C = require("Const")
@@ -32,6 +33,26 @@ end
 local KeyboardController = AController:extend({
   fetch = function(self)
     table.insert(self._pile, pullControl())
+  end,
+})
+
+local NetworkController = AController:new({
+  _constructors = {
+    NetworkController = function(self)
+      if not L.x(self.server) then
+        error("Server instance required")
+      end
+      self._server = self.server
+      self.server = nil
+    end,
+  },
+
+  fetch = function(self)
+    local message = self._server:poll()
+    while message ~= nil do
+      table.insert(self._pile, message)
+      message = self._server:poll()
+    end
   end,
 })
 
