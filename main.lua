@@ -1,3 +1,5 @@
+package.path = "./lib/?.lua;./lib/?/init.lua;" .. package.path
+
 -- CONFORT TWEAKS
 require("workHelpers")
 local love = love
