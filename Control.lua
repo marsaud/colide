@@ -29,7 +29,7 @@ local function pullControl()
     + (love.keyboard.isDown("right") and CONTROL.RIGHT or 0)
 end
 
-local KeyboardController = AController:new({
+local KeyboardController = AController:extend({
   fetch = function(self)
     table.insert(self._pile, pullControl())
   end,
