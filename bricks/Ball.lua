@@ -35,7 +35,7 @@ local BallAutoBounce = {
   end,
 }
 
-local Ball = AGameUIObject:new(IControlMove, BallAutoBounce, ICollidePusher, IRectLine, {
+local Ball = AGameUIObject:extend(IControlMove, BallAutoBounce, ICollidePusher, IRectLine, {
   _getDamage = function(_, target)
     local damage = {
       [GAME.ID.BRICK] = GAME.HEALTH.BASE + 1,

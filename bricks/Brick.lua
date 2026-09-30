@@ -17,7 +17,7 @@ local IDRawBrick = {
   end,
 }
 
-local Brick = AGameUIObject:new(ICollideBlocker, IRectFill, IDRawBrick)
+local Brick = AGameUIObject:extend(ICollideBlocker, IRectFill, IDRawBrick)
 
 return {
   Brick = Brick,

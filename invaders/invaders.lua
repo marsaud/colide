@@ -74,7 +74,7 @@ local function invaders()
     end
   end
 
-  local Missile = AGameUIObject:new({
+  local Missile = AGameUIObject:extend({
     _getDamage = function(_, _)
       return 100
     end,
@@ -107,8 +107,7 @@ local function invaders()
     end
   end
 
-  local Ship = AGameUIObject:new(IControlMove, IMoveX, ICollidePusher)
-  Ship:addPlugin("_control", shipFire)
+  local Ship = AGameUIObject:extend(IControlMove, IMoveX, ICollidePusher)
   local ship = Ship:new({
     id = "ship",
     x = 400,
@@ -118,10 +117,11 @@ local function invaders()
     speed = 300,
     vector = moveVectors[MOVE.NONE]:copy(),
   }, IRectLine)
+  ship:addPlugin("_control", shipFire)
 
   table.insert(objects, ship)
 
-  local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
+  local RectStatic = AGameUIObject:extend(ICollideBlocker, IRectFill)
   table.insert(
     objects,
     RectStatic:new({

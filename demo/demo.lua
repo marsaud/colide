@@ -19,12 +19,12 @@ local DataManager, IADataBroadcaster, IADataListener =
   Data.DataManager, Data.IADataBroadcaster, Data.IADataListener
 
 local function demo()
-  local Rect2D = AGameUIObject:new(IControlMove, IMove, ICollidePusher, IRectLine)
-  local RectPassive = AGameUIObject:new(ICollidePusher, IRectLine)
-  local Rect1DX = AGameUIObject:new(IControlMove, IMoveX, ICollidePusher, IRectLine)
-  local Rect1DY = AGameUIObject:new(IControlMove, IMoveY, ICollidePusher, IRectLine)
-  local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
-  local BlockerBoy = AGameUIObject:new(IControlMove, IMove, ICollidePusher, Boy)
+  local Rect2D = AGameUIObject:extend(IControlMove, IMove, ICollidePusher, IRectLine)
+  local RectPassive = AGameUIObject:extend(ICollidePusher, IRectLine)
+  local Rect1DX = AGameUIObject:extend(IControlMove, IMoveX, ICollidePusher, IRectLine)
+  local Rect1DY = AGameUIObject:extend(IControlMove, IMoveY, ICollidePusher, IRectLine)
+  local RectStatic = AGameUIObject:extend(ICollideBlocker, IRectFill)
+  local BlockerBoy = AGameUIObject:extend(IControlMove, IMove, ICollidePusher, Boy)
 
   local dataManager = DataManager:new()
 

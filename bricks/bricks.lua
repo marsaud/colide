@@ -16,7 +16,7 @@ local BR = require("bricks.Brick")
 local Brick, BRICK_HEALTH = BR.Brick, BR.HEALTH
 local BrickFallGenerator = require("bricks.BrickFall").BrickFallGenerator
 
-local Boundary = AGameUIObject:new(ICollideBlocker, IRectFill)
+local Boundary = AGameUIObject:extend(ICollideBlocker, IRectFill)
 
 local function bricks()
   local bat = Bat:new({

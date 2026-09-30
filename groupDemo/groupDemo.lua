@@ -15,11 +15,11 @@ local Collide = require("Collide")
 local ICollideBlocker, ICollidePusher = Collide.ICollideBlocker, Collide.ICollidePusher
 
 local function groupDemo()
-  local RectNoMove = AGameUIObject:new(IControlMove, ICollidePusher, IRectLine)
-  local RectStatic = AGameUIObject:new(ICollideBlocker, IRectFill)
+  local RectNoMove = AGameUIObject:extend(IControlMove, ICollidePusher, IRectLine)
+  local RectStatic = AGameUIObject:extend(ICollideBlocker, IRectFill)
 
-  local Rect2D = AGameUIObject:new(IControlMove, IMove, ICollidePusher, IRectLine)
-  local RectPassive = AGameUIObject:new(ICollidePusher, IRectLine)
+  local Rect2D = AGameUIObject:extend(IControlMove, IMove, ICollidePusher, IRectLine)
+  local RectPassive = AGameUIObject:extend(ICollidePusher, IRectLine)
 
   local autoMove = function(time)
     local AutoMove = {
@@ -46,9 +46,9 @@ local function groupDemo()
     return AutoMove
   end
 
-  local ControlGroup = Group:new(IAControl, IAMove, IAPlace, IControlMove, IMove)
+  local ControlGroup = Group:extend(IAControl, IAMove, IAPlace, IControlMove, IMove)
 
-  local PassiveGroup = Group:new(IAControl, IAMove, IAPlace)
+  local PassiveGroup = Group:extend(IAControl, IAMove, IAPlace)
 
   local group = ControlGroup:new({
     id = "group",

@@ -37,7 +37,7 @@ local BrickFallMove = {
   end,
 }
 
-local BrickFall = AGameUIObject:new(IControlMove, BrickFallMove, ICollidePusher, IRectFill, {
+local BrickFall = AGameUIObject:extend(IControlMove, BrickFallMove, ICollidePusher, IRectFill, {
   color = COLOR.BLUE,
 })
 

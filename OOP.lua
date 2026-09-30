@@ -1,7 +1,7 @@
-local OT = require("OrderedTable")
-local OrderedTable = OT.OrderedTable
+local O = require("OrderedTable")
+local OrderedTable = O.OrderedTable
 
-local function _aggregateTables(...)
+local function _aggregatePrototypes(...)
   local arg = { ... }
   local agg = {
     _constructors = OrderedTable:new(),
@@ -26,17 +26,16 @@ local function _aggregateTables(...)
   return agg
 end
 
-local function new(self, ...)
-  local o = _aggregateTables(...)
-  local _constructors = self._constructors or OrderedTable:new()
-  for key, val in o._constructors:iterate() do
-    _constructors:set(key, val)
-  end
-  self._constructors = _constructors
-  o._constructors = nil
-  setmetatable(o, self)
+local function extend(self, ...)
+  local o = _aggregatePrototypes(self, ...)
   self.__index = self
-  if self._constructors and type(self._constructors.iterate) == "function" then
+  setmetatable(o, self)
+  return o
+end
+
+local function new(self, ...)
+  local o = self:extend(...)
+  if o._constructors and type(o._constructors.iterate) == "function" then
     for _, c in self._constructors:iterate() do
       c(o)
     end
@@ -45,7 +44,7 @@ local function new(self, ...)
 end
 
 local function Class(...)
-  return _aggregateTables({ new = new }, ...)
+  return _aggregatePrototypes({ new = new, extend = extend }, ...)
 end
 
 return {

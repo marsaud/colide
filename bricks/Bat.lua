@@ -5,7 +5,7 @@ local IRectLine = require("Draw").IRectLine
 local IMoveX = require("Move").IMoveX
 local AGameUIObject = require("Utils").AGameUIObject
 
-local Bat = AGameUIObject:new(IControlMove, IMoveX, ICollideBlocker, ICollidePusher, IRectLine)
+local Bat = AGameUIObject:extend(IControlMove, IMoveX, ICollideBlocker, ICollidePusher, IRectLine)
 
 return {
   Bat = Bat,
