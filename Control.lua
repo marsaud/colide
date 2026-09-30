@@ -36,7 +36,7 @@ local KeyboardController = AController:extend({
   end,
 })
 
-local NetworkController = AController:new({
+local NetworkController = AController:extend({
   _constructors = {
     NetworkController = function(self)
       if not L.x(self.server) then
@@ -95,4 +95,5 @@ return {
   IAControl = IAControl,
   IControlMove = IControlMove,
   KeyboardController = KeyboardController,
+  NetworkController = NetworkController,
 }
