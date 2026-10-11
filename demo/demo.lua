@@ -26,7 +26,7 @@ local function demo()
   local RectStatic = AGameUIObject:extend(ICollideBlocker, IRectFill)
   local BlockerBoy = AGameUIObject:extend(IControlMove, IMove, ICollidePusher, Boy)
 
-  local dataManager = DataManager:new()
+  local dataManager = DataManager:new({ id = "DM" })
 
   local AutoMove = {
     stateIndex = 1,
@@ -175,7 +175,18 @@ local function demo()
     end,
   }, IADataBroadcaster)
 
-  boy:whiteList({ "blue" })
+  -- boy:whiteList({ "blue" })
+
+  local boy2 = BlockerBoy:new({
+    id = "boy2",
+    channel = "boy2",
+    x = 400,
+    y = 150,
+    w = 60,
+    h = 92,
+    speed = 120,
+    vector = moveVectors[MOVE.NONE]:copy(),
+  })
 
   local textBlock = SmallTextBlock:new({
     _getKeys = function(self)
@@ -202,6 +213,7 @@ local function demo()
     rect6,
     rect7,
     boy,
+    boy2,
     textBlock,
     RectStatic:new({
       id = "wall",

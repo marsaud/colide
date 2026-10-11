@@ -9,6 +9,8 @@ local CONTROL = {
   NONE = 0,
 }
 
+local DEFAULT_CONTROL_CHANNEL = "default_control_channel"
+
 local COLOR = {
   WHITE = { 1, 1, 1 },
   BLACK = { 0, 0, 0 },
@@ -53,6 +55,7 @@ local STYLE = {
 return {
   COLOR = COLOR,
   CONTROL = CONTROL,
+  DEFAULT_CONTROL_CHANNEL = DEFAULT_CONTROL_CHANNEL,
   EVENT = EVENT,
   MOVE = MOVE,
   PLUGIN = PLUGIN,

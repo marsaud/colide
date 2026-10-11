@@ -9,6 +9,7 @@ local Class = OOP.Class
 local C = require("Const")
 local CONTROL = C.CONTROL
 -- local debug = require("Debug").debug
+local DEFAULT_CONTROL_CHANNEL = C.DEFAULT_CONTROL_CHANNEL
 
 local AController = Class({
   _constructors = {
@@ -17,22 +18,60 @@ local AController = Class({
     end,
   },
 
+  fetch = function(self)
+    error("AController.fetch is abstract")
+  end,
+
   poll = function(self)
     return table.remove(self._pile, 1)
   end,
 })
 
-local function pullControl()
-  return (love.keyboard.isDown("space") and CONTROL.ACT1 or 0)
-    + (love.keyboard.isDown("up") and CONTROL.UP or 0)
-    + (love.keyboard.isDown("down") and CONTROL.DOWN or 0)
-    + (love.keyboard.isDown("left") and CONTROL.LEFT or 0)
-    + (love.keyboard.isDown("right") and CONTROL.RIGHT or 0)
+local defaultKeyMaps = {
+  {
+    [CONTROL.ACT1] = "space",
+    [CONTROL.UP] = "up",
+    [CONTROL.DOWN] = "down",
+    [CONTROL.LEFT] = "left",
+    [CONTROL.RIGHT] = "right",
+  },
+  {
+    [CONTROL.ACT1] = "x",
+    [CONTROL.UP] = "z",
+    [CONTROL.DOWN] = "s",
+    [CONTROL.LEFT] = "q",
+    [CONTROL.RIGHT] = "d",
+  },
+}
+
+local function pullControl(map, _test)
+  if not map then
+    map = defaultKeyMaps[1]
+  end
+  local ctrl = 0
+  for c, k in pairs(map) do
+    ctrl = ctrl + ((_test or love).keyboard.isDown(k) and c or 0)
+  end
+  -- return (love.keyboard.isDown("space") and CONTROL.ACT1 or 0)
+  --     + (love.keyboard.isDown("up") and CONTROL.UP or 0)
+  --     + (love.keyboard.isDown("down") and CONTROL.DOWN or 0)
+  --     + (love.keyboard.isDown("left") and CONTROL.LEFT or 0)
+  --     + (love.keyboard.isDown("right") and CONTROL.RIGHT or 0)
+  return ctrl
 end
 
 local KeyboardController = AController:extend({
-  fetch = function(self)
-    table.insert(self._pile, pullControl())
+  _constructors = {
+    KeyboardController = function(self)
+      if self.map then
+        self._map = self.map
+        self.map = nil
+      end
+    end,
+  },
+
+  fetch = function(self, _test)
+    table.insert(self._pile, pullControl(self._map or defaultKeyMaps[1], _test or love))
   end,
 })
 
@@ -56,6 +95,42 @@ local NetworkController = AController:extend({
   end,
 })
 
+local DispatchController = AController:extend({
+  _constructors = {
+    DispatchController = function(self)
+      self._controllers = {}
+      self.pile = {}
+    end,
+  },
+
+  addController = function(self, controller, channel)
+    self._controllers[channel or DEFAULT_CONTROL_CHANNEL] = controller
+  end,
+
+  removeController = function(self, channel)
+    self._controllers[channel or DEFAULT_CONTROL_CHANNEL] = nil
+  end,
+
+  fetch = function(self, _test)
+    for ch, c in pairs(self._controllers) do
+      c:fetch(_test)
+      local m = c:poll()
+      while m ~= nil do
+        table.insert(self._pile, { m = m, ch = ch })
+        m = c:poll()
+      end
+    end
+  end,
+
+  poll = function(self)
+    local mch = table.remove(self._pile, 1)
+    if mch ~= nil then
+      return mch.m, mch.ch
+    end
+    return nil
+  end,
+})
+
 local function testControl(state, value)
   if state == nil then
     return false
@@ -64,8 +139,11 @@ local function testControl(state, value)
 end
 
 local IAControl = {
-  control = function(self, ctrl, dt)
+  control = function(self, ctrl, dt, channel)
     local result = false
+    if (self.channel or DEFAULT_CONTROL_CHANNEL) ~= (channel or DEFAULT_CONTROL_CHANNEL) then
+      return result
+    end
     if self.runPrePlugins then
       result = self:runPrePlugins("_control", self, ctrl, dt)
     end
@@ -92,8 +170,10 @@ local IControlMove = {
 return {
   pullControl = pullControl,
   testControl = testControl,
+  DispatchController = DispatchController,
   IAControl = IAControl,
   IControlMove = IControlMove,
   KeyboardController = KeyboardController,
   NetworkController = NetworkController,
+  defaultKeyMaps = defaultKeyMaps,
 }

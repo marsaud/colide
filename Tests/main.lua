@@ -1,4 +1,14 @@
 package.path = "./lib/?.lua;./lib/?/init.lua;" .. package.path
 
-local run = require("protocol-test")
-run()
+local runs = {}
+
+local pT = require("protocol-test")
+table.insert(runs, pT)
+local cT = require("control-test")
+table.insert(runs, cT)
+
+for _, r in ipairs(runs) do
+  r()
+end
+
+love.event.quit(0)

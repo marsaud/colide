@@ -4,6 +4,7 @@ local Class = OOP.Class
 local C = require("Const")
 local EVENT = C.EVENT
 -- local debug = require("Debug").debug
+local DEFAULT_CONTROL_CHANNEL = C.DEFAULT_CONTROL_CHANNEL
 
 local eventId = 0
 local eventCount = 0
@@ -43,17 +44,19 @@ local EventManager = Class({
 
   tick = function(self, dt)
     self._controller:fetch()
-    local lastControl
-    local ctrl = self._controller:poll()
+    local lastControl = {}
+    local ctrl, channel = self._controller:poll()
     while ctrl ~= nil do
       for _, c in pairs(self._objects[EVENT.CONTROL]) do
-        c:control(ctrl, dt)
+        c:control(ctrl, dt, channel)
       end
-      lastControl = ctrl
-      ctrl = self._controller:poll()
+      lastControl[channel or DEFAULT_CONTROL_CHANNEL] = ctrl
+      ctrl, channel = self._controller:poll()
     end
     for _, u in pairs(self._objects[EVENT.UPDATE]) do
-      u:update(lastControl, dt)
+      for ch, lc in pairs(lastControl) do
+        u:update(lc, dt, ch)
+      end
     end
   end,
 

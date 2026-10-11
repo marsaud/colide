@@ -9,7 +9,10 @@ local love = love
 -- local debug = require("Debug").debug
 local EventManager = require("Event").EventManager
 local speedFactor = require("Move").speedFactor
-local KeyboardController = require("Control").KeyboardController
+local Control = require("Control")
+local KeyboardController = Control.KeyboardController
+local DispatchController = Control.DispatchController
+local defaultKeyMaps = Control.defaultKeyMaps
 -- END IMPORTS
 
 local contexts = {}
@@ -44,7 +47,11 @@ function love.load()
   local test = require("collideDebug/test")
   table.insert(boots, test)
 
-  local controller = KeyboardController:new()
+  local kc = KeyboardController:new()
+  local kc2 = KeyboardController:new({ map = defaultKeyMaps[2] })
+  local controller = DispatchController:new()
+  controller:addController(kc)
+  controller:addController(kc2, "boy2")
 
   for _, b in ipairs(boots) do
     local c = EventManager:new({ controller = controller })
@@ -101,7 +108,7 @@ function love.draw()
 end
 
 function love.keypressed(key)
-  if key == "s" then
+  if key == "*" then
     speedFactor(true)
   end
   if key == "f" then
