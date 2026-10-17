@@ -12,3 +12,5 @@
 
 [x] black/white list ids in object interractions (resolve)
 [ ] black/white list ids in object interractions (hit)
+
+[x] Handle default control channel more privatly to avoid many const imports

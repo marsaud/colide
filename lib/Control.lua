@@ -23,7 +23,7 @@ local AController = Class({
   end,
 
   poll = function(self)
-    return table.remove(self._pile, 1)
+    return table.remove(self._pile, 1), DEFAULT_CONTROL_CHANNEL
   end,
 })
 
