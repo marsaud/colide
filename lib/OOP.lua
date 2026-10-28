@@ -28,8 +28,6 @@ end
 
 local function extend(self, ...)
   local o = _aggregatePrototypes(self, ...)
-  self.__index = self
-  setmetatable(o, self)
   return o
 end
 
