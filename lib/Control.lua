@@ -71,7 +71,10 @@ local KeyboardController = AController:extend({
   },
 
   fetch = function(self, _test)
-    table.insert(self._pile, pullControl(self._map or defaultKeyMaps[1], _test or love))
+    local ctrl = pullControl(self._map or defaultKeyMaps[1], _test or love)
+    if ctrl ~= CONTROL.NONE then
+      table.insert(self._pile, ctrl)
+    end
   end,
 })
 
@@ -145,13 +148,13 @@ local IAControl = {
       return result
     end
     if self.runPrePlugins then
-      result = self:runPrePlugins("_control", self, ctrl, dt)
+      result = self:runPrePlugins("_control", ctrl, dt)
     end
     if self._control then
       result = self:_control(ctrl, dt) or result
     end
     if self.runPostPlugins then
-      result = self:runPostPlugins("_control", self, ctrl, dt) or result
+      result = self:runPostPlugins("_control", ctrl, dt) or result
     end
     return result
   end,

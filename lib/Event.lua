@@ -1,7 +1,10 @@
 local L = require("lib")
 local OOP = require("OOP")
 local Class = OOP.Class
-local EVENT = require("Const").EVENT
+local C = require("Const")
+local EVENT = C.EVENT
+local CONTROL = C.CONTROL
+local DEFAULT_CONTROL_CHANNEL = C.DEFAULT_CONTROL_CHANNEL
 -- local debug = require("Debug").debug
 
 local eventId = 0
@@ -52,9 +55,8 @@ local EventManager = Class({
       ctrl, channel = self._controller:poll()
     end
     for _, u in pairs(self._objects[EVENT.UPDATE]) do
-      for ch, lc in pairs(lastControl) do
-        u:update(lc, dt, ch)
-      end
+      local ch = u.channel or DEFAULT_CONTROL_CHANNEL
+      u:update(lastControl[ch] or CONTROL.NONE, dt, ch)
     end
   end,
 

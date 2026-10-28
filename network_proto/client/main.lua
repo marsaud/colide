@@ -9,7 +9,6 @@ local KeyboardController = Control.KeyboardController
 local defaultKeyMaps = Control.defaultKeyMaps
 
 local client
-local kbc1, kbc2
 local dc
 
 local messages = {
@@ -22,14 +21,14 @@ local messages = {
 }
 
 function love.load()
-  client = Client:new({ verbose = true })
-  client:connect()
-
-  kbc1 = KeyboardController:new({ map = defaultKeyMaps[1] })
-  kbc2 = KeyboardController:new({ map = defaultKeyMaps[2] })
   dc = DispatchController:new()
+  local kbc1 = KeyboardController:new({ map = defaultKeyMaps[1] })
+  local kbc2 = KeyboardController:new({ map = defaultKeyMaps[2] })
   dc:addController(kbc1, 1)
   dc:addController(kbc2, 2)
+
+  client = Client:new({ verbose = true })
+  client:connect()
 end
 
 function love.update()

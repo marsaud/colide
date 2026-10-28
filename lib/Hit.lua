@@ -17,13 +17,13 @@ local IAHit = {
     end
     local result = false
     if self.runPrePlugins then
-      result = self:runPrePlugins("_hit", self, id, who, by, vector)
+      result = self:runPrePlugins("_hit", id, who, by, vector)
     end
     if self._hit then
       result = self:_hit(id, who, by, vector) or result
     end
     if self.runPostPlugins then
-      result = self:runPostPlugins("_hit", self, id, who, by, vector) or result
+      result = self:runPostPlugins("_hit", id, who, by, vector) or result
     end
     local health = self:valHealth()
     if health and health > 0 then

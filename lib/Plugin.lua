@@ -57,9 +57,9 @@ local PluginManager = {
     for _, funcOrObj in ipairs(self[mapName][id] or {}) do
       local response
       if type(funcOrObj) == "table" and funcOrObj[id] then
-        response = funcOrObj[id](funcOrObj, ...)
+        response = funcOrObj[id](self, ...)
       elseif type(funcOrObj) == "function" then
-        response = funcOrObj(...)
+        response = funcOrObj(self, ...)
       end
       if type(response) == "boolean" then
         result = response or result

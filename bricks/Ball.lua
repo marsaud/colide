@@ -5,6 +5,7 @@ local ICollidePusher = require("Collide").ICollidePusher
 local IControlMove = require("Control").IControlMove
 local Vector = require("Couple").Vector
 local IRectLine = require("Draw").IRectLine
+local IStateMove = require("State").IStateMove
 local moveVectors = require("Move").moveVectors
 local AGameUIObject = require("Utils").AGameUIObject
 
@@ -35,7 +36,7 @@ local BallAutoBounce = {
   end,
 }
 
-local Ball = AGameUIObject:extend(IControlMove, BallAutoBounce, ICollidePusher, IRectLine, {
+local Ball = AGameUIObject:extend(IStateMove, BallAutoBounce, ICollidePusher, IRectLine, {
   _getDamage = function(_, target)
     local damage = {
       [GAME.ID.BRICK] = GAME.HEALTH.BASE + 1,

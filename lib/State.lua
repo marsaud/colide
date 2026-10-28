@@ -8,13 +8,13 @@ local IAState = {
       return result
     end
     if self.runPrePlugins then
-      result = self:runPrePlugins("update", self, ctrl, dt)
+      result = self:runPrePlugins("_update", ctrl, dt)
     end
     if self._update then
       result = self:_update(ctrl, dt) or result
     end
     if self.runPostPlugins then
-      result = self:runPostPlugins("update", self, ctrl, dt)
+      result = self:runPostPlugins("_update", ctrl, dt)
     end
     return result
   end,
@@ -22,18 +22,30 @@ local IAState = {
   flush = function(self)
     local result = false
     if self.runPrePlugins then
-      result = self:runPrePlugins("flush", self)
+      result = self:runPrePlugins("_flush")
     end
     if self._flush then
       result = self:_flush() or result
     end
     if self.runPostPlugins then
-      result = self:runPostPlugins("flush", self) or result
+      result = self:runPostPlugins("_flush") or result
     end
     return result
   end,
 }
 
+local IStateMove = {
+  _update = function(self, ctrl, dt)
+    print("IStateMove", self.id, ctrl, dt, self.move)
+    if self.move then
+      return self:move(0, ctrl, dt)
+    else
+      return false
+    end
+  end,
+}
+
 return {
   IAState = IAState,
+  IStateMove = IStateMove,
 }

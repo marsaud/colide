@@ -12,6 +12,7 @@ local Collide = require("Collide")
 local ICollideBlocker, ICollidePusher = Collide.ICollideBlocker, Collide.ICollidePusher
 local Control = require("Control")
 local IControlMove = Control.IControlMove
+local IStateMove = require("State").IStateMove
 local Boy = require("demo/Boy").Boy
 local SmallTextBlock = require("components/SmallTextBlock").SmallTextBlock
 local Data = require("Data")
@@ -19,10 +20,10 @@ local DataManager, IADataBroadcaster, IADataListener =
   Data.DataManager, Data.IADataBroadcaster, Data.IADataListener
 
 local function demo()
-  local Rect2D = AGameUIObject:extend(IControlMove, IMove, ICollidePusher, IRectLine)
+  local Rect2D = AGameUIObject:extend(IMove, ICollidePusher, IRectLine)
   local RectPassive = AGameUIObject:extend(ICollidePusher, IRectLine)
-  local Rect1DX = AGameUIObject:extend(IControlMove, IMoveX, ICollidePusher, IRectLine)
-  local Rect1DY = AGameUIObject:extend(IControlMove, IMoveY, ICollidePusher, IRectLine)
+  local Rect1DX = AGameUIObject:extend(IMoveX, ICollidePusher, IRectLine)
+  local Rect1DY = AGameUIObject:extend(IMoveY, ICollidePusher, IRectLine)
   local RectStatic = AGameUIObject:extend(ICollideBlocker, IRectFill)
   local BlockerBoy = AGameUIObject:extend(IControlMove, IMove, ICollidePusher, Boy)
 
@@ -130,7 +131,7 @@ local function demo()
     speed = 110,
     vector = moveVectors[MOVE.NONE]:copy(),
     color = COLOR.YELLOW,
-  }, AutoMove)
+  }, AutoMove, IStateMove)
 
   local rect6 = RectStatic:new({
     id = "cyan",
@@ -152,7 +153,7 @@ local function demo()
     speed = 240,
     vector = moveVectors[MOVE.NONE]:copy(),
     color = COLOR.ORANGE,
-  }, AutoBounce)
+  }, AutoBounce, IStateMove)
 
   local EXAMPLE_KEY = "abcdef"
 

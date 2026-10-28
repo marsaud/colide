@@ -2,12 +2,11 @@ local GAME = require("bricks.GAME")
 
 local C = require("Const")
 local COLOR, MOVE = C.COLOR, C.MOVE
-local Control = require("Control")
 local ICollidePusher = require("Collide").ICollidePusher
-local IControlMove = Control.IControlMove
 local Draw = require("Draw")
 local IRectFill = Draw.IRectFill
 local moveVectors = require("Move").moveVectors
+local IStateMove = require("State").IStateMove
 local AGameUIObject = require("Utils").AGameUIObject
 
 local BRICKFALL_HEALTH = 100
@@ -37,7 +36,7 @@ local BrickFallMove = {
   end,
 }
 
-local BrickFall = AGameUIObject:extend(IControlMove, BrickFallMove, ICollidePusher, IRectFill, {
+local BrickFall = AGameUIObject:extend(BrickFallMove, ICollidePusher, IRectFill, {
   color = COLOR.BLUE,
 })
 
@@ -54,6 +53,7 @@ local BrickFallGenerator = {
       speed = 0,
       vector = moveVectors[MOVE.DOWN]:copy(),
     })
+    brickFall:addPostPlugin("_update", IStateMove)
     brickFall:blackList({ GAME.ID.BRICK })
     self.eventManager:addObjects(brickFall)
   end,

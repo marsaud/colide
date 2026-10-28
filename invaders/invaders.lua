@@ -4,6 +4,7 @@ local C = require("Const")
 local COLOR, CONTROL, MOVE = C.COLOR, C.CONTROL, C.MOVE
 local Control = require("Control")
 local testControl, IControlMove = Control.testControl, Control.IControlMove
+local IStateMove = require("State").IStateMove
 local Draw = require("Draw")
 local IRectFill, IRectLine = Draw.IRectFill, Draw.IRectLine
 local Move = require("Move")
@@ -69,7 +70,7 @@ local function invaders()
           _getDamage = function(_, _)
             return 100
           end,
-        }, IControlMove, ICollidePusher, IRectLine, Vessel)
+        }, IStateMove, ICollidePusher, IRectLine, Vessel)
       )
     end
   end
@@ -81,7 +82,7 @@ local function invaders()
     _move = function(id, _, _, _)
       return moveVectors[MOVE.UP]
     end,
-  }, IControlMove, ICollidePusher)
+  }, IStateMove, ICollidePusher)
 
   local shipFire = function(self, ctrl, dt)
     if testControl(ctrl, CONTROL.ACT1) then
