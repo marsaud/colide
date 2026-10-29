@@ -5,6 +5,7 @@ local runs = {}
 local tests = {
   "protocol-test",
   "control-test",
+  "serializable-test",
   "oop-test",
 }
 
