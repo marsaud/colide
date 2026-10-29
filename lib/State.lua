@@ -36,7 +36,6 @@ local IAState = {
 
 local IStateMove = {
   _update = function(self, ctrl, dt)
-    print("IStateMove", self.id, ctrl, dt, self.move)
     if self.move then
       return self:move(0, ctrl, dt)
     else

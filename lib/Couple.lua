@@ -64,8 +64,9 @@ Couple = {
     if not L.n(c.x) or not L.n(c.y) then
       error("Couple objects require x and y properties")
     end
-    setmetatable(c, coupleMetatable)
-    return c
+    local o = { x = c.x, y = c.y }
+    setmetatable(o, coupleMetatable)
+    return o
   end,
 }
 

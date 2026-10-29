@@ -40,7 +40,7 @@ local DataManager = Class({
       end
       self._listeners[key][o.__DATA_LIST_INDEX[key]] = o
     end
-    o.DataManager = self
+    o.__dataManager = self
     return true
   end,
 
@@ -53,7 +53,7 @@ local DataManager = Class({
     end
     if #o.__DATA_LIST_INDEX == 0 then
       o.__DATA_LIST_INDEX = nil
-      o.dataManager = nil
+      o.__dataManager = nil
     end
   end,
 
@@ -78,20 +78,20 @@ local DataManager = Class({
       end
       self._broadcasters[key][o.__DATA_BROAD_INDEX[key]] = o
     end
-    o.dataManager = self
+    o.__dataManager = self
     return true
   end,
 
   unregister = function(self, o, key)
     for _key, id in pairs(o.__DATA_BROAD_INDEX) do
-      if L.x(key) or key == _key then
+      if not L.x(key) or key == _key then
         self._broadcasters[_key][id] = nil
         o.__DATA_BROAD_INDEX[_key] = nil
       end
     end
     if #o.__DATA_BROAD_INDEX == 0 then
       o.__DATA_BROAD_INDEX = nil
-      o.dataManager = nil
+      o.__dataManager = nil
     end
   end,
 

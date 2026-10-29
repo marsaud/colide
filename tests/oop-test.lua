@@ -15,49 +15,49 @@ local run = function()
     _constructors = {
       A = function(self)
         self._a = 1
-      end
+      end,
     },
     getA = function(self)
       return self._a
-    end
+    end,
   })
   local ainst = A:new()
   printT(ainst)
   printT(ainst._constructors.keys)
   printT(ainst._constructors.values)
-  print('---')
+  print("---")
 
   local B = A:extend({
     _constructors = {
       B = function(self)
         self._b = 2
-      end
+      end,
     },
     getB = function(self)
       return self._b
-    end
+    end,
   })
   local binst = B:new()
   printT(binst)
   printT(binst._constructors.keys)
   printT(binst._constructors.values)
-  print('---')
+  print("---")
 
   local C = B:extend({
     _constructors = {
       C = function(self)
         self._c = 3
-      end
+      end,
     },
     getC = function(self)
       return self._c
-    end
+    end,
   })
   local cinst = C:new()
   printT(cinst)
   printT(cinst._constructors.keys)
   printT(cinst._constructors.values)
-  print('---')
+  print("---")
 
   ainst._a = 11
   binst._a = 22
@@ -66,11 +66,11 @@ local run = function()
   cinst._b = 333
   cinst._c = 3333
   printT(ainst)
-  print('---')
+  print("---")
   printT(binst)
-  print('---')
+  print("---")
   printT(cinst)
-  print('---')
+  print("---")
   print(ainst:getA(), binst:getA(), binst:getB(), cinst:getA(), cinst:getB(), cinst:getC())
   local c2 = C:new()
   c2._a = 5

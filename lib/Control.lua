@@ -52,11 +52,6 @@ local function pullControl(map, _test)
   for c, k in pairs(map) do
     ctrl = ctrl + ((_test or love).keyboard.isDown(k) and c or 0)
   end
-  -- return (love.keyboard.isDown("space") and CONTROL.ACT1 or 0)
-  --     + (love.keyboard.isDown("up") and CONTROL.UP or 0)
-  --     + (love.keyboard.isDown("down") and CONTROL.DOWN or 0)
-  --     + (love.keyboard.isDown("left") and CONTROL.LEFT or 0)
-  --     + (love.keyboard.isDown("right") and CONTROL.RIGHT or 0)
   return ctrl
 end
 
