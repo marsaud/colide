@@ -37,12 +37,16 @@ local function _s(o)
   end
 end
 
-local serialize = function(o)
-  return "return unz(" .. _s(o) .. ")"
-end
-
 local unz = function(data)
   return data
+end
+local DEFAULT_UNSERIALIZE_CALLBACK_NAME = "unz"
+
+local serialize = function(o, unserializeCallbackName)
+  if not unserializeCallbackName then
+    unserializeCallbackName = DEFAULT_UNSERIALIZE_CALLBACK_NAME
+  end
+  return "return " .. unserializeCallbackName .. "(" .. _s(o) .. ")"
 end
 
 local Serializable = {
@@ -53,8 +57,8 @@ local Serializable = {
     end,
   },
 
-  serialize = function(self)
-    return serialize(self)
+  serialize = function(self, unserializeCallbackName)
+    return serialize(self, unserializeCallbackName)
   end,
 }
 

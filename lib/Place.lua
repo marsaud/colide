@@ -6,13 +6,9 @@ local Coord = Couple.Coord
 local IAPlace = {
   __constructors = {
     IAPlace = function(self)
-      if not L.x(self.x) then
-        self.x = 0
-      end
-      if not L.x(self.y) then
-        self.y = 0
-      end
-      self._c = Coord:new({ x = self.x, y = self.y }) -- internal coord
+      self._c = Coord:new({ x = L.x(self.x) and self.x or 0, y = L.x(self.y) and self.y or 0 }) -- internal coord
+      self.x = nil
+      self.y = nil
       self._d = self._c:copy() -- internal destination
     end,
   },

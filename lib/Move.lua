@@ -62,19 +62,19 @@ local IAMove = {
 
   commit = function(self, id)
     if self._commit then
-      self:_commit(id)
+      return self:_commit(id)
     end
     return true
   end,
 
   _commit = function(self, id)
-    local d = self._d:copy()
-    local srz = self._c == d
-    self._c = d
-    if srz then
-      self:serialize()
-    end
+    local cmt = self._c ~= self._d
     self.vector = self:initVector()
+    if cmt and L.x(self.__eventManager) then
+      self._c = self._d:copy()
+      self.__eventManager:registerDiff(self)
+    end
+    return cmt
   end,
 
   v = function(self, value, forceMover)

@@ -27,15 +27,14 @@ local EventManager = Class({
       if not L.x(self.controller) then
         error("AController instance required")
       end
-      self._controller = self.controller
+      self.__controller = self.controller
       self.controller = nil
-      if not L.x(self.__objects) then
-        self.__objects = {}
-        for _, e in pairs(EVENT) do
-          self.__objects[e] = {}
-        end
+      self.__objects = {}
+      for _, e in pairs(EVENT) do
+        self.__objects[e] = {}
       end
       self._ID = 0
+      self.__diffs = {}
     end,
   },
 
@@ -45,15 +44,15 @@ local EventManager = Class({
   end,
 
   tick = function(self, dt)
-    self._controller:fetch()
+    self.__controller:fetch()
     local lastControl = {}
-    local ctrl, channel = self._controller:poll()
+    local ctrl, channel = self.__controller:poll()
     while ctrl ~= nil do
       for _, c in pairs(self.__objects[EVENT.CONTROL]) do
         c:control(ctrl, dt, channel)
       end
       lastControl[channel] = ctrl
-      ctrl, channel = self._controller:poll()
+      ctrl, channel = self.__controller:poll()
     end
     for _, u in pairs(self.__objects[EVENT.UPDATE]) do
       local ch = u.channel or DEFAULT_CONTROL_CHANNEL
@@ -62,6 +61,13 @@ local EventManager = Class({
   end,
 
   flush = function(self)
+    local stateDiffMem = {}
+    for o, _ in pairs(self.__diffs) do
+      table.insert(stateDiffMem, o:serialize())
+      local stateDiff = table.concat(stateDiffMem, "\0")
+      self.__diffs[o] = nil
+      print(stateDiff)
+    end
     self:purge()
     for _, f in pairs(self.__objects[EVENT.FLUSH]) do
       f:flush()
@@ -169,22 +175,33 @@ local EventManager = Class({
   end,
 
   delete = function(self, o)
-    if not self._deleted then
-      self._deleted = {}
+    if not L.x(self.__deleted) then
+      self.__deleted = {}
     end
-    table.insert(self._deleted, o)
+    o._DELETED = true
+    table.insert(self.__deleted, o)
   end,
 
   purge = function(self)
-    if self._deleted then
-      for _, o in ipairs(self._deleted) do
+    if self.__deleted then
+      for _, o in ipairs(self.__deleted) do
         if o.group then
           o.group:remove(o)
         end
         self:removeObjects(o)
       end
     end
-    self._deleted = nil
+    self.__deleted = nil
+  end,
+
+  registerDiff = function(self, o)
+    if not L.x(o.serialize) then
+      return
+    end
+    if not L.x(o.__eventManager) or o.__eventManager ~= self then
+      error("EventManager: unexpected object for diff register")
+    end
+    self.__diffs[o] = true
   end,
 }, NotSerializable)
 
