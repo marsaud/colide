@@ -9,8 +9,7 @@ local Draw = require("Draw")
 local IRectFill, IRectLine = Draw.IRectFill, Draw.IRectLine
 local Move = require("Move")
 local moveVectors, IMoveX = Move.moveVectors, Move.IMoveX
-local Utils = require("Utils")
-local AGameUIObject = Utils.AGameUIObject
+local AGameUIObject = require("AGameUIObject").AGameUIObject
 
 local function invaders()
   local Vessel = {
@@ -70,7 +69,7 @@ local function invaders()
           _getDamage = function(_, _)
             return 100
           end,
-        }, IStateMove, ICollidePusher, IRectLine, Vessel)
+        }, IStateMove, ICollidePusher, IRectLine, Vessel):blackList({ "vessel" })
       )
     end
   end
@@ -86,7 +85,7 @@ local function invaders()
 
   local shipFire = function(self, ctrl, dt)
     if testControl(ctrl, CONTROL.ACT1) then
-      if self.eventManager then
+      if self.__eventManager then
         if self._SHIP_FIRE_DELAY and self._SHIP_FIRE_DELAY >= 0 then
           self._SHIP_FIRE_DELAY = self._SHIP_FIRE_DELAY - dt
         else
@@ -101,7 +100,7 @@ local function invaders()
             vector = moveVectors[MOVE.NONE]:copy(),
             health = 100,
           }, IRectFill)
-          self.eventManager:addObjects(missile)
+          self.__eventManager:addObjects(missile)
           self._SHIP_FIRE_DELAY = 0.3
         end
       end

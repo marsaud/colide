@@ -12,7 +12,7 @@ local CONTROL = C.CONTROL
 local DEFAULT_CONTROL_CHANNEL = C.DEFAULT_CONTROL_CHANNEL
 
 local AController = Class({
-  _constructors = {
+  __constructors = {
     Controller = function(self)
       self._pile = {}
     end,
@@ -56,7 +56,7 @@ local function pullControl(map, _test)
 end
 
 local KeyboardController = AController:extend({
-  _constructors = {
+  __constructors = {
     KeyboardController = function(self)
       if self.map then
         self._map = self.map
@@ -74,7 +74,7 @@ local KeyboardController = AController:extend({
 })
 
 local NetworkController = AController:extend({
-  _constructors = {
+  __constructors = {
     NetworkController = function(self)
       if not L.x(self.server) then
         error("Server instance required")
@@ -94,7 +94,7 @@ local NetworkController = AController:extend({
 })
 
 local DispatchController = AController:extend({
-  _constructors = {
+  __constructors = {
     DispatchController = function(self)
       self._controllers = {}
       self.pile = {}

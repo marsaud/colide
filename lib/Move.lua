@@ -38,7 +38,7 @@ local moveVectors = {
 ]]
 
 local IAMove = {
-  _constructors = {
+  __constructors = {
     IAMove = function(self)
       if not L.x(self.vector) then
         self.vector = self:initVector()
@@ -68,7 +68,12 @@ local IAMove = {
   end,
 
   _commit = function(self, id)
-    self._c = self._d:copy()
+    local d = self._d:copy()
+    local srz = self._c == d
+    self._c = d
+    if srz then
+      self:serialize()
+    end
     self.vector = self:initVector()
   end,
 
@@ -91,9 +96,9 @@ local IAMove = {
   end,
 
   fireMove = function(self, id, ...)
-    if self.eventManager then
+    if self.__eventManager then
       local moving = self._mover or self
-      return self.eventManager:fire(EVENT.MOVE, id, moving, ...)
+      return self.__eventManager:fire(EVENT.MOVE, id, moving, ...)
     else
       return true
     end

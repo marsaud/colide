@@ -7,7 +7,7 @@ local HOST = "127.0.0.1"
 local PORT = 5000
 
 local Client = Class({
-  _constructors = {
+  __constructors = {
     Client = function(self)
       self._verbose = self.verbose or false
       self.verbose = nil

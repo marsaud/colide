@@ -7,7 +7,7 @@ local Draw = require("Draw")
 local IRectFill = Draw.IRectFill
 local moveVectors = require("Move").moveVectors
 local IStateMove = require("State").IStateMove
-local AGameUIObject = require("Utils").AGameUIObject
+local AGameUIObject = require("AGameUIObject").AGameUIObject
 
 local BRICKFALL_HEALTH = 100
 
@@ -55,7 +55,7 @@ local BrickFallGenerator = {
     })
     brickFall:addPostPlugin("_update", IStateMove)
     brickFall:blackList({ GAME.ID.BRICK })
-    self.eventManager:addObjects(brickFall)
+    self.__eventManager:addObjects(brickFall)
   end,
 }
 

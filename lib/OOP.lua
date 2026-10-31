@@ -4,18 +4,18 @@ local OrderedTable = O.OrderedTable
 local function _aggregatePrototypes(...)
   local arg = { ... }
   local agg = {
-    _constructors = OrderedTable:new(),
+    __constructors = OrderedTable:new(),
   }
   for _, t in ipairs(arg) do
     for key, val in pairs(t) do
-      if key == "_constructors" then
+      if key == "__constructors" then
         if val and type(val.iterate) == "function" then
           for name, constructor in val:iterate() do
-            agg._constructors:set(name, constructor)
+            agg.__constructors:set(name, constructor)
           end
         else
           for name, constructor in pairs(val) do
-            agg._constructors:set(name, constructor)
+            agg.__constructors:set(name, constructor)
           end
         end
       else
@@ -33,8 +33,8 @@ end
 
 local function new(self, ...)
   local o = self:extend(...)
-  if o._constructors and type(o._constructors.iterate) == "function" then
-    for _, c in self._constructors:iterate() do
+  if o.__constructors and type(o.__constructors.iterate) == "function" then
+    for _, c in self.__constructors:iterate() do
       c(o)
     end
   end

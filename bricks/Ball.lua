@@ -2,12 +2,11 @@ local GAME = require("bricks.GAME")
 
 local MOVE = require("Const").MOVE
 local ICollidePusher = require("Collide").ICollidePusher
-local IControlMove = require("Control").IControlMove
 local Vector = require("Couple").Vector
 local IRectLine = require("Draw").IRectLine
 local IStateMove = require("State").IStateMove
 local moveVectors = require("Move").moveVectors
-local AGameUIObject = require("Utils").AGameUIObject
+local AGameUIObject = require("AGameUIObject").AGameUIObject
 
 -- The ball move
 local BallAutoBounce = {

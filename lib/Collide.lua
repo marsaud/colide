@@ -6,12 +6,11 @@ local EVENT = C.EVENT
 -- local debug = require("Debug").debug
 
 local IACollide = {
-  _constructors = {
+  __constructors = {
     IACollide = function(self)
-      self._whiteList = {}
-      self._whiteListN = 0
-      self._blackList = {}
-      self._blackListN = 0
+      self.__whiteList = {}
+      self.__whiteListN = 0
+      self.__blackList = {}
     end,
   },
   _isRight = function(self, o)
@@ -29,31 +28,31 @@ local IACollide = {
 
   whiteList = function(self, list)
     if list ~= nil then
-      self._whiteList = {}
-      self._whiteListN = 0
+      self.__whiteList = {}
+      self.__whiteListN = 0
       for _, id in pairs(list) do
-        self._whiteList[id] = true
-        self._whiteListN = self._whiteListN + 1
+        self.__whiteList[id] = true
+        self.__whiteListN = self.__whiteListN + 1
       end
     end
-    return self._whiteList
+    return self
   end,
 
   blackList = function(self, list)
     if list ~= nil then
-      self._blackList = {}
+      self.__blackList = {}
       for _, id in pairs(list) do
-        self._blackList[id] = true
+        self.__blackList[id] = true
       end
     end
-    return self._blackList
+    return self
   end,
 
-  welcome = function(self, o)
-    if self._blackList[o.id] == true then
+  isWelcome = function(self, o)
+    if self.__blackList[o.id] == true then
       return false
     end
-    return self._whiteListN == 0 or self._whiteList[o.id] == true
+    return self.__whiteListN == 0 or self.__whiteList[o.id] == true
   end,
 
   -- analyse how "o" will react on self on collision
@@ -61,7 +60,7 @@ local IACollide = {
     local effect = false
     local skip = o == self
     skip = skip or not o._resolve
-    skip = skip or not o:welcome(self) or not self:welcome(o)
+    skip = skip or not o:isWelcome(self) or not self:isWelcome(o)
     local previous = { ... }
     if not skip then
       for _, _o in ipairs(previous) do
@@ -221,8 +220,8 @@ local ICollidePusher = {
     end
     local effect = false
     if effectX then
-      if self.eventManager then
-        self.eventManager:fire(
+      if self.__eventManager then
+        self.__eventManager:fire(
           EVENT.HIT,
           id,
           self,
@@ -232,7 +231,7 @@ local ICollidePusher = {
             y = 0,
           })
         )
-        self.eventManager:fire(
+        self.__eventManager:fire(
           EVENT.HIT,
           id,
           o,
@@ -246,8 +245,8 @@ local ICollidePusher = {
       effect = o:pushX(id, self, ...) or effect
     end
     if effectY then
-      if self.eventManager then
-        self.eventManager:fire(
+      if self.__eventManager then
+        self.__eventManager:fire(
           EVENT.HIT,
           id,
           self,
@@ -257,7 +256,7 @@ local ICollidePusher = {
             y = -math.sign(self:v().y),
           })
         )
-        self.eventManager:fire(
+        self.__eventManager:fire(
           EVENT.HIT,
           id,
           o,

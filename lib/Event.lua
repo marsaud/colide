@@ -5,6 +5,7 @@ local C = require("Const")
 local EVENT = C.EVENT
 local CONTROL = C.CONTROL
 local DEFAULT_CONTROL_CHANNEL = C.DEFAULT_CONTROL_CHANNEL
+local NotSerializable = require("Serializable").NotSerializable
 -- local debug = require("Debug").debug
 
 local eventId = 0
@@ -21,17 +22,17 @@ local getEventId = function(id)
 end
 
 local EventManager = Class({
-  _constructors = {
+  __constructors = {
     EventManager = function(self)
       if not L.x(self.controller) then
         error("AController instance required")
       end
       self._controller = self.controller
       self.controller = nil
-      if not L.x(self._objects) then
-        self._objects = {}
+      if not L.x(self.__objects) then
+        self.__objects = {}
         for _, e in pairs(EVENT) do
-          self._objects[e] = {}
+          self.__objects[e] = {}
         end
       end
       self._ID = 0
@@ -48,13 +49,13 @@ local EventManager = Class({
     local lastControl = {}
     local ctrl, channel = self._controller:poll()
     while ctrl ~= nil do
-      for _, c in pairs(self._objects[EVENT.CONTROL]) do
+      for _, c in pairs(self.__objects[EVENT.CONTROL]) do
         c:control(ctrl, dt, channel)
       end
       lastControl[channel] = ctrl
       ctrl, channel = self._controller:poll()
     end
-    for _, u in pairs(self._objects[EVENT.UPDATE]) do
+    for _, u in pairs(self.__objects[EVENT.UPDATE]) do
       local ch = u.channel or DEFAULT_CONTROL_CHANNEL
       u:update(lastControl[ch] or CONTROL.NONE, dt, ch)
     end
@@ -62,23 +63,23 @@ local EventManager = Class({
 
   flush = function(self)
     self:purge()
-    for _, f in pairs(self._objects[EVENT.FLUSH]) do
+    for _, f in pairs(self.__objects[EVENT.FLUSH]) do
       f:flush()
     end
   end,
 
   draw = function(self)
-    for _, d in pairs(self._objects[EVENT.DRAW]) do
+    for _, d in pairs(self.__objects[EVENT.DRAW]) do
       d:draw()
     end
   end,
 
   getObjects = function(self)
-    return self._objects
+    return self.__objects
   end,
 
   _insert = function(self, o)
-    if L.x(o.eventManager) then
+    if L.x(o.__eventManager) then
       error("Object " .. o.id .. " already managed")
     end
     o.__EV_INDEX = {}
@@ -86,12 +87,12 @@ local EventManager = Class({
     for _, e in pairs(EVENT) do
       if o[e] then
         o.__EV_INDEX[e] = self:_id()
-        self._objects[e][o.__EV_INDEX[e]] = o
+        self.__objects[e][o.__EV_INDEX[e]] = o
         inserted = true
       end
     end
     if inserted then
-      o.eventManager = self
+      o.__eventManager = self
       return true
     else
       o.__EV_INDEX = nil
@@ -101,9 +102,9 @@ local EventManager = Class({
 
   _remove = function(self, o)
     for e, id in pairs(o.__EV_INDEX) do
-      self._objects[e][id] = nil
+      self.__objects[e][id] = nil
     end
-    o.eventManager = nil
+    o.__eventManager = nil
     o.__EV_INDEX = nil
   end,
 
@@ -155,7 +156,7 @@ local EventManager = Class({
         effect = self:fire(e, id, go, ...) or effect
       end
     end
-    for _, c in pairs(self._objects[e]) do
+    for _, c in pairs(self.__objects[e]) do
       if c.catch then
         effect = c:catch(e, id, o, ...) or effect
       end
@@ -185,7 +186,7 @@ local EventManager = Class({
     end
     self._deleted = nil
   end,
-})
+}, NotSerializable)
 
 local IEventCatcher = {
   catch = function(self, e, id, ...)

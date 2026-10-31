@@ -1,9 +1,6 @@
 local C = require("Const")
 local COLOR, MOVE = C.COLOR, C.MOVE
-local Utils = require("Utils")
-local AGameUIObject = Utils.AGameUIObject
-local Couple = require("Couple")
-local Vector = Couple.Vector
+local AGameUIObject = require("AGameUIObject").AGameUIObject
 local Draw = require("Draw")
 local IRectFill, IRectLine = Draw.IRectFill, Draw.IRectLine
 local Move = require("Move")

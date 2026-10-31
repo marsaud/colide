@@ -3,7 +3,7 @@ local C = require("Const")
 local PLUGIN = C.PLUGIN
 
 local PluginManager = {
-  _constructors = {
+  __constructors = {
     PluginManager = function(self)
       if not L.x(self[PLUGIN.PRE]) then
         self[PLUGIN.PRE] = {}

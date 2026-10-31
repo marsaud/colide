@@ -4,7 +4,7 @@ local Couple = require("Couple")
 local Coord = Couple.Coord
 
 local IAPlace = {
-  _constructors = {
+  __constructors = {
     IAPlace = function(self)
       if not L.x(self.x) then
         self.x = 0

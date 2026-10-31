@@ -2,23 +2,23 @@ local OrderedTable = {}
 OrderedTable.__index = OrderedTable
 
 function OrderedTable:new()
-  return setmetatable({ keys = {}, values = {} }, self)
+  return setmetatable({ __keys = {}, __values = {} }, self)
 end
 
 function OrderedTable:set(key, value)
-  if self.values[key] == nil then
-    table.insert(self.keys, key)
+  if self.__values[key] == nil then
+    table.insert(self.__keys, key)
   end
-  self.values[key] = value
+  self.__values[key] = value
 end
 
 function OrderedTable:iterate()
   local i = 0
   return function()
     i = i + 1
-    local key = self.keys[i]
+    local key = self.__keys[i]
     if key ~= nil then
-      return key, self.values[key]
+      return key, self.__values[key]
     end
   end
 end

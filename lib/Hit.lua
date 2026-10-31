@@ -1,7 +1,7 @@
 local L = require("lib")
 
 local IAHit = {
-  _constructors = {
+  __constructors = {
     IAHit = function(self)
       self._health = 0
       if L.x(self.health) then
@@ -31,8 +31,8 @@ local IAHit = {
       if damage ~= 0 then
         health = self:valHealth(-damage)
         if health ~= nil and health <= 0 then
-          if self.eventManager then
-            self.eventManager:delete(self)
+          if self.__eventManager then
+            self.__eventManager:delete(self)
           end
           self:destroy(id, who, by, vector)
         end

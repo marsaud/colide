@@ -6,18 +6,34 @@ local function _s(o)
   elseif type(o) == "string" then
     return string.format("%q", o)
   elseif type(o) == "table" then
+    if o.__NOT_SERIALIZABLE then
+      return nil
+    end
     local data = { "{" }
     for k, v in pairs(o) do
-      if type(v) ~= "function" then
-        if type(k) == "number" then
-          table.insert(data, _s(v) .. ",")
+      if type(k) == "string" and k:sub(1, 2) == "__" then
+        -- skip
+      else
+        local skey = _s(k)
+        if skey == nil then
+          -- skip
         else
-          table.insert(data, "[" .. _s(k) .. "]=" .. _s(v) .. ",")
+          local svalue = _s(v)
+          if svalue == nil then
+            -- skip
+          elseif type(k) == "number" then
+            table.insert(data, svalue .. ",")
+          else
+            table.insert(data, "[" .. skey .. "]=" .. svalue .. ",")
+          end
         end
       end
     end
+
     table.insert(data, "}")
     return table.concat(data)
+  else
+    return nil
   end
 end
 
@@ -30,7 +46,7 @@ local unz = function(data)
 end
 
 local Serializable = {
-  _constructors = {
+  __constructors = {
     Serializable = function(self)
       self._uid_ = _uid_
       _uid_ = _uid_ + 1
@@ -40,6 +56,14 @@ local Serializable = {
   serialize = function(self)
     return serialize(self)
   end,
+}
+
+local NotSerializable = {
+  __constructors = {
+    NotSerializable = function(self)
+      self.__NOT_SERIALIZABLE = true
+    end,
+  },
 }
 
 local function unserialize(data)
@@ -55,8 +79,9 @@ end
 
 return {
   _s = _s,
-  unz = unz,
+  NotSerializable = NotSerializable,
   serialize = serialize,
   Serializable = Serializable,
   unserialize = unserialize,
+  unz = unz,
 }

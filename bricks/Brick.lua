@@ -4,7 +4,7 @@ local STYLE = require("Const").STYLE
 local ICollideBlocker = require("Collide").ICollideBlocker
 local Draw = require("Draw")
 local IRectFill, rectangle = Draw.IRectFill, Draw.rectangle
-local AGameUIObject = require("Utils").AGameUIObject
+local AGameUIObject = require("AGameUIObject").AGameUIObject
 
 local BRICK_HEALTH = GAME.HEALTH.BASE * 2
 

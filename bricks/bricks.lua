@@ -3,7 +3,7 @@ local COLOR, MOVE = C.COLOR, C.MOVE
 local ICollideBlocker = require("Collide").ICollideBlocker
 local IRectFill = require("Draw").IRectFill
 local moveVectors = require("Move").moveVectors
-local AGameUIObject = require("Utils").AGameUIObject
+local AGameUIObject = require("AGameUIObject").AGameUIObject
 
 -- local debug = require("Debug").debug
 

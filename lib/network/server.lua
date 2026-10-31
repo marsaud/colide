@@ -7,7 +7,7 @@ local HOST = "127.0.0.1"
 local PORT = 5000
 
 local Server = Class({
-  _constructors = {
+  __constructors = {
     Server = function(self)
       if not L.x(self.listener) then
         error("AServerListener instance required")

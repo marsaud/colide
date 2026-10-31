@@ -29,7 +29,7 @@ local STATE = {
 }
 
 local Boy = {
-  _constructors = {
+  __constructors = {
     Animator = function(self)
       self[RIGHT] = {}
       for i = 1, 6 do

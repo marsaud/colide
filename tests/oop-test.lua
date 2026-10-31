@@ -12,7 +12,7 @@ end
 
 local run = function()
   local A = Class({
-    _constructors = {
+    __constructors = {
       A = function(self)
         self._a = 1
       end,
@@ -23,12 +23,12 @@ local run = function()
   })
   local ainst = A:new()
   printT(ainst)
-  printT(ainst._constructors.keys)
-  printT(ainst._constructors.values)
+  printT(ainst.__constructors.keys)
+  printT(ainst.__constructors.values)
   print("---")
 
   local B = A:extend({
-    _constructors = {
+    __constructors = {
       B = function(self)
         self._b = 2
       end,
@@ -39,12 +39,12 @@ local run = function()
   })
   local binst = B:new()
   printT(binst)
-  printT(binst._constructors.keys)
-  printT(binst._constructors.values)
+  printT(binst.__constructors.keys)
+  printT(binst.__constructors.values)
   print("---")
 
   local C = B:extend({
-    _constructors = {
+    __constructors = {
       C = function(self)
         self._c = 3
       end,
@@ -55,8 +55,8 @@ local run = function()
   })
   local cinst = C:new()
   printT(cinst)
-  printT(cinst._constructors.keys)
-  printT(cinst._constructors.values)
+  printT(cinst.__constructors.keys)
+  printT(cinst.__constructors.values)
   print("---")
 
   ainst._a = 11

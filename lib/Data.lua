@@ -1,11 +1,12 @@
 local OOP = require("OOP")
 local Class = OOP.Class
+local L = require("lib")
 local State = require("State")
 local IAState = State.IAState
-local L = require("lib")
+local NotSerializable = require("Serializable").NotSerializable
 
 local DataManager = Class({
-  _constructors = {
+  __constructors = {
     DataManager = function(self)
       if not L.x(self._listeners) then
         self._listeners = {}
@@ -118,7 +119,7 @@ local DataManager = Class({
   _flush = function(self, _id)
     self:broadcast()
   end,
-}, IAState)
+}, IAState, NotSerializable)
 
 local IADataBroadcaster = {
   getKeys = function(self)
@@ -147,7 +148,7 @@ local IADataListener = {
 }
 
 local DataStore = Class({
-  _constructors = {
+  __constructors = {
     DataStore = function(self)
       self._init = false
       self._store = {}

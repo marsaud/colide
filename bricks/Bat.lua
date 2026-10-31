@@ -3,7 +3,7 @@ local ICollideBlocker, ICollidePusher = Collide.ICollideBlocker, Collide.ICollid
 local IControlMove = require("Control").IControlMove
 local IRectLine = require("Draw").IRectLine
 local IMoveX = require("Move").IMoveX
-local AGameUIObject = require("Utils").AGameUIObject
+local AGameUIObject = require("AGameUIObject").AGameUIObject
 
 local Bat = AGameUIObject:extend(IControlMove, IMoveX, ICollideBlocker, ICollidePusher, IRectLine)
 

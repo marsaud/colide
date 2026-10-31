@@ -7,7 +7,7 @@ local C = require("Const")
 local STYLE = C.STYLE
 
 local SmallTextBlock = Class({
-  _constructors = {
+  __constructors = {
     SmallTextBlock = function(self)
       if not L.x(self.x) then
         self.x = 0
