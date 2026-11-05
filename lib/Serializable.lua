@@ -1,17 +1,25 @@
+local L = require("lib")
+
 local _uid_ = 1
 
-local function _s(o)
-  if type(o) == "number" then
+local function _s(o, keyMap, keyProtect)
+  if L.n(o) then
     return o
-  elseif type(o) == "string" then
-    return string.format("%q", o)
-  elseif type(o) == "table" then
+  elseif L.s(o) then
+    if keyProtect then
+      return string.format("%q", o)
+    else
+      return o
+    end
+  elseif L.t(o) then
     if o.__NOT_SERIALIZABLE then
       return nil
     end
     local data = { "{" }
     for k, v in pairs(o) do
-      if type(k) == "string" and k:sub(1, 2) == "__" then
+      if L.t(keyMap) and not keyMap[k] then
+        --skip
+      elseif L.s(k) and k:sub(1, 2) == "__" then
         -- skip
       else
         local skey = _s(k)
@@ -21,10 +29,12 @@ local function _s(o)
           local svalue = _s(v)
           if svalue == nil then
             -- skip
-          elseif type(k) == "number" then
+          elseif L.n(k) then
             table.insert(data, svalue .. ",")
-          else
+          elseif keyProtect then
             table.insert(data, "[" .. skey .. "]=" .. svalue .. ",")
+          else
+            table.insert(data, skey .. "=" .. svalue .. ",")
           end
         end
       end
@@ -42,11 +52,11 @@ local unz = function(data)
 end
 local DEFAULT_UNSERIALIZE_CALLBACK_NAME = "unz"
 
-local serialize = function(o, unserializeCallbackName)
+local serialize = function(o, keyMap, unserializeCallbackName)
   if not unserializeCallbackName then
     unserializeCallbackName = DEFAULT_UNSERIALIZE_CALLBACK_NAME
   end
-  return "return " .. unserializeCallbackName .. "(" .. _s(o) .. ")"
+  return "return " .. unserializeCallbackName .. "(" .. _s(o, keyMap) .. ")"
 end
 
 local Serializable = {
@@ -57,8 +67,8 @@ local Serializable = {
     end,
   },
 
-  serialize = function(self, unserializeCallbackName)
-    return serialize(self, unserializeCallbackName)
+  serialize = function(self, keyMap, unserializeCallbackName)
+    return serialize(self, keyMap, unserializeCallbackName)
   end,
 }
 
@@ -73,6 +83,7 @@ local NotSerializable = {
 local function unserialize(data)
   local u, err = load(data, "_", "t", { unz = unz })
   if err then
+    print(data)
     error(err)
   end
   if u == nil then

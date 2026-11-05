@@ -54,8 +54,20 @@ function love.load()
   controller:addController(kc2, "boy2")
 
   for _, b in ipairs(boots) do
-    local c = EventManager:new({ controller = controller })
+    local c = EventManager:new({
+      controller = controller,
+      keyMap = {
+        _uid_ = true,
+        h = true,
+        w = true,
+        _c = true,
+        x = true,
+        y = true,
+        _health = true,
+      },
+    })
     c:addObjects(table.unpack(b()))
+    c:startDiff()
     table.insert(contexts, c)
   end
 

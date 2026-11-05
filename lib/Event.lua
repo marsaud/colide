@@ -27,6 +27,10 @@ local EventManager = Class({
       if not L.x(self.controller) then
         error("AController instance required")
       end
+      if L.t(self.keyMap) then
+        self.__keyMap = self.keyMap
+      end
+      self.keyMap = nil
       self.__controller = self.controller
       self.controller = nil
       self.__objects = {}
@@ -41,6 +45,14 @@ local EventManager = Class({
   _id = function(self)
     self._ID = self._ID + 1
     return self._ID
+  end,
+
+  startDiff = function(self)
+    for _, map in pairs(self.__objects) do
+      for _, o in pairs(map) do
+        self:registerDiff(o)
+      end
+    end
   end,
 
   tick = function(self, dt)
@@ -63,11 +75,11 @@ local EventManager = Class({
   flush = function(self)
     local stateDiffMem = {}
     for o, _ in pairs(self.__diffs) do
-      table.insert(stateDiffMem, o:serialize())
-      local stateDiff = table.concat(stateDiffMem, "\0")
+      table.insert(stateDiffMem, o:serialize(self.__keyMap))
       self.__diffs[o] = nil
-      print(stateDiff)
     end
+    local stateDiff = table.concat(stateDiffMem, "%")
+    print(stateDiff)
     self:purge()
     for _, f in pairs(self.__objects[EVENT.FLUSH]) do
       f:flush()

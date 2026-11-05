@@ -19,12 +19,12 @@ local DataManager, IADataBroadcaster, IADataListener =
   Data.DataManager, Data.IADataBroadcaster, Data.IADataListener
 
 local function demo()
-  local Rect2D = AGameUIObject:extend(IControlMove, IMove, ICollidePusher, IRectLine)
+  local Rect2D = AGameUIObject:extend(ICollidePusher, IRectLine)
   local RectPassive = AGameUIObject:extend(ICollidePusher, IRectLine)
   local Rect1DX = AGameUIObject:extend(IControlMove, IMoveX, ICollidePusher, IRectLine)
   local Rect1DY = AGameUIObject:extend(IControlMove, IMoveY, ICollidePusher, IRectLine)
   local RectStatic = AGameUIObject:extend(ICollideBlocker, IRectFill)
-  local BlockerBoy = AGameUIObject:extend(IControlMove, IMove, ICollidePusher, Boy)
+  local PusherBoy = AGameUIObject:extend(IControlMove, IMove, ICollidePusher, Boy)
 
   local dataManager = DataManager:new({ id = "DM" })
 
@@ -156,7 +156,7 @@ local function demo()
 
   local EXAMPLE_KEY = "abcdef"
 
-  local boy = BlockerBoy:new({
+  local boy = PusherBoy:new({
     id = "boy",
     x = 200,
     y = 50,
@@ -177,7 +177,7 @@ local function demo()
 
   -- boy:whiteList({ "blue" })
 
-  local boy2 = BlockerBoy:new({
+  local boy2 = PusherBoy:new({
     id = "boy2",
     channel = "boy2",
     x = 400,

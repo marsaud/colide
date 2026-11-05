@@ -29,14 +29,6 @@ local moveVectors = {
   [MOVE.NONE] = Vector:new({ x = 0, y = 0 }),
 }
 
---[[
-	_move(
-		self
-		ctrl: (number) control bit mask
-		dt: (number) love provided delta time
-	)
-]]
-
 local IAMove = {
   __constructors = {
     IAMove = function(self)
@@ -67,7 +59,7 @@ local IAMove = {
     return true
   end,
 
-  _commit = function(self, id)
+  _commit = function(self, _id)
     local cmt = self._c ~= self._d
     self.vector = self:initVector()
     if cmt and L.x(self.__eventManager) then
@@ -122,7 +114,7 @@ local IAMove = {
 }
 
 local IMove = {
-  _move = function(self, id, ctrl, _)
+  _move = function(self, _id, ctrl, _)
     if self.vector == nil then
       self.vector = moveVectors[MOVE.NONE]:copy()
     end
@@ -143,7 +135,7 @@ local IMove = {
 }
 
 local IMoveX = {
-  _move = function(self, id, ctrl, _dt)
+  _move = function(self, _id, ctrl, _dt)
     if self.vector == nil then
       self.vector = moveVectors[MOVE.NONE]:copy()
     end
@@ -158,7 +150,7 @@ local IMoveX = {
 }
 
 local IMoveY = {
-  _move = function(self, id, ctrl, _dt)
+  _move = function(self, _id, ctrl, _dt)
     if self.vector == nil then
       self.vector = moveVectors[MOVE.NONE]:copy()
     end
@@ -173,7 +165,7 @@ local IMoveY = {
 }
 
 local IMoveNot = {
-  _move = function(self, id, _ctrl, _dt)
+  _move = function(self, _id, _ctrl, _dt)
     return moveVectors[MOVE.NONE]:copy()
   end,
 }

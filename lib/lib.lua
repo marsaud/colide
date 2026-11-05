@@ -8,4 +8,10 @@ return {
   n = function(v)
     return type(v) == "number"
   end,
+  s = function(v)
+    return type(v) == "string"
+  end,
+  t = function(v)
+    return type(v) == "table"
+  end,
 }
