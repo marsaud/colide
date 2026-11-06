@@ -62,8 +62,15 @@ end
 local Serializable = {
   __constructors = {
     Serializable = function(self)
-      self._uid_ = _uid_
-      _uid_ = _uid_ + 1
+      if L.x(self.uid) then
+        if L.n(self.uid) then
+          error("Forced serialization UID must not be a number")
+        end
+        self._uid_ = self.uid
+      else
+        self._uid_ = _uid_
+        _uid_ = _uid_ + 1
+      end
     end,
   },
 
