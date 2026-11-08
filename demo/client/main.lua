@@ -7,11 +7,17 @@ local love = love
 
 -- IMPORTS
 -- local debug = require("Debug").debug
-require("math-ext")
-local unserialize = require("Serializable").unserialize
-local D = require("Draw")
-local IRectLine = D.IRectLine
+local EventManager = require("Event").EventManager
+local speedFactor = require("Move").speedFactor
+local Control = require("Control")
+local KeyboardController = Control.KeyboardController
+local DispatchController = Control.DispatchController
+local defaultKeyMaps = Control.defaultKeyMaps
 -- END IMPORTS
+
+local contexts = {}
+local contextIndex
+local currentContextIndex
 
 local fullScreen
 local currentFullScreen = fullScreen
@@ -21,103 +27,65 @@ local scale = 1
 local offsetX = 0
 local offsetY = 0
 
-local stateReader = {
-  open = function(self, path)
-    local file = io.open(path, "rb")
-    if file == nil then
-      error("File not found")
-    end
-    self.content = file:read("*a")
-    file:close()
-  end,
-  read = function(self)
-    if self.content == "" then
-      return nil
-    end
-    local newLine
-    local separator = self.content:find("\n")
-    if not separator then
-      newLine = self.content
-      self.content = ""
-    else
-      newLine = self.content:sub(1, separator - 1)
-      self.content = self.content:sub(separator + 1)
-    end
-    return newLine
-  end,
-}
-
-local objectReader = {
-  open = function(self, state)
-    self._state = state
-  end,
-  read = function(self)
-    if self._state == "" then
-      return nil
-    end
-    local newObject
-    local separator = self._state:find("%", 1, true)
-    if not separator then
-      newObject = self._state
-      self._state = ""
-    else
-      newObject = self._state:sub(1, separator - 1)
-      self._state = self._state:sub(separator + 1)
-    end
-    return newObject
-  end,
-}
-
-local state
-local objects = {}
-
-local path = "../stateDiff"
+local pause
 
 function love.load()
+  local boots = {}
+
+  local demo = require("demo")
+  table.insert(boots, demo)
+
+  -- local bricks = require("bricks/bricks")
+  -- table.insert(boots, bricks)
+
+  -- local invaders = require("invaders/invaders")
+  -- table.insert(boots, invaders)
+
+  -- local groupDemo = require("groupDemo/groupDemo")
+  -- table.insert(boots, groupDemo)
+
+  -- local test = require("collideDebug/test")
+  -- table.insert(boots, test)
+
+  local kc = KeyboardController:new()
+  local kc2 = KeyboardController:new({ map = defaultKeyMaps[2] })
+  local controller = DispatchController:new()
+  controller:addController(kc)
+  controller:addController(kc2, "boy2")
+
+  for _, b in ipairs(boots) do
+    local c = EventManager:new({
+      controller = controller,
+      keyMap = {
+        _uid_ = true,
+        h = true,
+        w = true,
+        _c = true,
+        x = true,
+        y = true,
+        _health = true,
+      },
+    })
+    c:addObjects(table.unpack(b()))
+    c:startDiff()
+    table.insert(contexts, c)
+  end
+
+  contextIndex = 1
+  pause = false
   fullScreen = false
 
   love.graphics.setLineWidth(1)
   love.graphics.setLineStyle("rough")
-
-  stateReader:open(path)
-  state = stateReader:read()
-
-  if state == nil then
-    love.event.quit(0)
-  else
-    objectReader:open(state)
-    local object = objectReader:read()
-    while object ~= nil do
-      local o = unserialize(object)
-      o.draw = IRectLine._draw
-      o.c = function(self)
-        return { x = math.round(self._c.x), y = math.round(self._c.y) }
-      end
-      objects[o._uid_] = o
-      object = objectReader:read()
-    end
-  end
 end
 
 function love.update(dt)
-  state = stateReader:read()
-  if state == nil then
-    stateReader:open(path)
-    state = stateReader:read()
+  currentContextIndex = contextIndex
+  if pause then
+    return
   end
-  if state ~= nil then
-    objectReader:open(state)
-    local object = objectReader:read()
-    while object ~= nil do
-      local o = unserialize(object)
-      o.draw = IRectLine._draw
-      o.c = function(self)
-        return { x = math.round(self._c.x), y = math.round(self._c.y) }
-      end
-      objects[o._uid_] = o
-      object = objectReader:read()
-    end
-  end
+  contexts[currentContextIndex]:tick(dt)
+  contexts[currentContextIndex]:flush()
 end
 
 function love.draw()
@@ -144,9 +112,7 @@ function love.draw()
     love.graphics.scale(scale, scale)
   end
 
-  for _, obj in pairs(objects) do
-    obj:draw()
-  end
+  contexts[currentContextIndex]:draw()
 
   if currentFullScreen then
     love.graphics.pop()
@@ -154,13 +120,26 @@ function love.draw()
 end
 
 function love.keypressed(key)
+  if key == "*" then
+    speedFactor(true)
+  end
   if key == "f" then
     fullScreen = not fullScreen
+  end
+  if key == "p" then
+    pause = not pause
   end
   if key == "r" then
     love.event.quit("restart")
   end
   if key == "escape" then
     love.event.quit(0)
+  end
+
+  if key == "c" then
+    contextIndex = contextIndex + 1
+  end
+  if contextIndex > #contexts then
+    contextIndex = 1
   end
 end
