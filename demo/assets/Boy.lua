@@ -4,6 +4,11 @@ local CONTROL = C.CONTROL
 local Control = require("Control")
 local testControl = Control.testControl
 
+local source = debug.getinfo(1, "S").source
+local dir = source:match("^@(.*/)") or ""
+
+print(source, dir)
+
 local FACE = "face"
 local BACK = "back"
 local RIGHT = "right"
@@ -35,7 +40,7 @@ local Boy = {
       for i = 1, 6 do
         table.insert(
           self[RIGHT],
-          love.graphics.newImage("demo/walkingBoy/img/move" .. STATE[RIGHT].n .. i .. ".png")
+          love.graphics.newImage(dir .. "walkingBoy/img/move" .. STATE[RIGHT].n .. i .. ".png")
         )
       end
       self[LEFT] = self[RIGHT]
@@ -43,14 +48,14 @@ local Boy = {
       for i = 1, 6 do
         table.insert(
           self[FACE],
-          love.graphics.newImage("demo/walkingBoy/img/move" .. STATE[FACE].n .. i .. ".png")
+          love.graphics.newImage(dir .. "walkingBoy/img/move" .. STATE[FACE].n .. i .. ".png")
         )
       end
       self[BACK] = {}
       for i = 1, 6 do
         table.insert(
           self[BACK],
-          love.graphics.newImage("demo/walkingBoy/img/move" .. STATE[BACK].n .. i .. ".png")
+          love.graphics.newImage(dir .. "walkingBoy/img/move" .. STATE[BACK].n .. i .. ".png")
         )
       end
       self._state = RIGHT

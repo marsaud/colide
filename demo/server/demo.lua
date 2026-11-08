@@ -13,7 +13,7 @@ local Control = require("Control")
 local IControlMove = Control.IControlMove
 local IStateMove = require("State").IStateMove
 local Boy = require("Boy").Boy
-local SmallTextBlock = require("lib.ui.SmallTextBlock").SmallTextBlock
+local SmallTextBlock = require("ui.SmallTextBlock").SmallTextBlock
 local Data = require("Data")
 local DataManager, IADataBroadcaster, IADataListener =
   Data.DataManager, Data.IADataBroadcaster, Data.IADataListener

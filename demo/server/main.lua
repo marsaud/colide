@@ -1,0 +1,187 @@
+package.path = "lib/?.lua;lib/?/init.lua;assets/?.lua;" .. package.path
+
+-- CONFORT TWEAKS
+require("workHelpers")
+local love = love
+-- END CONFORT TWEAKS
+
+-- IMPORTS
+-- local debug = require("Debug").debug
+local EventManager = require("Event").EventManager
+local speedFactor = require("Move").speedFactor
+local Control = require("Control")
+-- END IMPORTS
+
+local L = require("lib")
+local Server = require("network/server").Server
+local AController = Control.AController
+
+local contexts = {}
+local contextIndex
+local currentContextIndex
+
+local fullScreen
+local currentFullScreen = fullScreen
+local gameWidth = 800
+local gameHeight = 600
+local scale = 1
+local offsetX = 0
+local offsetY = 0
+
+local pause
+
+local ServerController = AController:extend({
+  __constructors = {
+    ServerController = function(self)
+      if not L.x(self.server) then
+        error("Server instance required")
+      end
+      self._server = self.server
+      self.server = nil
+    end,
+  },
+
+  fetch = function(self)
+    local messages = self._server:poll()
+    for _, m in ipairs(messages) do
+      local c = tonumber(m)
+      if c ~= nil then
+        table.insert(self.controller._pile, c)
+      end
+    end
+  end,
+})
+
+-- local ServerListener = {
+--   controller = sc,
+--   eventManager = em,
+--   lastListen = nil,
+--   listen = AServerListener.listen,
+
+--   _listen = function(self, messages)
+--     for _, m in ipairs(messages) do
+--       local c = tonumber(m)
+--       if c ~= nil then
+--         table.insert(self.controller._pile, c)
+--       end
+--     end
+--     if (self.lastListen == nil) then
+--       self.lastListen = monotime()
+--     end
+--     local dt = monotime() - self.lastListen
+--     self.lastListen = monotime
+--     self.eventManager:tick(dt):flush()
+--   end,
+-- }
+
+function love.load()
+  local boots = {}
+
+  local demo = require("demo")
+  table.insert(boots, demo)
+
+  -- local bricks = require("bricks/bricks")
+  -- table.insert(boots, bricks)
+
+  -- local invaders = require("invaders/invaders")
+  -- table.insert(boots, invaders)
+
+  -- local groupDemo = require("groupDemo/groupDemo")
+  -- table.insert(boots, groupDemo)
+
+  -- local test = require("collideDebug/test")
+  -- table.insert(boots, test)
+
+  local server = Server:new()
+  local sc = ServerController:new({ server = server })
+
+  for _, b in ipairs(boots) do
+    local c = EventManager:new({
+      controller = sc,
+      keyMap = {
+        _uid_ = true,
+        h = true,
+        w = true,
+        _c = true,
+        x = true,
+        y = true,
+        _health = true,
+      },
+    })
+    c:addObjects(table.unpack(b()))
+    c:startDiff()
+    table.insert(contexts, c)
+  end
+
+  contextIndex = 1
+  pause = false
+  fullScreen = false
+
+  love.graphics.setLineWidth(1)
+  love.graphics.setLineStyle("rough")
+end
+
+function love.update(dt)
+  currentContextIndex = contextIndex
+  if pause then
+    return
+  end
+  contexts[currentContextIndex]:tick(dt)
+  contexts[currentContextIndex]:flush()
+end
+
+function love.draw()
+  if currentFullScreen ~= fullScreen then
+    currentFullScreen = fullScreen
+    if currentFullScreen then
+      local _, _, flags = love.window.getMode()
+      local display = flags.display
+      local screenW, screenH = love.window.getDesktopDimensions(display)
+      scale = math.floor(math.min(screenW / gameWidth, screenH / gameHeight))
+      offsetX = (screenW - gameWidth * scale) / 2
+      offsetY = (screenH - gameHeight * scale) / 2
+    else
+      scale = 1
+      offsetX = 0
+      offsetY = 0
+    end
+    love.window.setFullscreen(fullScreen)
+  end
+
+  if currentFullScreen then
+    love.graphics.push()
+    love.graphics.translate(offsetX, offsetY)
+    love.graphics.scale(scale, scale)
+  end
+
+  contexts[currentContextIndex]:draw()
+
+  if currentFullScreen then
+    love.graphics.pop()
+  end
+end
+
+function love.keypressed(key)
+  if key == "*" then
+    speedFactor(true)
+  end
+  if key == "f" then
+    fullScreen = not fullScreen
+  end
+  if key == "p" then
+    pause = not pause
+  end
+  if key == "r" then
+    love.event.quit("restart")
+  end
+  if key == "escape" then
+    love.event.quit(0)
+  end
+
+  if key == "c" then
+    contextIndex = contextIndex + 1
+  end
+  if contextIndex > #contexts then
+    contextIndex = 1
+  end
+end
