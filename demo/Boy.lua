@@ -30,7 +30,7 @@ local STATE = {
 
 local Boy = {
   __constructors = {
-    Animator = function(self)
+    Boy = function(self)
       self[RIGHT] = {}
       for i = 1, 6 do
         table.insert(

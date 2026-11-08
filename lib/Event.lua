@@ -53,6 +53,7 @@ local EventManager = Class({
         self:registerDiff(o)
       end
     end
+    return self
   end,
 
   tick = function(self, dt)
@@ -70,6 +71,7 @@ local EventManager = Class({
       local ch = u.channel or DEFAULT_CONTROL_CHANNEL
       u:update(lastControl[ch] or CONTROL.NONE, dt, ch)
     end
+    return self
   end,
 
   flush = function(self)
@@ -84,12 +86,14 @@ local EventManager = Class({
     for _, f in pairs(self.__objects[EVENT.FLUSH]) do
       f:flush()
     end
+    return self
   end,
 
   draw = function(self)
     for _, d in pairs(self.__objects[EVENT.DRAW]) do
       d:draw()
     end
+    return self
   end,
 
   getObjects = function(self)
@@ -137,6 +141,7 @@ local EventManager = Class({
         self:_addObjects(table.unpack(o._group))
       end
     end
+    return self
   end,
 
   _addObjects = function(self, ...)
@@ -156,6 +161,7 @@ local EventManager = Class({
         self:_remove(v)
       end
     end
+    return self
   end,
 
   _removeObjects = function(self, ...)
@@ -204,6 +210,7 @@ local EventManager = Class({
       end
     end
     self.__deleted = nil
+    return self
   end,
 
   registerDiff = function(self, o)

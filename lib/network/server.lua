@@ -6,14 +6,17 @@ local socket = require("socket")
 local HOST = "127.0.0.1"
 local PORT = 5000
 
+local WAIT_SOCKETS = 0.01
+local WAIT_LOOP = 0.01
+
 local Server = Class({
   __constructors = {
     Server = function(self)
-      if not L.x(self.listener) then
-        error("AServerListener instance required")
+      if L.x(self.listener) then
+        self._listener = self.listener
+        self._listener:setServer(self)
+        self.listener = nil
       end
-      self._listener = self.listener
-      self.listener = nil
       self._verbose = self.verbose or false
       self.verbose = nil
       self._host = self.host or HOST
@@ -87,68 +90,72 @@ local Server = Class({
     end
   end,
 
+  poll = function(self)
+    local readable = { self._server }
+
+    for client in pairs(self._clients) do
+      table.insert(readable, client)
+    end
+
+    -- Wait until something happens.
+    local ready = socket.select(readable, nil, WAIT_SOCKETS)
+
+    local messages = {}
+
+    for _, _socket in ipairs(ready) do
+      -- New connection
+      if _socket == self._server then
+        local clientSocket = self._server:accept()
+
+        if clientSocket then
+          self:createClient(clientSocket)
+        end
+      else
+        local client = self._clients[_socket]
+        local data, err, partial = client.socket:receive("*a")
+
+        data = data or partial
+
+        if data and #data > 0 then
+          client.buffer = client.buffer .. data
+
+          while true do
+            local newline = client.buffer:find("\n", 1, true)
+
+            if not newline then
+              break
+            end
+
+            local message = client.buffer:sub(1, newline - 1)
+            client.buffer = client.buffer:sub(newline + 1)
+
+            -- Remove CR from CRLF
+            message = message:gsub("\r$", "")
+
+            self:print("Received (" .. client.address .. "): " .. message)
+
+            table.insert(messages, message)
+          end
+        end
+
+        if err == "closed" then
+          self:removeClient(client)
+        end
+      end
+    end
+    return messages
+  end,
+
   start = function(self)
-    local lastBroadcast = socket.gettime()
+    if not L.x(self._listener) then
+      error("AServerListener instance required for loop mode")
+    end
     self._running = true
     self:print("Server loop started")
     while self._running do
-      local readable = { self._server }
-
-      for client in pairs(self._clients) do
-        table.insert(readable, client)
-      end
-
-      -- Wait until something happens.
-      local ready = socket.select(readable, nil, 0.1)
-
-      local messages = {}
-
-      for _, _socket in ipairs(ready) do
-        -- New connection
-        if _socket == self._server then
-          local clientSocket = self._server:accept()
-
-          if clientSocket then
-            local client = self:createClient(clientSocket)
-          end
-        else
-          local client = self._clients[_socket]
-          local data, err, partial = client.socket:receive("*a")
-
-          data = data or partial
-
-          if data and #data > 0 then
-            client.buffer = client.buffer .. data
-
-            while true do
-              local newline = client.buffer:find("\n", 1, true)
-
-              if not newline then
-                break
-              end
-
-              local message = client.buffer:sub(1, newline - 1)
-              client.buffer = client.buffer:sub(newline + 1)
-
-              -- Remove CR from CRLF
-              message = message:gsub("\r$", "")
-
-              self:print("Received (" .. client.address .. "): " .. message)
-
-              table.insert(messages, message)
-            end
-          end
-
-          if err == "closed" then
-            self:removeClient(client)
-          end
-        end
-      end
-
+      local messages = self:poll()
       self._listener:listen(messages)
-      messages = {}
-
-      socket.sleep(0.01)
+      socket.sleep(WAIT_LOOP)
     end
     self:print("Server loop stopped")
   end,
@@ -180,6 +187,10 @@ AServerListner = {
     if self._listen then
       self:_listen(messages)
     end
+  end,
+
+  setServer = function(self, server)
+    self._server = server
   end,
 }
 

@@ -166,6 +166,7 @@ local IControlMove = {
 }
 
 return {
+  AController = AController,
   pullControl = pullControl,
   testControl = testControl,
   DispatchController = DispatchController,

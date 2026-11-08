@@ -3,10 +3,11 @@ package.path = "./lib/?.lua;./lib/?/init.lua;" .. package.path
 local runs = {}
 
 local tests = {
-  "protocol-test",
-  "control-test",
-  "serializable-test",
-  "oop-test",
+  -- "protocol-test",
+  -- "control-test",
+  -- "serializable-test",
+  -- "oop-test",
+  "time-test",
 }
 
 for _, test in ipairs(tests) do

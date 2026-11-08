@@ -10,7 +10,7 @@ local ICollideBlocker, ICollidePusher = Collide.ICollideBlocker, Collide.ICollid
 local Control = require("Control")
 local IControlMove = Control.IControlMove
 local Boy = require("demo/Boy").Boy
-local SmallTextBlock = require("components/SmallTextBlock").SmallTextBlock
+local SmallTextBlock = require("lib.ui.SmallTextBlock").SmallTextBlock
 local Data = require("Data")
 local DataManager, IADataBroadcaster, IADataListener =
   Data.DataManager, Data.IADataBroadcaster, Data.IADataListener
