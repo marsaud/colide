@@ -2,15 +2,10 @@
 require("workHelpers")
 -- END CONFORT TWEAKS
 
-local Message = {
-  format = function(control)
-    return tostring(control)
-  end,
-
-  parse = function(message)
-    return tonumber(message)
-  end,
-}
+local format = function(separator, ...)
+  local args = { ... }
+  return table.concat(args, separator)
+end
 
 local parse = function(str, separator)
   local parsed = {}
@@ -33,6 +28,6 @@ local parse = function(str, separator)
 end
 
 return {
+  format = format,
   parse = parse,
-  Message = Message,
 }

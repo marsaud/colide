@@ -13,7 +13,8 @@ local Control = require("Control")
 -- END IMPORTS
 
 local L = require("lib")
-local Server = require("network/server").Server
+local Server = require("network.server").Server
+local parse = require("network.protocol").parse
 local AController = Control.AController
 
 local contexts = {}
@@ -43,36 +44,23 @@ local ServerController = AController:extend({
 
   fetch = function(self)
     local messages = self._server:poll()
-    for _, m in ipairs(messages) do
-      local c = tonumber(m)
-      if c ~= nil then
-        table.insert(self.controller._pile, c)
+    for _, message in ipairs(messages) do
+      local m, ch = parse(message, "%")
+      m = tonumber(m)
+      if m ~= nil then
+        table.insert(self._pile, { m = m, ch = ch })
       end
     end
   end,
+
+  poll = function(self)
+    local mch = table.remove(self._pile, 1)
+    if mch ~= nil then
+      return mch.m, mch.ch
+    end
+    return nil
+  end,
 })
-
--- local ServerListener = {
---   controller = sc,
---   eventManager = em,
---   lastListen = nil,
---   listen = AServerListener.listen,
-
---   _listen = function(self, messages)
---     for _, m in ipairs(messages) do
---       local c = tonumber(m)
---       if c ~= nil then
---         table.insert(self.controller._pile, c)
---       end
---     end
---     if (self.lastListen == nil) then
---       self.lastListen = monotime()
---     end
---     local dt = monotime() - self.lastListen
---     self.lastListen = monotime
---     self.eventManager:tick(dt):flush()
---   end,
--- }
 
 function love.load()
   local boots = {}
@@ -109,7 +97,7 @@ function love.load()
       },
     })
     c:addObjects(table.unpack(b()))
-    c:startDiff()
+    -- c:startDiff()
     table.insert(contexts, c)
   end
 

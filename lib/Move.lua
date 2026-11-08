@@ -62,9 +62,8 @@ local IAMove = {
   _commit = function(self, _id)
     local cmt = self._c ~= self._d
     self.vector = self:initVector()
-    if cmt and L.x(self.__eventManager) then
+    if cmt then
       self._c = self._d:copy()
-      self.__eventManager:registerDiff(self)
     end
     return cmt
   end,

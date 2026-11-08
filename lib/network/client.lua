@@ -89,6 +89,8 @@ local Client = Class({
       return false, err
     end
 
+    self:print("Sent: " .. message)
+
     return true
   end,
 

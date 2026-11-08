@@ -7,8 +7,6 @@ local testControl = Control.testControl
 local source = debug.getinfo(1, "S").source
 local dir = source:match("^@(.*/)") or ""
 
-print(source, dir)
-
 local FACE = "face"
 local BACK = "back"
 local RIGHT = "right"

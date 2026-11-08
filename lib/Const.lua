@@ -9,7 +9,7 @@ local CONTROL = {
   NONE = 0,
 }
 
-local DEFAULT_CONTROL_CHANNEL = "default_control_channel"
+local DEFAULT_CONTROL_CHANNEL = "_dcc_"
 
 local COLOR = {
   WHITE = { 1, 1, 1 },

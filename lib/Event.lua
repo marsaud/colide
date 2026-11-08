@@ -48,6 +48,7 @@ local EventManager = Class({
   end,
 
   startDiff = function(self)
+    self.__diff = true
     for _, map in pairs(self.__objects) do
       for _, o in pairs(map) do
         self:registerDiff(o)
@@ -75,13 +76,15 @@ local EventManager = Class({
   end,
 
   flush = function(self)
-    local stateDiffMem = {}
-    for o, _ in pairs(self.__diffs) do
-      table.insert(stateDiffMem, o:serialize(self.__keyMap))
-      self.__diffs[o] = nil
+    if self.__diff then
+      local stateDiffMem = {}
+      for o, _ in pairs(self.__diffs) do
+        table.insert(stateDiffMem, o:serialize(self.__keyMap))
+        self.__diffs[o] = nil
+      end
+      local stateDiff = table.concat(stateDiffMem, "%")
+      print(stateDiff)
     end
-    local stateDiff = table.concat(stateDiffMem, "%")
-    print(stateDiff)
     self:purge()
     for _, f in pairs(self.__objects[EVENT.FLUSH]) do
       f:flush()
@@ -182,7 +185,11 @@ local EventManager = Class({
     end
     for _, c in pairs(self.__objects[e]) do
       if c.catch then
-        effect = c:catch(e, id, o, ...) or effect
+        local _effect = c:catch(e, id, o, ...)
+        effect = _effect or effect
+        if e == EVENT.COMMIT and _effect and self.__diff then
+          self:registerDiff(c)
+        end
       end
     end
     if e == EVENT.MOVE and not o.group and #{ o, ... } <= 1 then

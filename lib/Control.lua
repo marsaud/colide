@@ -10,6 +10,7 @@ local C = require("Const")
 local CONTROL = C.CONTROL
 -- local debug = require("Debug").debug
 local DEFAULT_CONTROL_CHANNEL = C.DEFAULT_CONTROL_CHANNEL
+local format = require("network.protocol").format
 
 local AController = Class({
   __constructors = {
@@ -129,6 +130,40 @@ local DispatchController = AController:extend({
   end,
 })
 
+local ClientControllerWrapper = AController:extend({
+  __constructors = {
+    ClientControllerWrapper = function(self)
+      if not L.x(self.controller) then
+        error("Missing wrapped controller")
+      end
+      if not L.x(self.client) then
+        error("Missing Client instance")
+      end
+      self._controller = self.controller
+      self.controller = nil
+      self._client = self.client
+      self.client = nil
+    end,
+  },
+
+  fetch = function(self, _test)
+    return self._controller:fetch(_test)
+  end,
+
+  poll = function(self)
+    local m, ch = self._controller:poll()
+    if m == nil then
+      return nil
+    end
+    local message = format("%", m, ch)
+    local _, err = self._client:send(message)
+    if err then
+      error(err)
+    end
+    return m, ch
+  end,
+})
+
 local function testControl(state, value)
   if state == nil then
     return false
@@ -167,12 +202,13 @@ local IControlMove = {
 
 return {
   AController = AController,
-  pullControl = pullControl,
-  testControl = testControl,
+  ClientControllerWrapper = ClientControllerWrapper,
   DispatchController = DispatchController,
   IAControl = IAControl,
   IControlMove = IControlMove,
   KeyboardController = KeyboardController,
   NetworkController = NetworkController,
   defaultKeyMaps = defaultKeyMaps,
+  pullControl = pullControl,
+  testControl = testControl,
 }

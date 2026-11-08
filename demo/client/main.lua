@@ -12,7 +12,9 @@ local speedFactor = require("Move").speedFactor
 local Control = require("Control")
 local KeyboardController = Control.KeyboardController
 local DispatchController = Control.DispatchController
+local ClientControllerWrapper = Control.ClientControllerWrapper
 local defaultKeyMaps = Control.defaultKeyMaps
+local Client = require("network.client").Client
 -- END IMPORTS
 
 local contexts = {}
@@ -49,9 +51,17 @@ function love.load()
 
   local kc = KeyboardController:new()
   local kc2 = KeyboardController:new({ map = defaultKeyMaps[2] })
-  local controller = DispatchController:new()
-  controller:addController(kc)
-  controller:addController(kc2, "boy2")
+  local dc = DispatchController:new()
+  dc:addController(kc)
+  dc:addController(kc2, "boy2")
+
+  local client = Client:new()
+  client:connect()
+
+  local controller = ClientControllerWrapper:new({
+    controller = dc,
+    client = client
+  })
 
   for _, b in ipairs(boots) do
     local c = EventManager:new({
@@ -67,7 +77,7 @@ function love.load()
       },
     })
     c:addObjects(table.unpack(b()))
-    c:startDiff()
+    -- c:startDiff()
     table.insert(contexts, c)
   end
 
