@@ -2,7 +2,7 @@ package.path = "lib/?.lua;lib/?/init.lua;assets/?.lua;" .. package.path
 
 -- CONFORT TWEAKS
 require("workHelpers")
-local love = love
+-- local love = love
 -- END CONFORT TWEAKS
 
 -- IMPORTS
@@ -62,6 +62,9 @@ local ServerController = AController:extend({
   end,
 })
 
+local server = Server:new()
+
+---@diagnostic disable-next-line: duplicate-set-field
 function love.load()
   local boots = {}
 
@@ -80,7 +83,6 @@ function love.load()
   -- local test = require("collideDebug/test")
   -- table.insert(boots, test)
 
-  local server = Server:new()
   local sc = ServerController:new({ server = server })
 
   for _, b in ipairs(boots) do
@@ -97,7 +99,7 @@ function love.load()
       },
     })
     c:addObjects(table.unpack(b()))
-    -- c:startDiff()
+    c:startDiff()
     table.insert(contexts, c)
   end
 
@@ -109,15 +111,23 @@ function love.load()
   love.graphics.setLineStyle("rough")
 end
 
+---@diagnostic disable-next-line: duplicate-set-field
 function love.update(dt)
   currentContextIndex = contextIndex
   if pause then
     return
   end
   contexts[currentContextIndex]:tick(dt)
-  contexts[currentContextIndex]:flush()
+  local _, gameStateDiff = contexts[currentContextIndex]:flush()
+  if L.x(gameStateDiff) then
+    local ok, err = server:broadCast(gameStateDiff)
+    if not ok then
+      error(err)
+    end
+  end
 end
 
+---@diagnostic disable-next-line: duplicate-set-field
 function love.draw()
   if currentFullScreen ~= fullScreen then
     currentFullScreen = fullScreen
@@ -149,6 +159,7 @@ function love.draw()
   end
 end
 
+---@diagnostic disable-next-line: duplicate-set-field
 function love.keypressed(key)
   if key == "*" then
     speedFactor(true)
@@ -161,9 +172,11 @@ function love.keypressed(key)
   end
   if key == "r" then
     love.event.quit("restart")
+    server:close()
   end
   if key == "escape" then
     love.event.quit(0)
+    server:close()
   end
 
   if key == "c" then

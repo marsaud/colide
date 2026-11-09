@@ -15,6 +15,7 @@ local DispatchController = Control.DispatchController
 local ClientControllerWrapper = Control.ClientControllerWrapper
 local defaultKeyMaps = Control.defaultKeyMaps
 local Client = require("network.client").Client
+local unserialize = require("Serializable").unserialize
 -- END IMPORTS
 
 local contexts = {}
@@ -29,7 +30,29 @@ local scale = 1
 local offsetX = 0
 local offsetY = 0
 
+local objectReader = {
+  open = function(self, state)
+    self._state = state
+  end,
+  read = function(self)
+    if self._state == "" then
+      return nil
+    end
+    local newObject
+    local separator = self._state:find("%", 1, true)
+    if not separator then
+      newObject = self._state
+      self._state = ""
+    else
+      newObject = self._state:sub(1, separator - 1)
+      self._state = self._state:sub(separator + 1)
+    end
+    return newObject
+  end,
+}
+
 local pause
+local client = Client:new()
 
 function love.load()
   local boots = {}
@@ -37,30 +60,15 @@ function love.load()
   local demo = require("demo")
   table.insert(boots, demo)
 
-  -- local bricks = require("bricks/bricks")
-  -- table.insert(boots, bricks)
-
-  -- local invaders = require("invaders/invaders")
-  -- table.insert(boots, invaders)
-
-  -- local groupDemo = require("groupDemo/groupDemo")
-  -- table.insert(boots, groupDemo)
-
-  -- local test = require("collideDebug/test")
-  -- table.insert(boots, test)
-
   local kc = KeyboardController:new()
   local kc2 = KeyboardController:new({ map = defaultKeyMaps[2] })
   local dc = DispatchController:new()
   dc:addController(kc)
   dc:addController(kc2, "boy2")
 
-  local client = Client:new()
-  client:connect()
-
   local controller = ClientControllerWrapper:new({
     controller = dc,
-    client = client
+    client = client,
   })
 
   for _, b in ipairs(boots) do
@@ -79,6 +87,7 @@ function love.load()
     c:addObjects(table.unpack(b()))
     -- c:startDiff()
     table.insert(contexts, c)
+    client:connect()
   end
 
   contextIndex = 1
@@ -94,8 +103,21 @@ function love.update(dt)
   if pause then
     return
   end
-  contexts[currentContextIndex]:tick(dt)
-  contexts[currentContextIndex]:flush()
+  local context = contexts[currentContextIndex]
+  context:tick(dt, true):flush()
+
+  client:update()
+  local gameState = client:poll()
+  while gameState ~= nil do
+    objectReader:open(gameState)
+    local object = objectReader:read()
+    while object ~= nil do
+      local o = unserialize(object)
+      context:updateObject(o)
+      object = objectReader:read()
+    end
+    gameState = client:poll()
+  end
 end
 
 function love.draw()

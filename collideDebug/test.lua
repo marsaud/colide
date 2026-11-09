@@ -4,12 +4,11 @@ local AGameUIObject = require("AGameUIObject").AGameUIObject
 local Draw = require("Draw")
 local IRectFill, IRectLine = Draw.IRectFill, Draw.IRectLine
 local Move = require("Move")
-local moveVectors, IMove, IMoveX, IMoveY = Move.moveVectors, Move.IMove, Move.IMoveX, Move.IMoveY
+local moveVectors, IMove = Move.moveVectors, Move.IMove
 local Collide = require("Collide")
 local ICollideBlocker, ICollidePusher = Collide.ICollideBlocker, Collide.ICollidePusher
 local Control = require("Control")
 local IControlMove = Control.IControlMove
-local Boy = require("demo/Boy").Boy
 local SmallTextBlock = require("ui.SmallTextBlock").SmallTextBlock
 local Data = require("Data")
 local DataManager, IADataBroadcaster, IADataListener =
@@ -21,10 +20,7 @@ local function test()
 
   local Rect2D = AGameUIObject:extend(IControlMove, IMove, ICollidePusher, IRectLine)
   local RectPassive = AGameUIObject:extend(ICollidePusher, IRectLine)
-  local Rect1DX = AGameUIObject:extend(IControlMove, IMoveX, ICollidePusher, IRectLine)
-  local Rect1DY = AGameUIObject:extend(IControlMove, IMoveY, ICollidePusher, IRectLine)
   local RectStatic = AGameUIObject:extend(ICollideBlocker, IRectFill)
-  local BlockerBoy = AGameUIObject:extend(IControlMove, IMove, ICollidePusher, Boy)
 
   local dataManager = DataManager:new()
 

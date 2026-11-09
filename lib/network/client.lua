@@ -95,7 +95,7 @@ local Client = Class({
   end,
 
   update = function(self)
-    if not self.socket then
+    if not self._socket then
       return
     end
 

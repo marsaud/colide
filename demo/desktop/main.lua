@@ -67,7 +67,6 @@ function love.load()
       },
     })
     c:addObjects(table.unpack(b()))
-    c:startDiff()
     table.insert(contexts, c)
   end
 

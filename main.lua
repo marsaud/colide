@@ -1,4 +1,5 @@
-package.path = "./lib/?.lua;./lib/?/init.lua;" .. package.path
+package.path = "lib/?.lua;lib/?/init.lua;" .. package.path
+package.path = "demo/desktop/?.lua;demo/desktop/assets/?.lua;" .. package.path
 
 -- CONFORT TWEAKS
 require("workHelpers")
@@ -32,20 +33,20 @@ local pause
 function love.load()
   local boots = {}
 
-  local demo = require("demo/desktop/demo")
+  local demo = require("demo")
   table.insert(boots, demo)
 
-  -- local bricks = require("bricks/bricks")
-  -- table.insert(boots, bricks)
+  local bricks = require("bricks/bricks")
+  table.insert(boots, bricks)
 
-  -- local invaders = require("invaders/invaders")
-  -- table.insert(boots, invaders)
+  local invaders = require("invaders/invaders")
+  table.insert(boots, invaders)
 
-  -- local groupDemo = require("groupDemo/groupDemo")
-  -- table.insert(boots, groupDemo)
+  local groupDemo = require("groupDemo/groupDemo")
+  table.insert(boots, groupDemo)
 
-  -- local test = require("collideDebug/test")
-  -- table.insert(boots, test)
+  local test = require("collideDebug/test")
+  table.insert(boots, test)
 
   local kc = KeyboardController:new()
   local kc2 = KeyboardController:new({ map = defaultKeyMaps[2] })

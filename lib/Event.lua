@@ -7,6 +7,7 @@ local CONTROL = C.CONTROL
 local DEFAULT_CONTROL_CHANNEL = C.DEFAULT_CONTROL_CHANNEL
 local NotSerializable = require("Serializable").NotSerializable
 -- local debug = require("Debug").debug
+local Coord = require("Couple").Coord
 
 local eventId = 0
 local eventCount = 0
@@ -34,6 +35,7 @@ local EventManager = Class({
       self.__controller = self.controller
       self.controller = nil
       self.__objects = {}
+      self.__objectIndex = {}
       for _, e in pairs(EVENT) do
         self.__objects[e] = {}
       end
@@ -57,10 +59,13 @@ local EventManager = Class({
     return self
   end,
 
-  tick = function(self, dt)
+  tick = function(self, dt, dry)
     self.__controller:fetch()
     local lastControl = {}
     local ctrl, channel = self.__controller:poll()
+    if dry then
+      return self
+    end
     while ctrl ~= nil do
       for _, c in pairs(self.__objects[EVENT.CONTROL]) do
         c:control(ctrl, dt, channel)
@@ -76,20 +81,20 @@ local EventManager = Class({
   end,
 
   flush = function(self)
+    local stateDiff
     if self.__diff then
       local stateDiffMem = {}
       for o, _ in pairs(self.__diffs) do
         table.insert(stateDiffMem, o:serialize(self.__keyMap))
         self.__diffs[o] = nil
       end
-      local stateDiff = table.concat(stateDiffMem, "%")
-      print(stateDiff)
+      stateDiff = table.concat(stateDiffMem, "%")
     end
     self:purge()
     for _, f in pairs(self.__objects[EVENT.FLUSH]) do
       f:flush()
     end
-    return self
+    return self, stateDiff
   end,
 
   draw = function(self)
@@ -118,6 +123,9 @@ local EventManager = Class({
     end
     if inserted then
       o.__eventManager = self
+      if L.x(o._uid_) then
+        self.__objectIndex[o._uid_] = o
+      end
       return true
     else
       o.__EV_INDEX = nil
@@ -131,6 +139,7 @@ local EventManager = Class({
     end
     o.__eventManager = nil
     o.__EV_INDEX = nil
+    self.__objectIndex[o._uid_] = nil
   end,
 
   addObjects = function(self, ...)
@@ -197,6 +206,17 @@ local EventManager = Class({
     end
     -- debug('OUT', id, e, o, ...)
     return effect
+  end,
+
+  updateObject = function(self, o)
+    local _o = self.__objectIndex[o._uid_]
+    if not L.x(_o) then
+      return
+    end
+    _o.h = o.h
+    _o.w = o.w
+    _o._health = o.health
+    _o._c = Coord:new({ x = o._c.x, y = o._c.y })
   end,
 
   delete = function(self, o)

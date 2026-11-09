@@ -63,7 +63,7 @@ local Server = Class({
   removeClient = function(self, client)
     local _client = self._clients[client.socket]
 
-    if _client then
+    if _client and _client == client then
       _client.socket:close()
       self._clients[_client.socket] = nil
       self:print("Client disconnected: " .. _client.address)
@@ -71,23 +71,34 @@ local Server = Class({
   end,
 
   sendToClient = function(self, client, message)
+    -- Our protocol uses newline as the message delimiter.
+    if not message:match("\n$") then
+      message = message .. "\n"
+    end
+
     local ok, err = client.socket:send(message)
 
     if not ok then
       self:print("Send error (" .. client.address .. "): " .. tostring(err))
       self:removeClient(client)
-      return false
+      return false, err
     end
+    self:print("Server sent to " .. client.address .. ": " .. message)
 
     return true
   end,
 
   broadCast = function(self, message, except)
-    for client, _ in pairs(self._clients) do
+    local ok, err = true, nil
+    for _, client in pairs(self._clients) do
       if client ~= except then
-        self:sendToClient(client, message)
+        ok, err = self:sendToClient(client, message)
+        if not ok then
+          break
+        end
       end
     end
+    return ok, err
   end,
 
   poll = function(self)
