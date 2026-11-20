@@ -45,20 +45,24 @@ local ServerController = AController:extend({
   fetch = function(self)
     local messages = self._server:poll()
     for _, message in ipairs(messages) do
-      local m, ch = parse(message, "%")
-      m = tonumber(m)
-      if m ~= nil then
-        table.insert(self._pile, { m = m, ch = ch })
+      local ctrlms = parse(message, "%", true)
+      local ctrls = {}
+      for _, ctrlm in pairs(ctrlms) do
+        local ctrl, channel = parse(ctrlm, "|")
+        ctrl = tonumber(ctrl)
+        if ctrl ~= nil then
+          ctrls[channel] = ctrl
+        end
+      end
+      local next = next
+      if next(ctrls) ~= nil then
+        table.insert(self._pile, ctrls)
       end
     end
   end,
 
   poll = function(self)
-    local mch = table.remove(self._pile, 1)
-    if mch ~= nil then
-      return mch.m, mch.ch
-    end
-    return nil
+    return table.remove(self._pile, 1)
   end,
 })
 
@@ -93,9 +97,8 @@ function love.load()
         h = true,
         w = true,
         _c = true,
-        x = true,
-        y = true,
         _health = true,
+        _state = true
       },
     })
     c:addObjects(table.unpack(b()))

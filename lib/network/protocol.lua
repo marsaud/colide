@@ -7,7 +7,7 @@ local format = function(separator, ...)
   return table.concat(args, separator)
 end
 
-local parse = function(str, separator)
+local parse = function(str, separator, nospread)
   local parsed = {}
   local i = 1
 
@@ -24,7 +24,11 @@ local parse = function(str, separator)
     i = i + 1
     c = string.sub(str, i, i)
   end
-  return table.unpack(parsed)
+  if nospread ~= true then
+    return table.unpack(parsed)
+  else
+    return parsed
+  end
 end
 
 return {

@@ -17,6 +17,7 @@ local Client = Class({
       self.port = nil
       self._buffer = ""
       self._messages = {}
+      self._count = 0
     end,
   },
 
@@ -89,7 +90,8 @@ local Client = Class({
       return false, err
     end
 
-    self:print("Sent: " .. message)
+    self._count = self._count + 1
+    self:print("Sent(" .. self._count .. "): " .. message)
 
     return true
   end,

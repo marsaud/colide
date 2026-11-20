@@ -12,22 +12,6 @@ local CONTROL = C.CONTROL
 local DEFAULT_CONTROL_CHANNEL = C.DEFAULT_CONTROL_CHANNEL
 local format = require("network.protocol").format
 
-local AController = Class({
-  __constructors = {
-    Controller = function(self)
-      self._pile = {}
-    end,
-  },
-
-  fetch = function(self)
-    error("AController.fetch is abstract")
-  end,
-
-  poll = function(self)
-    return table.remove(self._pile, 1), DEFAULT_CONTROL_CHANNEL
-  end,
-})
-
 local defaultKeyMaps = {
   {
     [CONTROL.ACT1] = "space",
@@ -56,6 +40,22 @@ local function pullControl(map, _test)
   return ctrl
 end
 
+local AController = Class({
+  __constructors = {
+    Controller = function(self)
+      self._pile = {}
+    end,
+  },
+
+  fetch = function(self)
+    error("AController.fetch is abstract")
+  end,
+
+  poll = function(self)
+    return table.remove(self._pile, 1)
+  end,
+})
+
 local KeyboardController = AController:extend({
   __constructors = {
     KeyboardController = function(self)
@@ -63,33 +63,19 @@ local KeyboardController = AController:extend({
         self._map = self.map
         self.map = nil
       end
+      if self.channel then
+        self._channel = self.channel
+        self.channel = nil
+      else
+        self._channel = DEFAULT_CONTROL_CHANNEL
+      end
     end,
   },
 
   fetch = function(self, _test)
     local ctrl = pullControl(self._map or defaultKeyMaps[1], _test or love)
     if ctrl ~= CONTROL.NONE then
-      table.insert(self._pile, ctrl)
-    end
-  end,
-})
-
-local NetworkController = AController:extend({
-  __constructors = {
-    NetworkController = function(self)
-      if not L.x(self.server) then
-        error("Server instance required")
-      end
-      self._server = self.server
-      self.server = nil
-    end,
-  },
-
-  fetch = function(self)
-    local message = self._server:poll()
-    while message ~= nil do
-      table.insert(self._pile, message)
-      message = self._server:poll()
+      table.insert(self._pile, { [self._channel] = ctrl })
     end
   end,
 })
@@ -102,31 +88,34 @@ local DispatchController = AController:extend({
     end,
   },
 
-  addController = function(self, controller, channel)
-    self._controllers[channel or DEFAULT_CONTROL_CHANNEL] = controller
+  addController = function(self, controller)
+    self._controllers[controller._channel or DEFAULT_CONTROL_CHANNEL] = controller
+    return self
   end,
 
   removeController = function(self, channel)
     self._controllers[channel or DEFAULT_CONTROL_CHANNEL] = nil
+    return self
   end,
 
   fetch = function(self, _test)
+    local next = next
+    local ctrls = {}
     for ch, c in pairs(self._controllers) do
       c:fetch(_test)
-      local m = c:poll()
-      while m ~= nil do
-        table.insert(self._pile, { m = m, ch = ch })
-        m = c:poll()
+      local ctrl = c:poll()
+      while ctrl ~= nil do
+        ctrls[ch] = ctrl[ch]
+        ctrl = c:poll()
       end
+    end
+    if next(ctrls) ~= nil then
+      table.insert(self._pile, ctrls)
     end
   end,
 
   poll = function(self)
-    local mch = table.remove(self._pile, 1)
-    if mch ~= nil then
-      return mch.m, mch.ch
-    end
-    return nil
+    return table.remove(self._pile, 1)
   end,
 })
 
@@ -151,16 +140,20 @@ local ClientControllerWrapper = AController:extend({
   end,
 
   poll = function(self)
-    local m, ch = self._controller:poll()
-    if m == nil then
+    local ctrls = self._controller:poll()
+    if ctrls == nil then
       return nil
     end
-    local message = format("%", m, ch)
+    local ctrlms = {}
+    for ch, ctrl in pairs(ctrls) do
+      table.insert(ctrlms, format("|", ctrl, ch))
+    end
+    local message = format("%", table.unpack(ctrlms))
     local _, err = self._client:send(message)
     if err then
       error(err)
     end
-    return m, ch
+    return ctrls
   end,
 })
 
@@ -207,7 +200,6 @@ return {
   IAControl = IAControl,
   IControlMove = IControlMove,
   KeyboardController = KeyboardController,
-  NetworkController = NetworkController,
   defaultKeyMaps = defaultKeyMaps,
   pullControl = pullControl,
   testControl = testControl,

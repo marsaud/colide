@@ -9,6 +9,11 @@ local PORT = 5000
 local WAIT_SOCKETS = 0.01
 local WAIT_LOOP = 0.01
 
+local SERVER_EVENTS = {
+  CLIENT_CREATED = "clientCreated",
+  CLIENT_REMOVED = "clientRemoved"
+}
+
 local Server = Class({
   __constructors = {
     Server = function(self)
@@ -27,11 +32,27 @@ local Server = Class({
       self._server = assert(socket.bind(self._host, self._port))
       self._server:settimeout(0)
       self._running = false
+      self._listeners = {}
       if self._verbose then
         print(string.format("Server listening on %s:%d", HOST, PORT))
       end
+      self._count = 0
     end,
   },
+
+  addListener = function(self, listener)
+    self._listeners[listener] = listener
+  end,
+
+  removeListener = function(self, listener)
+    self._listeners[listener] = nil
+  end,
+
+  _event = function(self, E, ...)
+    for _, listener in pairs(self._listeners) do
+      listener[E](listener, ...)
+    end
+  end,
 
   print = function(self, ...)
     if self._verbose then
@@ -47,6 +68,8 @@ local Server = Class({
       buffer = "",
     }
     self._clients[_socket] = client
+
+    self:_event(SERVER_EVENTS.CLIENT_CREATED, client)
 
     if self._verbose then
       self:print("Client connected: " .. client.address)
@@ -66,6 +89,9 @@ local Server = Class({
     if _client and _client == client then
       _client.socket:close()
       self._clients[_client.socket] = nil
+
+      self:_event(SERVER_EVENTS.CLIENT_REMOVED, client)
+
       self:print("Client disconnected: " .. _client.address)
     end
   end,
@@ -83,7 +109,7 @@ local Server = Class({
       self:removeClient(client)
       return false, err
     end
-    self:print("Server sent to " .. client.address .. ": " .. message)
+    self:print("Server sent to " .. client.address .. " (" .. self._count .. "): " .. message)
 
     return true
   end,
@@ -98,6 +124,7 @@ local Server = Class({
         end
       end
     end
+    self._count = self._count + 1
     return ok, err
   end,
 
@@ -194,18 +221,17 @@ local Server = Class({
 })
 
 AServerListner = {
-  listen = function(self, messages)
-    if self._listen then
-      self:_listen(messages)
-    end
+  [SERVER_EVENTS.CLIENT_CREATED] = function(self, client)
+    error("REQUIRES IMPLEMENTATION")
   end,
 
-  setServer = function(self, server)
-    self._server = server
+  [SERVER_EVENTS.CLIENT_REMOVED] = function(self, client)
+    error("REQUIRES IMPLEMENTATION")
   end,
 }
 
 return {
   Server = Server,
   AServerListner = AServerListner,
+  SERVER_EVENTS = SERVER_EVENTS
 }

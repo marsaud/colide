@@ -62,16 +62,18 @@ local EventManager = Class({
   tick = function(self, dt, dry)
     self.__controller:fetch()
     local lastControl = {}
-    local ctrl, channel = self.__controller:poll()
+    local ctrls = self.__controller:poll()
     if dry then
       return self
     end
-    while ctrl ~= nil do
-      for _, c in pairs(self.__objects[EVENT.CONTROL]) do
-        c:control(ctrl, dt, channel)
+    while ctrls ~= nil do
+      for channel, ctrl in pairs(ctrls) do
+        for _, c in pairs(self.__objects[EVENT.CONTROL]) do
+          c:control(ctrl, dt, channel)
+        end
+        lastControl[channel] = ctrl
       end
-      lastControl[channel] = ctrl
-      ctrl, channel = self.__controller:poll()
+      ctrls = self.__controller:poll()
     end
     for _, u in pairs(self.__objects[EVENT.UPDATE]) do
       local ch = u.channel or DEFAULT_CONTROL_CHANNEL
@@ -215,8 +217,9 @@ local EventManager = Class({
     end
     _o.h = o.h
     _o.w = o.w
-    _o._health = o.health
+    _o._health = o._health
     _o._c = Coord:new({ x = o._c.x, y = o._c.y })
+    _o._state = o._state
   end,
 
   delete = function(self, o)

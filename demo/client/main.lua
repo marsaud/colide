@@ -61,10 +61,9 @@ function love.load()
   table.insert(boots, demo)
 
   local kc = KeyboardController:new()
-  local kc2 = KeyboardController:new({ map = defaultKeyMaps[2] })
+  local kc2 = KeyboardController:new({ channel = "boy2", map = defaultKeyMaps[2] })
   local dc = DispatchController:new()
-  dc:addController(kc)
-  dc:addController(kc2, "boy2")
+  dc:addController(kc):addController(kc2)
 
   local controller = ClientControllerWrapper:new({
     controller = dc,
@@ -85,7 +84,6 @@ function love.load()
       },
     })
     c:addObjects(table.unpack(b()))
-    -- c:startDiff()
     table.insert(contexts, c)
     client:connect()
   end

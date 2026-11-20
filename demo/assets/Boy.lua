@@ -56,8 +56,10 @@ local Boy = {
           love.graphics.newImage(dir .. "walkingBoy/img/move" .. STATE[BACK].n .. i .. ".png")
         )
       end
-      self._state = RIGHT
-      self._step = 1
+      self._state = {
+        dir = RIGHT,
+        step = 1
+      }
       self._time = 0
     end,
   },
@@ -65,24 +67,24 @@ local Boy = {
   _update = function(self, ctrl, dt)
     local animate = false
     if testControl(ctrl, CONTROL.RIGHT) then
-      self._state = RIGHT
+      self._state.dir = RIGHT
       animate = true
     elseif testControl(ctrl, CONTROL.LEFT) then
-      self._state = LEFT
+      self._state.dir = LEFT
       animate = true
     elseif testControl(ctrl, CONTROL.UP) then
-      self._state = BACK
+      self._state.dir = BACK
       animate = true
     elseif testControl(ctrl, CONTROL.DOWN) then
-      self._state = FACE
+      self._state.dir = FACE
       animate = true
     end
     if animate then
       self._time = self._time + dt
       if self._time > 0.2 then
-        self._step = self._step + 1
-        if self._step > #self[self._state] then
-          self._step = 1
+        self._state.step = self._state.step + 1
+        if self._state.step > #self[self._state.dir] then
+          self._state.step = 1
         end
         self._time = self._time - 0.2
       end
@@ -97,11 +99,11 @@ local Boy = {
       c = self
     end
     love.graphics.draw(
-      self[self._state][self._step],
-      c.x + ((1 - STATE[self._state].f) * self.w) / 2,
+      self[self._state.dir][self._state.step],
+      c.x + ((1 - STATE[self._state.dir].f) * self.w) / 2,
       c.y,
       0,
-      4 * STATE[self._state].f,
+      4 * STATE[self._state.dir].f,
       4
     )
   end,
