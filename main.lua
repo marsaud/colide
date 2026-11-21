@@ -49,10 +49,9 @@ function love.load()
   table.insert(boots, test)
 
   local kc = KeyboardController:new()
-  local kc2 = KeyboardController:new({ map = defaultKeyMaps[2] })
+  local kc2 = KeyboardController:new({ channel = "boy2", map = defaultKeyMaps[2] })
   local controller = DispatchController:new()
-  controller:addController(kc)
-  controller:addController(kc2, "boy2")
+  controller:addController(kc):addController(kc2)
 
   for _, b in ipairs(boots) do
     local c = EventManager:new({
