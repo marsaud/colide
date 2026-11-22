@@ -230,9 +230,24 @@ IServerListener = {
   end,
 }
 
-ALoopListener = {}
+ALoopListener = {
+  listen = function(self, messages)
+    if self._listen then
+      self:_listen(messages)
+    end
+  end,
+
+  setServer = function(self, server)
+    self._server = server
+  end,
+
+  getServer = function(self)
+    return self._server
+  end,
+}
 
 return {
+  ALoopListener = ALoopListener,
   Server = Server,
   IServerListener = IServerListener,
   SERVER_EVENTS = SERVER_EVENTS,

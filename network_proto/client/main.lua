@@ -22,10 +22,10 @@ local messages = {
 
 function love.load()
   dc = DispatchController:new()
-  local kbc1 = KeyboardController:new({ map = defaultKeyMaps[1] })
-  local kbc2 = KeyboardController:new({ map = defaultKeyMaps[2] })
-  dc:addController(kbc1, 1)
-  dc:addController(kbc2, 2)
+  local kbc1 = KeyboardController:new({ channel = 1, map = defaultKeyMaps[1] })
+  local kbc2 = KeyboardController:new({ channel = 2, map = defaultKeyMaps[2] })
+  dc:addController(kbc1)
+  dc:addController(kbc2)
 
   client = Client:new({ verbose = true })
   client:connect()
@@ -33,10 +33,12 @@ end
 
 function love.update()
   dc:fetch()
-  local m, ch = dc:poll()
-  while m do
-    client:send(m .. "|" .. ch)
-    m, ch = dc:poll()
+  local ctrls = dc:poll()
+  while ctrls ~= nil do
+    for ch, ctrl in pairs(ctrls) do
+      client:send(ch .. "|" .. ctrl)
+    end
+    ctrls = dc:poll()
   end
 end
 
@@ -46,5 +48,8 @@ function love.keypressed(key)
   local message = messages[key]
   if message ~= nil then
     -- client:send(message)
+  end
+  if key == "escape" then
+    client:send("quit")
   end
 end

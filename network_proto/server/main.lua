@@ -14,6 +14,9 @@ local Listener = Class(ALoopListener, {
     for _, m in pairs(messages) do
       messageCount = messageCount + 1
       print(messageCount .. ": " .. m)
+      if m == "quit" then
+        self:getServer():stop()
+      end
     end
   end,
 })
@@ -21,7 +24,7 @@ local Listener = Class(ALoopListener, {
 local listener = Listener:new()
 
 local server = Server:new({
-  listener = listener,
+  loopListener = listener,
   verbose = true,
 })
 
