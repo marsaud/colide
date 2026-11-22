@@ -58,7 +58,7 @@ local Boy = {
       end
       self._state = {
         dir = RIGHT,
-        step = 1
+        step = 1,
       }
       self._time = 0
     end,

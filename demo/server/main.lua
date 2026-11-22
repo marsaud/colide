@@ -98,7 +98,7 @@ function love.load()
         w = true,
         _c = true,
         _health = true,
-        _state = true
+        _state = true,
       },
     })
     c:addObjects(table.unpack(b()))

@@ -11,16 +11,16 @@ local WAIT_LOOP = 0.01
 
 local SERVER_EVENTS = {
   CLIENT_CREATED = "clientCreated",
-  CLIENT_REMOVED = "clientRemoved"
+  CLIENT_REMOVED = "clientRemoved",
 }
 
 local Server = Class({
   __constructors = {
     Server = function(self)
-      if L.x(self.listener) then
-        self._listener = self.listener
-        self._listener:setServer(self)
-        self.listener = nil
+      if L.x(self.loopListener) then
+        self._loopListener = self.loopListener
+        self._loopListener:setServer(self)
+        self.loopListener = nil
       end
       self._verbose = self.verbose or false
       self.verbose = nil
@@ -50,7 +50,7 @@ local Server = Class({
 
   _event = function(self, E, ...)
     for _, listener in pairs(self._listeners) do
-      listener[E](listener, ...)
+      listener[E](listener, self, ...)
     end
   end,
 
@@ -185,14 +185,14 @@ local Server = Class({
   end,
 
   start = function(self)
-    if not L.x(self._listener) then
-      error("AServerListener instance required for loop mode")
+    if not L.x(self._loopListener) then
+      error("ALoopListener instance required for loop mode")
     end
     self._running = true
     self:print("Server loop started")
     while self._running do
       local messages = self:poll()
-      self._listener:listen(messages)
+      self._loopListener:listen(messages)
       socket.sleep(WAIT_LOOP)
     end
     self:print("Server loop stopped")
@@ -220,18 +220,20 @@ local Server = Class({
   end,
 })
 
-AServerListner = {
-  [SERVER_EVENTS.CLIENT_CREATED] = function(self, client)
+IServerListener = {
+  [SERVER_EVENTS.CLIENT_CREATED] = function(self, server, client, ...)
     error("REQUIRES IMPLEMENTATION")
   end,
 
-  [SERVER_EVENTS.CLIENT_REMOVED] = function(self, client)
+  [SERVER_EVENTS.CLIENT_REMOVED] = function(self, server, client, ...)
     error("REQUIRES IMPLEMENTATION")
   end,
 }
 
+ALoopListener = {}
+
 return {
   Server = Server,
-  AServerListner = AServerListner,
-  SERVER_EVENTS = SERVER_EVENTS
+  IServerListener = IServerListener,
+  SERVER_EVENTS = SERVER_EVENTS,
 }

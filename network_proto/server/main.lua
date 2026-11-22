@@ -5,11 +5,11 @@ local Class = OOP.Class
 
 local s = require("network/server")
 local Server = s.Server
-local AServerListener = s.AServerListner
+local ALoopListener = s.ALoopListener
 
 local messageCount = 0
 
-local Listener = Class(AServerListener, {
+local Listener = Class(ALoopListener, {
   _listen = function(self, messages)
     for _, m in pairs(messages) do
       messageCount = messageCount + 1

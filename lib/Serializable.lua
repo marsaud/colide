@@ -10,7 +10,7 @@ local function _s(o, params)
     if keyProtect then
       return string.format("%q", o)
     elseif value then
-      return "\"" .. o .. "\""
+      return '"' .. o .. '"'
     else
       return o
     end
